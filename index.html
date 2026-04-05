@@ -3,29 +3,21 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Quinn Bot 2026 - سوق داخلي حقيقي</title>
+<title>Quinn Bot 2026 - السوق الداخلي والمحفظة الكاملة</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,900&display=swap" rel="stylesheet">
 <style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
   --bg-dark: #05020f;
   --bg-card: rgba(15, 12, 35, 0.7);
   --glass-border: rgba(255, 255, 255, 0.12);
   --purple-neon: #b77eff;
-  --blue-neon: #3b82f6;
   --green: #10b981;
   --red: #ef4444;
   --text: #ffffff;
   --text-dim: rgba(255, 255, 255, 0.65);
 }
-
 body {
   background: var(--bg-dark);
   font-family: 'Inter', sans-serif;
@@ -33,7 +25,6 @@ body {
   overflow: hidden;
   height: 100vh;
 }
-
 .animated-bg {
   position: fixed;
   inset: 0;
@@ -43,7 +34,6 @@ body {
   animation: bgPulse 6s ease infinite alternate;
 }
 @keyframes bgPulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
-
 .grid-overlay {
   position: fixed;
   inset: 0;
@@ -52,7 +42,6 @@ body {
   background-size: 40px 40px;
   pointer-events: none;
 }
-
 .app {
   height: 100vh;
   display: flex;
@@ -60,7 +49,6 @@ body {
   position: relative;
   z-index: 2;
 }
-
 .header {
   backdrop-filter: blur(20px);
   background: rgba(5, 2, 15, 0.7);
@@ -71,12 +59,7 @@ body {
   align-items: center;
   flex-shrink: 0;
 }
-
-.user-info {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
+.user-info { display: flex; align-items: center; gap: 12px; }
 .avatar-circle {
   width: 48px;
   height: 48px;
@@ -102,7 +85,6 @@ body {
   padding: 16px 16px 80px;
   scrollbar-width: thin;
 }
-
 .bottom-nav {
   position: fixed;
   bottom: 0;
@@ -128,12 +110,8 @@ body {
   cursor: pointer;
   transition: all 0.2s;
 }
-.nav-item.active {
-  color: var(--purple-neon);
-  transform: translateY(-2px);
-}
+.nav-item.active { color: var(--purple-neon); transform: translateY(-2px); }
 .nav-icon { font-size: 24px; }
-
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: blur(15px);
@@ -142,7 +120,6 @@ body {
   padding: 16px;
   margin-bottom: 16px;
 }
-
 .coin-btn {
   width: 180px;
   height: 180px;
@@ -158,7 +135,6 @@ body {
   transition: transform 0.05s linear;
 }
 .coin-btn:active { transform: scale(0.94); }
-
 .energy-bar {
   height: 8px;
   background: rgba(255,255,255,0.1);
@@ -171,11 +147,9 @@ body {
   background: linear-gradient(90deg, #10b981, #fbbf24);
   transition: width 0.2s;
 }
-
 .tab-pane { display: none; }
 .tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
-
 .stock-item {
   display: flex;
   justify-content: space-between;
@@ -185,11 +159,7 @@ body {
   flex-wrap: wrap;
   gap: 8px;
 }
-.stock-price {
-  font-family: monospace;
-  font-size: 16px;
-  font-weight: bold;
-}
+.stock-price { font-family: monospace; font-size: 16px; font-weight: bold; }
 .up { color: #10b981; }
 .down { color: #ef4444; }
 .small-btn {
@@ -208,7 +178,6 @@ canvas {
   height: 180px;
   margin-top: 12px;
 }
-
 .flying-number {
   position: fixed;
   pointer-events: none;
@@ -223,13 +192,25 @@ canvas {
   0% { opacity: 1; transform: translateY(0); }
   100% { opacity: 0; transform: translateY(-80px); }
 }
-
 .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
 .switch input { opacity: 0; width: 0; height: 0; }
 .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
 .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
 input:checked + .slider { background-color: #8b5cf6; }
 input:checked + .slider:before { transform: translateX(20px); }
+.tx-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+}
 </style>
 </head>
 <body>
@@ -249,6 +230,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   </div>
 
   <div class="content">
+    <!-- الرئيسية -->
     <div id="homeTab" class="tab-pane active">
       <div class="glass-card">
         <div style="display: flex; justify-content: space-between;"><span>💎 الرصيد</span><span id="homeTokens">0 توكن</span></div>
@@ -264,9 +246,30 @@ input:checked + .slider:before { transform: translateX(20px); }
       </div>
     </div>
 
+    <!-- المحفظة -->
+    <div id="walletTab" class="tab-pane">
+      <div class="glass-card" style="text-align:center">
+        <div>الرصيد الكلي</div>
+        <div id="walletQuinn" style="font-size:32px; font-weight:900">0 Q</div>
+        <div id="walletTokens" style="font-size:14px">0 توكن</div>
+        <div class="small-btn" style="margin-top:12px; display:inline-block" onclick="showBuyQuinn()">💎 شراء Quinn</div>
+      </div>
+      <div class="glass-card">
+        <h3>📤 إرسال Quinn</h3>
+        <input type="text" id="sendTo" class="small-btn" style="width:100%; margin-bottom:8px; background:#1e1b2e" placeholder="@username أو ID">
+        <input type="number" id="sendAmount" class="small-btn" style="width:100%; margin-bottom:8px" placeholder="الكمية (Quinn)">
+        <button class="small-btn" style="width:100%" onclick="requestTransfer()">إرسال</button>
+      </div>
+      <div class="glass-card">
+        <h3>📋 آخر العمليات</h3>
+        <div id="transactionsList">لا توجد معاملات</div>
+      </div>
+    </div>
+
+    <!-- السوق -->
     <div id="marketTab" class="tab-pane">
       <div class="glass-card">
-        <h3 style="margin-bottom: 12px;">📈 السوق الداخلي (عرض وطلب حقيقي)</h3>
+        <h3>📈 السوق الداخلي (عرض وطلب حقيقي)</h3>
         <div id="stocksList"></div>
         <canvas id="priceChart" width="400" height="180"></canvas>
       </div>
@@ -276,11 +279,15 @@ input:checked + .slider:before { transform: translateX(20px); }
       </div>
     </div>
 
-    <div id="shopTab" class="tab-pane">
-      <div class="glass-card"><h3>🖼️ الصور المجانية</h3><div id="freeAvatars"></div></div>
-      <div class="glass-card"><h3>💎 الصور المدفوعة (تشتري بـ Quinn)</h3><div id="paidAvatars"></div></div>
+    <!-- المتصدرين -->
+    <div id="leaderboardTab" class="tab-pane">
+      <div class="glass-card">
+        <h3>🏆 قائمة المتصدرين</h3>
+        <div id="leaderboardList"></div>
+      </div>
     </div>
 
+    <!-- الإحالات -->
     <div id="referralTab" class="tab-pane">
       <div class="glass-card" style="text-align:center">
         <div>كود الإحالة الخاص بك</div>
@@ -292,9 +299,10 @@ input:checked + .slider:before { transform: translateX(20px); }
       <div id="referralsList"></div>
     </div>
 
+    <!-- الإعدادات -->
     <div id="settingsTab" class="tab-pane">
       <div class="glass-card">
-        <div class="settings-toggle" style="display:flex; justify-content:space-between; align-items:center">
+        <div style="display:flex; justify-content:space-between; align-items:center">
           <span>🔊 المؤثرات الصوتية</span>
           <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider"></span></label>
         </div>
@@ -306,20 +314,26 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div class="energy-bar"><div class="energy-fill" id="levelProgressBar" style="width:0%; background:linear-gradient(90deg,#b77eff,#3b82f6);"></div></div>
         <div id="nextLevelInfo" style="font-size:12px; margin-top:6px;">التالي: 1,000,000 توكن</div>
       </div>
+      <div class="glass-card">
+        <h3>🖼️ الصور</h3>
+        <div id="freeAvatars" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
+        <div id="paidAvatars" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;"></div>
+      </div>
     </div>
   </div>
 
   <div class="bottom-nav">
     <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>الرئيسية</span></button>
+    <button class="nav-item" data-tab="wallet"><span class="nav-icon">💼</span><span>المحفظة</span></button>
     <button class="nav-item" data-tab="market"><span class="nav-icon">📈</span><span>السوق</span></button>
-    <button class="nav-item" data-tab="shop"><span class="nav-icon">🛒</span><span>المتجر</span></button>
+    <button class="nav-item" data-tab="leaderboard"><span class="nav-icon">🏆</span><span>المتصدرين</span></button>
     <button class="nav-item" data-tab="referral"><span class="nav-icon">👥</span><span>الإحالات</span></button>
     <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙️</span><span>الإعدادات</span></button>
   </div>
 </div>
 
 <script>
-  // ---------- صوتيات ----------
+  // ========== الصوت ==========
   let audioCtx = null, soundEnabled = true, volume = 0.7;
   function initAudio() { if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
   function playBeep(freq=880, dur=0.08, type='sine') { if (!soundEnabled || !audioCtx) return; try { let now=audioCtx.currentTime; let gain=audioCtx.createGain(); gain.gain.setValueAtTime(volume,now); gain.gain.exponentialRampToValueAtTime(0.00001,now+dur); let osc=audioCtx.createOscillator(); osc.type=type; osc.frequency.value=freq; osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(now+dur); } catch(e){} }
@@ -327,18 +341,16 @@ input:checked + .slider:before { transform: translateX(20px); }
   function playBuy() { playBeep(660,0.2,'sine'); }
   function playSell() { playBeep(440,0.2,'sine'); }
 
-  // ---------- نظام الأسهم الداخلي (العرض والطلب) ----------
+  // ========== السوق الداخلي (عرض وطلب) ==========
   const STOCKS = [
     { id: 'telegram', name: 'Telegram Inc.', symbol: 'TLGM', basePrice: 245.80, minPrice: 50, maxPrice: 2000 },
     { id: 'gold', name: 'صندوق الذهب', symbol: 'GOLD', basePrice: 1920.50, minPrice: 1000, maxPrice: 5000 },
     { id: 'bitcoin', name: 'Bitcoin ETF', symbol: 'BTCX', basePrice: 63400, minPrice: 20000, maxPrice: 150000 },
     { id: 'realty', name: 'العقارات الرقمية', symbol: 'REAL', basePrice: 125.30, minPrice: 30, maxPrice: 800 }
   ];
-  let marketPrices = {};     // الأسعار الحالية لكل سهم
-  let priceHistory = {};     // تاريخ الأسعار (آخر 30 نقطة)
-  let lastPriceUpdate = Date.now();
+  let marketPrices = {};
+  let priceHistory = {};
 
-  // تهيئة الأسعار من localStorage أو من القاعدة
   function initMarket() {
     let saved = localStorage.getItem('quinn_market_prices');
     if (saved) {
@@ -352,77 +364,36 @@ input:checked + .slider:before { transform: translateX(20px); }
       });
     }
   }
+  function saveMarket() { localStorage.setItem('quinn_market_prices', JSON.stringify({ prices: marketPrices, history: priceHistory })); }
+  function applyBuyImpact(id) { let old=marketPrices[id]; let newPrice=old*1.005; let s=STOCKS.find(s=>s.id===id); if(newPrice>s.maxPrice) newPrice=s.maxPrice; marketPrices[id]=parseFloat(newPrice.toFixed(2)); updateHistory(id); saveMarket(); }
+  function applySellImpact(id) { let old=marketPrices[id]; let newPrice=old*0.995; let s=STOCKS.find(s=>s.id===id); if(newPrice<s.minPrice) newPrice=s.minPrice; marketPrices[id]=parseFloat(newPrice.toFixed(2)); updateHistory(id); saveMarket(); }
+  function updateHistory(id) { priceHistory[id].push(marketPrices[id]); if(priceHistory[id].length>30) priceHistory[id].shift(); }
 
-  function saveMarket() {
-    localStorage.setItem('quinn_market_prices', JSON.stringify({ prices: marketPrices, history: priceHistory }));
-  }
-
-  // تأثير الشراء: يرفع السعر بنسبة 0.5% (يحد من min/max)
-  function applyBuyImpact(stockId) {
-    let old = marketPrices[stockId];
-    let newPrice = old * 1.005;
-    let stock = STOCKS.find(s=>s.id===stockId);
-    if (newPrice > stock.maxPrice) newPrice = stock.maxPrice;
-    if (newPrice < stock.minPrice) newPrice = stock.minPrice;
-    marketPrices[stockId] = parseFloat(newPrice.toFixed(2));
-    updateHistory(stockId);
-    saveMarket();
-  }
-
-  // تأثير البيع: يخفض السعر بنسبة 0.5%
-  function applySellImpact(stockId) {
-    let old = marketPrices[stockId];
-    let newPrice = old * 0.995;
-    let stock = STOCKS.find(s=>s.id===stockId);
-    if (newPrice > stock.maxPrice) newPrice = stock.maxPrice;
-    if (newPrice < stock.minPrice) newPrice = stock.minPrice;
-    marketPrices[stockId] = parseFloat(newPrice.toFixed(2));
-    updateHistory(stockId);
-    saveMarket();
-  }
-
-  function updateHistory(stockId) {
-    if (!priceHistory[stockId]) priceHistory[stockId] = [];
-    priceHistory[stockId].push(marketPrices[stockId]);
-    if (priceHistory[stockId].length > 30) priceHistory[stockId].shift();
-  }
-
-  // ---------- بيانات المستخدم ----------
+  // ========== بيانات المستخدم ==========
   let currentUser = null;
   let allUsers = {};
 
-  function saveAll() { localStorage.setItem('quinn_all_users_v3', JSON.stringify(allUsers)); }
+  function saveAll() { localStorage.setItem('quinn_all_users_final', JSON.stringify(allUsers)); }
 
   function loadUser(telegramUser) {
     let uid = String(telegramUser.id);
     if (!allUsers[uid]) {
       let newUser = {
-        id: uid,
-        name: (telegramUser.first_name||'') + ' ' + (telegramUser.last_name||''),
-        username: telegramUser.username || '',
-        tokens: 1000,
-        clicks: 0,
-        energy: 1000,
-        passiveIncome: 0,
-        avatar: 1,
-        ownedAvatars: [1],
-        transactions: [],
-        referrals: [],
-        referralEarnings: 0,
-        referralCode: `REF${uid.slice(-6)}`,
-        portfolio: { telegram: 0, gold: 0, bitcoin: 0, realty: 0 }
+        id: uid, name: (telegramUser.first_name||'') + ' ' + (telegramUser.last_name||''),
+        username: telegramUser.username || '', tokens: 1000, clicks: 0, energy: 1000, passiveIncome: 0,
+        avatar: 1, ownedAvatars: [1], transactions: [], referrals: [], referralEarnings: 0,
+        referralCode: `REF${uid.slice(-6)}`, portfolio: { telegram: 0, gold: 0, bitcoin: 0, realty: 0 }
       };
       allUsers[uid] = newUser;
       saveAll();
-      // معالجة الإحالة عبر start_param
       let startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
       if (startParam && startParam.startsWith('ref_')) {
         let refCode = startParam.replace('ref_', '');
         let referrerId = Object.keys(allUsers).find(id => allUsers[id].referralCode === refCode);
         if (referrerId && referrerId !== uid && !allUsers[uid].referralProcessed) {
           allUsers[uid].referralProcessed = true;
-          allUsers[uid].tokens += 400;          // المدعو يكسب 400
-          allUsers[referrerId].tokens += 500;   // الداعي يكسب 500
+          allUsers[uid].tokens += 400;
+          allUsers[referrerId].tokens += 500;
           allUsers[referrerId].referralEarnings += 500;
           allUsers[referrerId].referrals.push({ name: newUser.name, bonus: 500, date: new Date().toLocaleString() });
           allUsers[uid].transactions.unshift({ desc: `مكافأة إحالة`, amount: 400, time: new Date().toLocaleTimeString() });
@@ -434,119 +405,75 @@ input:checked + .slider:before { transform: translateX(20px); }
     return allUsers[uid];
   }
 
-  // دوال مساعدة
-  function formatNumber(n) {
-    if (n >= 1_000_000) return (n/1_000_000).toFixed(2)+'M';
-    if (n >= 1_000) return (n/1_000).toFixed(1)+'K';
-    return Math.floor(n).toString();
-  }
+  function formatNumber(n) { if(n>=1e6) return (n/1e6).toFixed(2)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n).toString(); }
   function tokensToQuinn(t) { return (t/10000).toFixed(2); }
   function quinnToTokens(q) { return q * 10000; }
+  function getLevel(tokens) { let lvl = Math.floor(tokens / 1_000_000) + 1; return Math.min(100, Math.max(1, lvl)); }
 
-  function getLevelFromTokens(tokens) {
-    if (tokens >= 100_000_000) return 100;
-    let level = Math.floor(tokens / 1_000_000) + 1;
-    return Math.min(100, Math.max(1, level));
-  }
-
-  // شراء وبيع الأسهم (يؤثران على السوق الداخلي)
-  function buyStock(stockId) {
-    let price = marketPrices[stockId];
-    let costTokens = Math.floor(price * 10);  // سعر الوحدة بالتوكن
-    if (currentUser.tokens < costTokens) { alert('رصيد غير كافٍ'); return; }
-    currentUser.tokens -= costTokens;
-    currentUser.portfolio[stockId] = (currentUser.portfolio[stockId] || 0) + 1;
-    currentUser.transactions.unshift({ desc: `شراء ${STOCKS.find(s=>s.id===stockId).name}`, amount: -costTokens, time: new Date().toLocaleTimeString() });
-    applyBuyImpact(stockId);   // رفع السعر
+  // شراء وبيع الأسهم
+  function buyStock(id) {
+    let price = marketPrices[id];
+    let cost = Math.floor(price * 10);
+    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
+    currentUser.tokens -= cost;
+    currentUser.portfolio[id]++;
+    currentUser.transactions.unshift({ desc: `شراء ${STOCKS.find(s=>s.id===id).name}`, amount: -cost, time: new Date().toLocaleTimeString() });
+    applyBuyImpact(id);
     saveAll();
     playBuy();
     refreshUI();
-    renderPortfolio();
-    renderMarketList();
-    drawChart();
   }
-
-  function sellStock(stockId) {
-    let qty = currentUser.portfolio[stockId] || 0;
-    if (qty === 0) { alert('ليس لديك هذا الأصل'); return; }
-    let price = marketPrices[stockId];
-    let gainTokens = Math.floor(price * 10);
-    currentUser.tokens += gainTokens;
-    currentUser.portfolio[stockId]--;
-    currentUser.transactions.unshift({ desc: `بيع ${STOCKS.find(s=>s.id===stockId).name}`, amount: gainTokens, time: new Date().toLocaleTimeString() });
-    applySellImpact(stockId);  // خفض السعر
+  function sellStock(id) {
+    if (!currentUser.portfolio[id]) { alert('لا تملك هذا الأصل'); return; }
+    let price = marketPrices[id];
+    let gain = Math.floor(price * 10);
+    currentUser.tokens += gain;
+    currentUser.portfolio[id]--;
+    currentUser.transactions.unshift({ desc: `بيع ${STOCKS.find(s=>s.id===id).name}`, amount: gain, time: new Date().toLocaleTimeString() });
+    applySellImpact(id);
     saveAll();
     playSell();
     refreshUI();
-    renderPortfolio();
-    renderMarketList();
-    drawChart();
   }
 
-  function renderMarketList() {
-    const container = document.getElementById('stocksList');
-    if (!container) return;
-    container.innerHTML = STOCKS.map(s => {
-      let price = marketPrices[s.id];
-      let change = 0;
-      if (priceHistory[s.id] && priceHistory[s.id].length >= 2) {
-        let prev = priceHistory[s.id][priceHistory[s.id].length-2];
-        change = ((price - prev)/prev)*100;
-      }
-      let changeClass = change >= 0 ? 'up' : 'down';
-      let sign = change >= 0 ? '+' : '';
-      return `
-        <div class="stock-item">
-          <div><span class="stock-name">${s.name}</span><div style="font-size:11px">${s.symbol}</div></div>
-          <div><span class="stock-price">${price.toFixed(2)}</span><div class="${changeClass}" style="font-size:12px">${sign}${change.toFixed(2)}%</div></div>
-          <div class="buy-sell-btns">
-            <button class="small-btn" onclick="buyStock('${s.id}')">شراء</button>
-            <button class="small-btn" onclick="sellStock('${s.id}')">بيع</button>
-          </div>
-        </div>
-      `;
-    }).join('');
+  // المحفظة: إرسال Quinn
+  function requestTransfer() {
+    let to = document.getElementById('sendTo').value.trim();
+    let amount = parseFloat(document.getElementById('sendAmount').value);
+    if (!to || isNaN(amount) || amount <= 0) { alert('بيانات غير صحيحة'); return; }
+    let cost = quinnToTokens(amount);
+    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
+    let targetId = null;
+    if (to.startsWith('@')) { let uname = to.slice(1); targetId = Object.keys(allUsers).find(id => allUsers[id].username === uname); }
+    else targetId = to;
+    if (!targetId || !allUsers[targetId]) { alert('المستخدم غير موجود'); return; }
+    if (targetId === currentUser.id) { alert('لا يمكن التحويل لنفسك'); return; }
+    currentUser.tokens -= cost;
+    allUsers[targetId].tokens += cost;
+    currentUser.transactions.unshift({ desc: `إرسال ${amount} Quinn إلى ${to}`, amount: -cost, time: new Date().toLocaleTimeString() });
+    allUsers[targetId].transactions.unshift({ desc: `استلام ${amount} Quinn من ${currentUser.name}`, amount: cost, time: new Date().toLocaleTimeString() });
+    saveAll();
+    playClick();
+    refreshUI();
+    document.getElementById('sendTo').value = '';
+    document.getElementById('sendAmount').value = '';
+    alert('تم الإرسال بنجاح');
   }
 
-  function renderPortfolio() {
-    const container = document.getElementById('portfolioList');
-    if (!container) return;
-    let items = STOCKS.map(s => {
-      let qty = currentUser.portfolio[s.id] || 0;
-      if (qty === 0) return '';
-      let value = (marketPrices[s.id] * 10 * qty).toFixed(0);
-      return `<div class="stock-item"><div>${s.name}</div><div>الكمية: ${qty}</div><div>القيمة ≈ ${formatNumber(value)} توكن</div></div>`;
-    }).filter(i=>i);
-    if (items.length === 0) container.innerHTML = '<div class="glass-card" style="text-align:center">محفظتك فارغة، ابدأ بالاستثمار!</div>';
-    else container.innerHTML = items.join('');
-  }
-
-  function drawChart() {
-    let canvas = document.getElementById('priceChart');
-    if (!canvas) return;
-    canvas.width = canvas.clientWidth;
-    canvas.height = 180;
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let w = canvas.width, h = canvas.height;
-    let data = priceHistory['telegram'] || [];
-    if (data.length < 2) return;
-    let min = Math.min(...data);
-    let max = Math.max(...data);
-    let range = max - min || 1;
-    ctx.beginPath();
-    ctx.strokeStyle = '#b77eff';
-    ctx.lineWidth = 2.5;
-    for (let i=0; i<data.length; i++) {
-      let x = (i / (data.length-1)) * w;
-      let y = h - ((data[i] - min) / range) * (h - 30) - 15;
-      if (i===0) ctx.moveTo(x, y);
-      else ctx.lineTo(x, y);
-    }
-    ctx.stroke();
-    ctx.fillStyle = '#ffffffaa';
-    ctx.font = '10px monospace';
-    ctx.fillText(`السعر الحالي: ${marketPrices['telegram'].toFixed(2)}`, 10, 15);
+  // شراء Quinn من المتجر
+  function showBuyQuinn() {
+    let qty = prompt('كمية Quinn المراد شراؤها:', '1');
+    if (!qty) return;
+    let pass = prompt('كلمة مرور المتجر:');
+    if (pass !== 'T9@xQ#4mL!2vZ$7pR') { alert('كلمة المرور خاطئة'); return; }
+    let tokensGain = quinnToTokens(parseFloat(qty));
+    if (isNaN(tokensGain)) return;
+    currentUser.tokens += tokensGain;
+    currentUser.transactions.unshift({ desc: `شراء ${qty} Quinn من المتجر`, amount: tokensGain, time: new Date().toLocaleTimeString() });
+    saveAll();
+    playBuy();
+    refreshUI();
+    alert(`تمت إضافة ${qty} Quinn بنجاح`);
   }
 
   // الصور
@@ -556,74 +483,64 @@ input:checked + .slider:before { transform: translateX(20px); }
     {id:7,emoji:'🚀',name:'صاروخ القمر',price:50},{id:8,emoji:'🌌',name:'المجرة',price:100},
     {id:9,emoji:'💎',name:'الألماس',price:250},{id:10,emoji:'⚡',name:'البرق',price:500}
   ];
-  const allAvatars = [...freeAvatars, ...paidAvatars];
-
-  function renderAvatarShop() {
+  function renderAvatars() {
     let freeDiv = document.getElementById('freeAvatars');
     let paidDiv = document.getElementById('paidAvatars');
-    if (freeDiv) freeDiv.innerHTML = freeAvatars.map(av => `
-      <div style="display:inline-block; margin:6px; text-align:center; cursor:pointer;" onclick="changeAvatar(${av.id})">
-        <div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id ? '#b77eff' : '#ffffff30'}; border-radius:60px; padding:6px;">${av.emoji}</div>
-        <div>${av.name}</div>
-      </div>
-    `).join('');
+    if (freeDiv) freeDiv.innerHTML = freeAvatars.map(av => `<div style="cursor:pointer; text-align:center" onclick="changeAvatar(${av.id})"><div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id?'#b77eff':'#ffffff30'}; border-radius:60px; padding:6px;">${av.emoji}</div><div>${av.name}</div></div>`).join('');
     if (paidDiv) paidDiv.innerHTML = paidAvatars.map(av => {
       let owned = currentUser.ownedAvatars.includes(av.id);
-      return `<div style="display:inline-block; margin:6px; text-align:center; cursor:pointer;" onclick="${owned ? `changeAvatar(${av.id})` : `buyAvatar(${av.id}, ${av.price})`}">
-        <div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id ? '#b77eff' : '#ffffff30'}; border-radius:60px; padding:6px; opacity:${owned?1:0.6}">${av.emoji}</div>
-        <div style="font-size:12px">${av.name}</div>
-        <div style="font-size:10px">${owned ? '✓ مملوكة' : av.price+' Quinn'}</div>
-      </div>`;
+      return `<div style="cursor:pointer; text-align:center" onclick="${owned ? `changeAvatar(${av.id})` : `buyAvatar(${av.id}, ${av.price})`}"><div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id?'#b77eff':'#ffffff30'}; border-radius:60px; padding:6px; opacity:${owned?1:0.6}">${av.emoji}</div><div>${av.name}</div><div style="font-size:10px">${owned ? '✓' : av.price+' Q'}</div></div>`;
     }).join('');
   }
-
-  function buyAvatar(avatarId, priceQuinn) {
-    let cost = quinnToTokens(priceQuinn);
-    if (currentUser.tokens < cost) { alert('رصيد غير كافٍ'); return; }
-    if (currentUser.ownedAvatars.includes(avatarId)) return;
+  function buyAvatar(id, priceQ) {
+    let cost = quinnToTokens(priceQ);
+    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
+    if (currentUser.ownedAvatars.includes(id)) return;
     currentUser.tokens -= cost;
-    currentUser.ownedAvatars.push(avatarId);
-    currentUser.transactions.unshift({ desc: `شراء صورة ${paidAvatars.find(a=>a.id===avatarId).name}`, amount: -cost, time: new Date().toLocaleTimeString() });
+    currentUser.ownedAvatars.push(id);
+    currentUser.transactions.unshift({ desc: `شراء صورة ${paidAvatars.find(a=>a.id===id).name}`, amount: -cost, time: new Date().toLocaleTimeString() });
     saveAll();
     playBuy();
     refreshUI();
-    renderAvatarShop();
   }
-
-  function changeAvatar(avatarId) {
-    if (!currentUser.ownedAvatars.includes(avatarId)) { alert('لا تملك هذه الصورة'); return; }
-    currentUser.avatar = avatarId;
+  function changeAvatar(id) {
+    if (!currentUser.ownedAvatars.includes(id)) { alert('لا تملك هذه الصورة'); return; }
+    currentUser.avatar = id;
     saveAll();
     refreshUI();
     playClick();
+  }
+
+  // المتصدرين
+  function renderLeaderboard() {
+    let users = Object.values(allUsers).map(u => ({ name: u.name, tokens: u.tokens, avatar: u.avatar, isMe: u.id === currentUser.id }));
+    users.sort((a,b)=>b.tokens - a.tokens);
+    let html = users.slice(0,50).map((u,i) => `<div class="leaderboard-item"><div style="width:30px">${i+1}</div><div style="font-size:28px">${freeAvatars.concat(paidAvatars).find(a=>a.id===u.avatar)?.emoji || '🦁'}</div><div style="flex:1">${u.name} ${u.isMe?'(أنت)':''}</div><div>${formatNumber(u.tokens)} توكن</div></div>`).join('');
+    document.getElementById('leaderboardList').innerHTML = html || '<div class="glass-card">لا يوجد مستخدمين</div>';
   }
 
   // النقر الرئيسي
   function handleClick(e) {
-    if (currentUser.energy <= 0) { alert('لا طاقة!'); return; }
-    currentUser.tokens += 1;
+    if (currentUser.energy <= 0) { alert('لا طاقة! انتظر'); return; }
+    currentUser.tokens++;
     currentUser.clicks++;
     currentUser.energy = Math.max(0, currentUser.energy - 1);
     let x=e.clientX, y=e.clientY;
-    let fly = document.createElement('div');
-    fly.className = 'flying-number';
-    fly.innerText = '+1';
-    fly.style.left = x+'px'; fly.style.top = y+'px';
-    document.body.appendChild(fly);
-    setTimeout(()=>fly.remove(), 800);
+    let fly = document.createElement('div'); fly.className='flying-number'; fly.innerText='+1'; fly.style.left=x+'px'; fly.style.top=y+'px'; document.body.appendChild(fly); setTimeout(()=>fly.remove(),800);
     refreshUI();
     saveAll();
     playClick();
   }
 
+  // تحديث الواجهة بالكامل
   function refreshUI() {
     if (!currentUser) return;
-    let level = getLevelFromTokens(currentUser.tokens);
+    let level = getLevel(currentUser.tokens);
     let nextTokens = level===100 ? 100_000_000 : level * 1_000_000;
     let progress = ((currentUser.tokens - (level-1)*1_000_000) / (nextTokens - (level-1)*1_000_000))*100;
     if (level===100) progress=100;
     document.getElementById('currentLevelNum').innerText = level;
-    document.getElementById('levelProgressBar').style.width = Math.min(100, progress)+'%';
+    document.getElementById('levelProgressBar').style.width = Math.min(100,progress)+'%';
     document.getElementById('nextLevelInfo').innerHTML = level>=100 ? '🏆 أعلى مستوى' : `التالي: ${formatNumber(nextTokens)} توكن`;
     document.getElementById('userLevel').innerHTML = (level>=90?'👑':(level>=50?'🔥':'🌱')) + ` المستوى ${level}`;
     document.getElementById('headerQuinn').innerHTML = tokensToQuinn(currentUser.tokens)+' Q';
@@ -634,51 +551,81 @@ input:checked + .slider:before { transform: translateX(20px); }
     let energyPct = (currentUser.energy/1000)*100;
     document.getElementById('energyFill').style.width = energyPct+'%';
     document.getElementById('energyText').innerHTML = `${Math.floor(currentUser.energy)}/1000`;
-    let avatarObj = allAvatars.find(a=>a.id===currentUser.avatar);
+    let avatarObj = freeAvatars.concat(paidAvatars).find(a=>a.id===currentUser.avatar);
     document.getElementById('avatarPreview').innerHTML = avatarObj ? avatarObj.emoji : '🦁';
     document.getElementById('userName').innerHTML = currentUser.name.split(' ')[0];
+    document.getElementById('walletQuinn').innerHTML = tokensToQuinn(currentUser.tokens)+' Q';
+    document.getElementById('walletTokens').innerHTML = formatNumber(currentUser.tokens)+' توكن';
+    let txHtml = currentUser.transactions.slice(0,10).map(tx => `<div class="tx-item"><div>${tx.desc}</div><div style="color:${tx.amount>0?'#10b981':'#ef4444'}">${tx.amount>0?'+':''}${formatNumber(Math.abs(tx.amount))}</div></div>`).join('');
+    document.getElementById('transactionsList').innerHTML = txHtml || 'لا توجد معاملات';
     document.getElementById('refCode').innerHTML = currentUser.referralCode;
     document.getElementById('refCount').innerHTML = currentUser.referrals.length;
     document.getElementById('refEarnings').innerHTML = formatNumber(currentUser.referralEarnings);
-    let refsDiv = document.getElementById('referralsList');
-    if (refsDiv) {
-      if (!currentUser.referrals.length) refsDiv.innerHTML = '<div class="glass-card" style="text-align:center">لا توجد إحالات بعد</div>';
-      else refsDiv.innerHTML = currentUser.referrals.map(r=>`<div class="glass-card" style="margin-bottom:8px"><div>👤 ${r.name}</div><div style="font-size:12px">${r.date}</div><div style="color:#10b981">+${formatNumber(r.bonus)} توكن</div></div>`).join('');
-    }
+    let refsHtml = currentUser.referrals.map(r => `<div class="glass-card" style="margin-bottom:8px">👤 ${r.name} +${formatNumber(r.bonus)} توكن<br><span style="font-size:11px">${r.date}</span></div>`).join('');
+    document.getElementById('referralsList').innerHTML = refsHtml || '<div class="glass-card">لا توجد إحالات بعد</div>';
+    renderLeaderboard();
     renderMarketList();
     renderPortfolio();
-    renderAvatarShop();
+    renderAvatars();
     drawChart();
   }
 
-  // تجديد الطاقة
-  setInterval(() => {
-    if (currentUser && currentUser.energy < 1000) {
-      currentUser.energy = Math.min(1000, currentUser.energy + 5);
-      refreshUI();
-      saveAll();
+  function renderMarketList() {
+    let container = document.getElementById('stocksList');
+    if (!container) return;
+    container.innerHTML = STOCKS.map(s => {
+      let price = marketPrices[s.id];
+      let change = 0;
+      if (priceHistory[s.id] && priceHistory[s.id].length>=2) {
+        let prev = priceHistory[s.id][priceHistory[s.id].length-2];
+        change = ((price - prev)/prev)*100;
+      }
+      return `<div class="stock-item"><div><strong>${s.name}</strong><br><span style="font-size:11px">${s.symbol}</span></div><div><span class="stock-price">${price.toFixed(2)}</span><div class="${change>=0?'up':'down'}">${change>=0?'+':''}${change.toFixed(2)}%</div></div><div><button class="small-btn" onclick="buyStock('${s.id}')">شراء</button> <button class="small-btn" onclick="sellStock('${s.id}')">بيع</button></div></div>`;
+    }).join('');
+  }
+  function renderPortfolio() {
+    let container = document.getElementById('portfolioList');
+    if (!container) return;
+    let items = STOCKS.map(s => {
+      let qty = currentUser.portfolio[s.id] || 0;
+      if (qty===0) return '';
+      let value = (marketPrices[s.id] * 10 * qty).toFixed(0);
+      return `<div class="stock-item"><div>${s.name}</div><div>الكمية: ${qty}</div><div>القيمة: ${formatNumber(value)} توكن</div></div>`;
+    }).filter(i=>i);
+    container.innerHTML = items.length ? items.join('') : '<div class="glass-card" style="text-align:center">محفظتك فارغة</div>';
+  }
+  function drawChart() {
+    let canvas = document.getElementById('priceChart');
+    if (!canvas) return;
+    canvas.width = canvas.clientWidth;
+    canvas.height = 180;
+    let ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    let data = priceHistory['telegram'] || [];
+    if (data.length<2) return;
+    let min=Math.min(...data), max=Math.max(...data), range=max-min||1;
+    ctx.beginPath(); ctx.strokeStyle='#b77eff'; ctx.lineWidth=2.5;
+    for (let i=0; i<data.length; i++) {
+      let x = (i/(data.length-1))*canvas.width;
+      let y = canvas.height - ((data[i]-min)/range)*(canvas.height-30)-15;
+      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
     }
-  }, 2000);
+    ctx.stroke();
+    ctx.fillStyle='#fff'; ctx.font='10px monospace'; ctx.fillText(`السعر: ${marketPrices['telegram'].toFixed(2)}`,10,15);
+  }
 
-  // دخل سلبي كل دقيقة
-  setInterval(() => {
-    if (currentUser && currentUser.passiveIncome > 0) {
-      currentUser.tokens += currentUser.passiveIncome;
-      currentUser.transactions.unshift({ desc: 'الدخل السلبي', amount: currentUser.passiveIncome, time: new Date().toLocaleTimeString() });
-      refreshUI();
-      saveAll();
-    }
-  }, 60000);
+  // مؤقتات
+  setInterval(() => { if(currentUser && currentUser.energy<1000) { currentUser.energy=Math.min(1000,currentUser.energy+5); refreshUI(); saveAll(); } }, 2000);
+  setInterval(() => { if(currentUser && currentUser.passiveIncome>0) { currentUser.tokens+=currentUser.passiveIncome; currentUser.transactions.unshift({desc:'الدخل السلبي',amount:currentUser.passiveIncome,time:new Date().toLocaleTimeString()}); refreshUI(); saveAll(); } }, 60000);
 
   // بدء التشغيل
   function init() {
     initMarket();
     let tg = window.Telegram?.WebApp;
-    let userData;
-    if (tg) { tg.ready(); tg.expand(); userData = tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'زائر' }; }
-    else userData = { id: 'local'+Date.now(), first_name: 'تجريبي' };
-    let stored = localStorage.getItem('quinn_all_users_v3');
-    if (stored) allUsers = JSON.parse(stored);
+    let userData = tg ? (tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'زائر' }) : { id: 'local'+Date.now(), first_name: 'تجريبي' };
+    if(tg) { tg.ready(); tg.expand(); }
+    let stored = localStorage.getItem('quinn_all_users_final');
+    if(stored) allUsers = JSON.parse(stored);
     else allUsers = {};
     currentUser = loadUser(userData);
     initAudio();
@@ -699,8 +646,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         document.getElementById(tab+'Tab').classList.add('active');
         document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
         btn.classList.add('active');
-        if (tab === 'market') drawChart();
-        if (tab === 'shop') renderAvatarShop();
+        if(tab === 'market') drawChart();
       });
     });
   }
@@ -709,6 +655,8 @@ input:checked + .slider:before { transform: translateX(20px); }
   window.sellStock = sellStock;
   window.buyAvatar = buyAvatar;
   window.changeAvatar = changeAvatar;
+  window.requestTransfer = requestTransfer;
+  window.showBuyQuinn = showBuyQuinn;
 </script>
 </body>
 </html>
