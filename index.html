@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Quinn Bot 2026 - السوق الداخلي والمحفظة الكاملة</title>
+<title>Quinn Bot - السوق الداخلي الحقيقي</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,900&display=swap" rel="stylesheet">
 <style>
@@ -252,7 +252,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div>الرصيد الكلي</div>
         <div id="walletQuinn" style="font-size:32px; font-weight:900">0 Q</div>
         <div id="walletTokens" style="font-size:14px">0 توكن</div>
-        <div class="small-btn" style="margin-top:12px; display:inline-block" onclick="showBuyQuinn()">💎 شراء Quinn</div>
+        <button class="small-btn" style="margin-top:12px" onclick="showBuyQuinn()">💎 شراء Quinn</button>
       </div>
       <div class="glass-card">
         <h3>📤 إرسال Quinn</h3>
@@ -266,7 +266,7 @@ input:checked + .slider:before { transform: translateX(20px); }
       </div>
     </div>
 
-    <!-- السوق -->
+    <!-- السوق الداخلي -->
     <div id="marketTab" class="tab-pane">
       <div class="glass-card">
         <h3>📈 السوق الداخلي (عرض وطلب حقيقي)</h3>
@@ -341,7 +341,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   function playBuy() { playBeep(660,0.2,'sine'); }
   function playSell() { playBeep(440,0.2,'sine'); }
 
-  // ========== السوق الداخلي (عرض وطلب) ==========
+  // ========== السوق الداخلي (عرض وطلب حقيقي) ==========
   const STOCKS = [
     { id: 'telegram', name: 'Telegram Inc.', symbol: 'TLGM', basePrice: 245.80, minPrice: 50, maxPrice: 2000 },
     { id: 'gold', name: 'صندوق الذهب', symbol: 'GOLD', basePrice: 1920.50, minPrice: 1000, maxPrice: 5000 },
@@ -369,11 +369,11 @@ input:checked + .slider:before { transform: translateX(20px); }
   function applySellImpact(id) { let old=marketPrices[id]; let newPrice=old*0.995; let s=STOCKS.find(s=>s.id===id); if(newPrice<s.minPrice) newPrice=s.minPrice; marketPrices[id]=parseFloat(newPrice.toFixed(2)); updateHistory(id); saveMarket(); }
   function updateHistory(id) { priceHistory[id].push(marketPrices[id]); if(priceHistory[id].length>30) priceHistory[id].shift(); }
 
-  // ========== بيانات المستخدم ==========
+  // ========== بيانات المستخدمين (نفس المفتاح القديم) ==========
   let currentUser = null;
   let allUsers = {};
 
-  function saveAll() { localStorage.setItem('quinn_all_users_final', JSON.stringify(allUsers)); }
+  function saveAll() { localStorage.setItem('quinn_all_users_v3', JSON.stringify(allUsers)); }  // نفس المفتاح القديم للحفاظ على البيانات
 
   function loadUser(telegramUser) {
     let uid = String(telegramUser.id);
@@ -386,6 +386,7 @@ input:checked + .slider:before { transform: translateX(20px); }
       };
       allUsers[uid] = newUser;
       saveAll();
+      // معالجة الإحالة عبر start_param
       let startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
       if (startParam && startParam.startsWith('ref_')) {
         let refCode = startParam.replace('ref_', '');
@@ -410,7 +411,7 @@ input:checked + .slider:before { transform: translateX(20px); }
   function quinnToTokens(q) { return q * 10000; }
   function getLevel(tokens) { let lvl = Math.floor(tokens / 1_000_000) + 1; return Math.min(100, Math.max(1, lvl)); }
 
-  // شراء وبيع الأسهم
+  // شراء وبيع الأسهم (تؤثر على السوق)
   function buyStock(id) {
     let price = marketPrices[id];
     let cost = Math.floor(price * 10);
@@ -460,7 +461,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     alert('تم الإرسال بنجاح');
   }
 
-  // شراء Quinn من المتجر
+  // شراء Quinn من المتجر (بنفس كلمة المرور القديمة)
   function showBuyQuinn() {
     let qty = prompt('كمية Quinn المراد شراؤها:', '1');
     if (!qty) return;
@@ -476,7 +477,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     alert(`تمت إضافة ${qty} Quinn بنجاح`);
   }
 
-  // الصور
+  // الصور (نفس النظام القديم)
   const freeAvatars = [{id:1,emoji:'🦁',name:'الأسد'},{id:2,emoji:'🐯',name:'النمر'},{id:3,emoji:'🦊',name:'الثعلب'},{id:4,emoji:'🐺',name:'الذئب'}];
   const paidAvatars = [
     {id:5,emoji:'🐉',name:'التنين الذهبي',price:10},{id:6,emoji:'👑',name:'التاج الملكي',price:25},
@@ -624,7 +625,7 @@ input:checked + .slider:before { transform: translateX(20px); }
     let tg = window.Telegram?.WebApp;
     let userData = tg ? (tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'زائر' }) : { id: 'local'+Date.now(), first_name: 'تجريبي' };
     if(tg) { tg.ready(); tg.expand(); }
-    let stored = localStorage.getItem('quinn_all_users_final');
+    let stored = localStorage.getItem('quinn_all_users_v3');  // نفس المفتاح القديم
     if(stored) allUsers = JSON.parse(stored);
     else allUsers = {};
     currentUser = loadUser(userData);
