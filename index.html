@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Quinn Bot - Hamster Kombat Style</title>
+<title>Quinn Bot - الإصدار المستقر</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
@@ -12,7 +12,6 @@
   --bg2: #110e2a;
   --purple: #8b5cf6;
   --blue: #3b82f6;
-  --pink: #ec4899;
   --gold: #f59e0b;
   --green: #10b981;
   --red: #ef4444;
@@ -20,44 +19,22 @@
   --glass-border: rgba(255,255,255,0.12);
   --text: #ffffff;
   --text-dim: rgba(255,255,255,0.5);
-  --text-faint: rgba(255,255,255,0.25);
   --radius: 18px;
   --radius-sm: 12px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
 html, body { height: 100%; overflow: hidden; }
 body {
   font-family: 'Cairo', sans-serif;
   background: var(--bg);
   color: var(--text);
   direction: rtl;
-  position: relative;
-  overflow: hidden;
 }
-
 .bg-mesh {
   position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle at 20% 30%, rgba(139,92,246,0.15) 0%, transparent 50%),
+              radial-gradient(circle at 80% 70%, rgba(59,130,246,0.1) 0%, transparent 50%);
 }
-.bg-mesh::before {
-  content: '';
-  position: absolute;
-  top: -20%; right: -10%;
-  width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(139,92,246,0.18) 0%, transparent 65%);
-  border-radius: 50%;
-  animation: drift 8s ease-in-out infinite alternate;
-}
-.bg-mesh::after {
-  content: '';
-  position: absolute;
-  bottom: -10%; left: -10%;
-  width: 400px; height: 400px;
-  background: radial-gradient(circle, rgba(59,130,246,0.14) 0%, transparent 65%);
-  border-radius: 50%;
-  animation: drift 10s ease-in-out infinite alternate-reverse;
-}
-@keyframes drift { 0%{transform:translate(0,0)} 100%{transform:translate(30px,20px)} }
-
 #app {
   position: relative; z-index: 1;
   height: 100vh;
@@ -76,10 +53,7 @@ body {
   flex: 1;
   overflow-y: auto;
   padding: 14px 14px 90px;
-  -webkit-overflow-scrolling: touch;
 }
-.content::-webkit-scrollbar { display: none; }
-
 .glass {
   background: var(--glass);
   backdrop-filter: blur(20px);
@@ -92,11 +66,9 @@ body {
   border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-sm);
 }
-
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-
 .bottom-nav {
   position: fixed; bottom: 0; left: 0; right: 0;
   background: rgba(10,8,24,0.92);
@@ -114,44 +86,34 @@ body {
   transition: transform 0.15s;
 }
 .nav-btn:active { transform: scale(0.9); }
-.nav-icon { font-size: 22px; transition: filter 0.2s, transform 0.2s; }
-.nav-label { font-size: 10px; font-family: 'Cairo', sans-serif; color: var(--text-faint); transition: color 0.2s; }
-.nav-btn.active .nav-icon { filter: drop-shadow(0 0 8px var(--purple)); transform: scale(1.15); }
+.nav-icon { font-size: 22px; }
+.nav-label { font-size: 10px; font-family: 'Cairo', sans-serif; color: rgba(255,255,255,0.3); }
+.nav-btn.active .nav-icon { filter: drop-shadow(0 0 8px var(--purple)); }
 .nav-btn.active .nav-label { color: #a78bfa; font-weight: 700; }
-
 .btn-primary {
   width: 100%;
   padding: 14px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.7), rgba(59,130,246,0.7));
-  border: 1px solid rgba(255,255,255,0.2);
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
+  border: none;
   border-radius: var(--radius-sm);
   color: #fff;
-  font-family: 'Cairo', sans-serif;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  backdrop-filter: blur(10px);
-  transition: all 0.2s;
+  transition: transform 0.1s;
 }
-.btn-primary:active { transform: scale(0.97); opacity: 0.85; }
-.btn-primary:disabled { opacity: 0.35; cursor: not-allowed; }
-
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.4; cursor: not-allowed; }
 .btn-sm {
-  padding: 9px 16px;
-  background: linear-gradient(135deg, rgba(139,92,246,0.6), rgba(59,130,246,0.6));
-  border: 1px solid rgba(255,255,255,0.18);
+  padding: 8px 14px;
+  background: rgba(139,92,246,0.7);
   border-radius: 10px;
-  color: #fff;
-  font-family: 'Cairo', sans-serif;
+  color: white;
   font-weight: 700;
   font-size: 12px;
   cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s;
+  border: none;
 }
-.btn-sm:active { transform: scale(0.94); }
-.btn-sm:disabled { opacity: 0.35; cursor: not-allowed; }
-
 .inp {
   width: 100%;
   padding: 12px 16px;
@@ -162,76 +124,67 @@ body {
   font-family: 'Cairo', sans-serif;
   font-size: 15px;
   outline: none;
-  transition: border-color 0.2s;
 }
-.inp:focus { border-color: rgba(139,92,246,0.6); }
-.inp::placeholder { color: var(--text-faint); }
-
+.inp:focus { border-color: #8b5cf6; }
 #coin-btn {
-  width: 185px; height: 185px;
+  width: 180px; height: 180px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 40%, #3b82f6 100%);
+  background: linear-gradient(135deg, #8b5cf6, #3b82f6);
   border: 3px solid rgba(255,255,255,0.2);
-  box-shadow: 0 0 50px rgba(139,92,246,0.5), 0 0 100px rgba(59,130,246,0.25);
+  box-shadow: 0 0 40px rgba(139,92,246,0.6);
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  font-size: 85px;
-  user-select: none;
-  transition: transform 0.08s, box-shadow 0.15s;
-  touch-action: manipulation;
+  font-size: 75px;
+  transition: transform 0.08s;
+  margin: 0 auto;
 }
-#coin-btn:active { transform: scale(0.93); box-shadow: 0 0 30px rgba(139,92,246,0.4); }
-#coin-btn.turbo-active {
-  box-shadow: 0 0 60px rgba(245,158,11,0.8), 0 0 120px rgba(245,158,11,0.35);
-  animation: turboPulse 0.5s ease-in-out infinite alternate;
-}
-@keyframes turboPulse { 0%{transform:scale(1)} 100%{transform:scale(1.03)} }
-
-.particle {
-  position: fixed;
-  pointer-events: none;
-  font-weight: 900;
-  font-family: 'Cairo', sans-serif;
-  font-size: 20px;
-  color: #fbbf24;
-  z-index: 9999;
-  animation: particleUp 0.85s ease-out forwards;
-}
-@keyframes particleUp {
-  0%  { opacity:1; transform: translateY(0) scale(1); }
-  100%{ opacity:0; transform: translateY(-70px) scale(1.4); }
-}
-
+#coin-btn:active { transform: scale(0.93); }
 .progress-bar {
   height: 8px;
-  background: rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.1);
   border-radius: 4px;
   overflow: hidden;
 }
 .progress-fill {
   height: 100%;
   border-radius: 4px;
-  transition: width 0.4s ease;
+  transition: width 0.3s;
 }
-
-#notif {
-  position: fixed;
-  top: 70px; left: 50%; transform: translateX(-50%);
-  z-index: 9998;
-  padding: 12px 24px;
+.stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.stat-box {
+  flex: 1;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
   border-radius: var(--radius-sm);
-  font-weight: 700;
-  font-size: 14px;
-  white-space: nowrap;
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.15);
-  background: rgba(15,12,40,0.9);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-  display: none;
-  animation: slideDown 0.3s ease;
+  padding: 12px 8px;
+  text-align: center;
 }
-@keyframes slideDown { from{opacity:0;top:50px} to{opacity:1;top:70px} }
-
+.stat-val { font-size: 18px; font-weight: 900; }
+.stat-lbl { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.sub-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
+.sub-tab {
+  white-space: nowrap;
+  padding: 9px 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+}
+.sub-tab.active {
+  border-color: #8b5cf6;
+  background: rgba(139,92,246,0.2);
+  color: #c4b5fd;
+}
+.tx-item {
+  display: flex; justify-content: space-between;
+  padding: 12px;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+  margin-bottom: 8px;
+}
 .avatar-grid {
   display: grid;
   grid-template-columns: repeat(3,1fr);
@@ -244,92 +197,33 @@ body {
   cursor: pointer;
   border: 1.5px solid rgba(255,255,255,0.08);
   background: rgba(255,255,255,0.04);
-  backdrop-filter: blur(10px);
   transition: all 0.2s;
   position: relative;
 }
+.avatar-item.selected { border-color: #8b5cf6; background: rgba(139,92,246,0.2); }
+.avatar-item.taken { opacity: 0.4; cursor: not-allowed; filter: grayscale(0.5); }
 .avatar-item:active { transform: scale(0.95); }
-.avatar-item.selected { border-color: var(--purple); background: rgba(139,92,246,0.15); }
-.avatar-item.taken { opacity: 0.4; cursor: not-allowed; }
-
 .podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin-bottom: 20px; }
 .podium-item { flex: 1; text-align: center; }
 .podium-stand {
-  display: flex; align-items: flex-end; justify-content: center;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
   border-radius: 10px 10px 0 0;
   padding: 8px;
 }
-
-.stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
-.stat-box {
-  flex: 1;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
-  border-radius: var(--radius-sm);
-  padding: 12px 8px;
-  text-align: center;
-}
-.stat-val { font-size: 18px; font-weight: 900; color: #fff; }
-.stat-lbl { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-
-.sub-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
-.sub-tabs::-webkit-scrollbar { display: none; }
-.sub-tab {
+#notif {
+  position: fixed;
+  top: 70px; left: 50%; transform: translateX(-50%);
+  z-index: 9998;
+  padding: 10px 20px;
+  border-radius: 12px;
+  background: #1e1b2e;
+  border: 1px solid rgba(255,255,255,0.2);
+  color: white;
+  font-weight: bold;
+  display: none;
   white-space: nowrap;
-  padding: 9px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
-  color: var(--text-dim);
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
 }
-.sub-tab.active {
-  border-color: rgba(139,92,246,0.6);
-  background: rgba(139,92,246,0.2);
-  color: #c4b5fd;
-}
-
-.tx-item {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 13px 14px;
-  margin-bottom: 8px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: var(--radius-sm);
-}
-
-.label { font-size: 12px; color: var(--text-dim); margin-bottom: 6px; display: block; }
-
-.spinner {
-  width: 40px; height: 40px;
-  border: 3px solid rgba(255,255,255,0.1);
-  border-top-color: var(--purple);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-  margin: 40px auto;
-}
-@keyframes spin { to{transform:rotate(360deg)} }
-
-.verified-badge {
-  display: inline-flex; align-items: center;
-  background: rgba(96,165,250,0.15);
-  border: 1px solid rgba(96,165,250,0.4);
-  border-radius: 6px;
-  padding: 1px 6px;
-  font-size: 11px;
-  color: #93c5fd;
-}
-
-.energy-high { background: linear-gradient(90deg, #10b981, #34d399); }
-.energy-mid  { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-.energy-low  { background: linear-gradient(90deg, #ef4444, #f87171); }
-
 .modal {
   display: none;
   position: fixed;
@@ -339,24 +233,13 @@ body {
   align-items: center;
   justify-content: center;
 }
-.modal.active {
-  display: flex;
-}
+.modal.active { display: flex; }
 .modal-content {
-  background: var(--bg2);
-  border-radius: var(--radius);
-  border: 1px solid var(--glass-border);
+  background: #1a1635;
+  border-radius: 20px;
   padding: 24px;
   max-width: 90%;
-  max-height: 80vh;
-  overflow-y: auto;
-  animation: slideUp 0.3s ease;
-}
-@keyframes slideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
-.modal-title {
-  font-size: 20px;
-  font-weight: 900;
-  margin-bottom: 16px;
+  text-align: center;
 }
 .modal-btns {
   display: flex;
@@ -366,33 +249,24 @@ body {
 .modal-btns button {
   flex: 1;
   padding: 12px;
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.2);
-  background: linear-gradient(135deg, rgba(139,92,246,0.5), rgba(59,130,246,0.5));
-  color: #fff;
-  font-family: 'Cairo', sans-serif;
-  font-weight: 700;
+  border-radius: 12px;
+  border: none;
+  font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s;
 }
-.modal-btns button:active { transform: scale(0.97); }
-.modal-btns button.cancel {
-  background: rgba(255,255,255,0.1);
-}
+.modal-btns button.cancel { background: rgba(255,255,255,0.1); color: white; }
+.modal-btns button.confirm { background: #8b5cf6; color: white; }
 </style>
 </head>
 <body>
-
-<div class="bg-mesh"></div>
 <div id="notif"></div>
-
 <div id="confirmModal" class="modal">
-  <div class="modal-content" style="text-align:center">
-    <div class="modal-title" id="confirmTitle">هل أنت متأكد؟</div>
-    <p id="confirmMsg" style="color:var(--text-dim);margin-bottom:20px"></p>
+  <div class="modal-content">
+    <div class="modal-title" id="confirmTitle">تأكيد</div>
+    <p id="confirmMsg"></p>
     <div class="modal-btns">
       <button class="cancel" onclick="closeConfirm()">إلغاء</button>
-      <button onclick="confirmAction()">تأكيد ✓</button>
+      <button class="confirm" onclick="confirmAction()">تأكيد</button>
     </div>
   </div>
 </div>
@@ -400,280 +274,196 @@ body {
 <div id="app">
   <div class="header">
     <div style="display:flex;align-items:center;gap:10px">
-      <div id="hdr-avatar" style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;border:2px solid var(--purple);background:rgba(139,92,246,0.15)" onclick="showTab('profile')"></div>
-      <div>
-        <div style="font-weight:700;font-size:14px;display:flex;align-items:center;gap:5px">
-          <span id="hdr-name">Quinn</span>
-          <span id="hdr-verified" style="display:none" class="verified-badge">✓</span>
-        </div>
-        <div id="hdr-level" style="font-size:11px;color:var(--text-dim)">🌱 مبتدئ</div>
-      </div>
+      <div id="hdr-avatar" style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:#1e1b2e;border:2px solid #8b5cf6" onclick="showTab('profile')"></div>
+      <div><div id="hdr-name" style="font-weight:700"></div><div id="hdr-level" style="font-size:11px;color:#aaa"></div></div>
     </div>
-    <div style="text-align:left">
-      <div id="hdr-quinn">0 <span style="font-size:12px;color:var(--text-dim)">Q</span></div>
-      <div id="hdr-tokens" style="color:var(--text-faint);font-size:11px">0 توكن</div>
-    </div>
+    <div style="text-align:left"><div id="hdr-quinn" style="font-weight:900"></div><div id="hdr-tokens" style="font-size:11px;color:#aaa"></div></div>
   </div>
-
   <div class="content">
+    <!-- الصفحة الرئيسية -->
     <div id="tab-home" class="tab-content active">
       <div class="stat-row">
         <div class="stat-box"><div class="stat-val" id="s-tokens">0</div><div class="stat-lbl">🪙 التوكن</div></div>
-        <div class="stat-box"><div class="stat-val" id="s-quinn">0.00</div><div class="stat-lbl">💎 Quinn</div></div>
+        <div class="stat-box"><div class="stat-val" id="s-quinn">0</div><div class="stat-lbl">💎 Quinn</div></div>
         <div class="stat-box"><div class="stat-val" id="s-clicks">0</div><div class="stat-lbl">👆 نقرات</div></div>
       </div>
       <div class="glass-card" style="padding:14px;margin-bottom:16px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:8px">
-          <span id="lvl-name" style="font-weight:700;font-size:14px">🌱 مبتدئ</span>
-          <span id="lvl-next" style="font-size:12px;color:var(--text-dim)"></span>
-        </div>
-        <div class="progress-bar">
-          <div id="lvl-bar" class="progress-fill" style="background:linear-gradient(90deg,#8b5cf6,#3b82f6);width:0%"></div>
-        </div>
+        <div style="display:flex;justify-content:space-between"><span id="lvl-name"></span><span id="lvl-next" style="font-size:12px"></span></div>
+        <div class="progress-bar" style="margin-top:6px"><div id="lvl-bar" class="progress-fill" style="width:0%"></div></div>
       </div>
-      <div id="boost-active-banner" style="display:none;background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.3);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;color:#fbbf24;font-weight:700;text-align:center;font-size:13px"></div>
-      <div style="display:flex;justify-content:center;margin:20px 0">
-        <button id="coin-btn" onclick="handleCoin(event)">💎</button>
+      <div id="boost-banner" style="display:none;background:#f59e0b20;border:1px solid #f59e0b;border-radius:12px;padding:10px;text-align:center;margin-bottom:14px"></div>
+      <div style="display:flex;justify-content:center;margin:20px 0"><button id="coin-btn" onclick="handleClick(event)">💎</button></div>
+      <div class="glass-card" style="padding:12px">
+        <div style="display:flex;justify-content:space-between"><span>⚡ الطاقة</span><span id="energy-txt"></span></div>
+        <div class="progress-bar" style="margin-top:6px"><div id="energy-bar" class="progress-fill" style="width:100%"></div></div>
       </div>
-      <div class="glass-card" style="padding:12px 14px;margin-bottom:14px">
-        <div style="display:flex;justify-content:space-between;margin-bottom:6px">
-          <span style="font-size:12px;font-weight:700">⚡ الطاقة</span>
-          <span id="energy-txt" style="font-size:12px;color:var(--text-dim)">1000/1000</span>
-        </div>
-        <div class="progress-bar">
-          <div id="energy-bar" class="progress-fill energy-high" style="width:100%"></div>
-        </div>
-      </div>
-      <div class="glass-card" style="padding:12px 14px;display:flex;justify-content:space-between;align-items:center">
-        <span style="font-size:13px;color:var(--text-dim)">💰 الدخل السلبي</span>
-        <span id="passive-txt" style="font-weight:700;color:#34d399">0 توكن/دقيقة</span>
-      </div>
+      <div class="glass-card" style="padding:12px;margin-top:12px;display:flex;justify-content:space-between"><span>💰 الدخل السلبي</span><span id="passive-txt">0</span></div>
     </div>
 
+    <!-- المحفظة -->
     <div id="tab-wallet" class="tab-content">
-      <h2 style="font-size:22px;font-weight:900;margin-bottom:16px">💼 المحفظة</h2>
-      <div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(59,130,246,0.1))">
-        <div style="color:var(--text-dim);font-size:13px">الرصيد الكلي</div>
-        <div id="w-quinn" style="font-size:42px;font-weight:900;margin:8px 0">0 <span style="font-size:20px;color:#a78bfa">Quinn</span></div>
-        <div id="w-tokens" style="color:var(--text-faint);font-size:13px">≈ 0 توكن</div>
-        <div style="margin-top:12px;display:inline-block;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:6px 14px;font-size:12px;color:#a78bfa">💱 10,000 توكن = 1 Quinn</div>
+      <div class="glass" style="padding:20px;text-align:center;margin-bottom:16px">
+        <div>الرصيد الكلي</div>
+        <div id="w-quinn" style="font-size:36px;font-weight:900"></div>
+        <div id="w-tokens" style="font-size:12px"></div>
+        <div style="font-size:11px;margin-top:8px">10,000 توكن = 1 Quinn</div>
       </div>
       <div class="sub-tabs">
-        <button class="sub-tab active" onclick="showWalletTab('overview',this)">📊 نظرة عامة</button>
-        <button class="sub-tab" onclick="showWalletTab('send',this)">📤 إرسال</button>
-        <button class="sub-tab" onclick="showWalletTab('receive',this)">📥 استقبال</button>
-        <button class="sub-tab" onclick="showWalletTab('shop',this)">🏪 المتجر</button>
+        <button class="sub-tab active" onclick="showWalletSub('overview',this)">نظرة عامة</button>
+        <button class="sub-tab" onclick="showWalletSub('send',this)">إرسال</button>
+        <button class="sub-tab" onclick="showWalletSub('receive',this)">استقبال</button>
+        <button class="sub-tab" onclick="showWalletSub('shop',this)">متجر</button>
       </div>
-      <div id="wtab-overview">
-        <h3 style="font-size:15px;margin-bottom:10px">📋 آخر العمليات</h3>
-        <div id="tx-list"><div style="text-align:center;padding:30px;color:var(--text-faint)">لا توجد عمليات بعد</div></div>
-      </div>
-      <div id="wtab-send" style="display:none">
-        <div class="glass-card" style="padding:22px">
-          <h3 style="font-size:16px;margin-bottom:18px">📤 إرسال Quinn</h3>
-          <label class="label">معرف المستقبل (@username أو ID رقمي)</label>
-          <input class="inp" id="send-to" placeholder="@username أو user ID" style="margin-bottom:14px"/>
-          <label class="label">الكمية (Quinn)</label>
-          <input class="inp" id="send-amt" type="number" placeholder="0.00" style="margin-bottom:6px" oninput="updateSendPreview()"/>
-          <div id="send-preview" style="color:var(--text-faint);font-size:12px;margin-bottom:16px"></div>
+      <div id="w-overview"><div id="tx-list"></div></div>
+      <div id="w-send" style="display:none">
+        <div class="glass-card" style="padding:20px">
+          <input class="inp" id="sendTo" placeholder="@username أو المعرف الرقمي" style="margin-bottom:12px">
+          <input class="inp" id="sendAmt" type="number" placeholder="الكمية (Quinn)" style="margin-bottom:12px">
           <button class="btn-primary" onclick="requestTransfer()">إرسال 💎</button>
         </div>
       </div>
-      <div id="wtab-receive" style="display:none">
-        <div class="glass-card" style="padding:22px;text-align:center">
-          <h3 style="font-size:16px;margin-bottom:16px">📥 استقبال Quinn</h3>
-          <div style="width:110px;height:110px;margin:0 auto 16px;background:rgba(255,255,255,0.05);border-radius:16px;display:flex;align-items:center;justify-content:center;border:2px dashed rgba(255,255,255,0.15);font-size:55px">📱</div>
-          <div style="font-size:13px;color:var(--text-dim);margin-bottom:12px">معرف الاستقبال</div>
-          <div id="recv-id" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:10px 20px;display:inline-block;margin-bottom:12px;color:#a78bfa;font-weight:700;font-size:16px;letter-spacing:1px;word-break:break-all"></div>
-          <p style="color:var(--text-dim);font-size:13px">شارك معرفك لاستقبال Quinn</p>
-          <button class="btn-primary" style="margin-top:14px" onclick="copyId()">📋 نسخ المعرف</button>
+      <div id="w-receive" style="display:none">
+        <div class="glass-card" style="padding:20px;text-align:center">
+          <div style="font-size:50px">📱</div>
+          <div style="margin:10px 0">معرف الاستقبال</div>
+          <div id="recvId" style="background:#00000030;padding:8px;border-radius:10px;font-weight:bold"></div>
+          <button class="btn-primary" style="margin-top:14px" onclick="copyReceiveId()">نسخ المعرف</button>
         </div>
       </div>
-      <div id="wtab-shop" style="display:none">
-        <div class="glass-card" style="padding:22px">
-          <h3 style="font-size:16px;margin-bottom:4px">🏪 متجر Quinn</h3>
-          <p style="color:var(--text-faint);font-size:12px;margin-bottom:18px">شراء Quinn مباشرةً — يتطلب كلمة مرور خاصة</p>
-          <div id="shop-step1">
-            <label class="label">كمية Quinn للشراء</label>
-            <input class="inp" id="shop-qty" type="number" placeholder="0.00" style="margin-bottom:6px" oninput="updateShopPreview()"/>
-            <div id="shop-preview" style="color:var(--text-faint);font-size:12px;margin-bottom:16px"></div>
-            <button class="btn-primary" onclick="shopNext()">التالي ←</button>
-          </div>
-          <div id="shop-step2" style="display:none">
-            <div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.3);border-radius:10px;padding:12px;margin-bottom:16px;text-align:center;color:#fbbf24;font-weight:700" id="shop-confirm-lbl"></div>
-            <label class="label">🔐 كلمة مرور المتجر</label>
-            <input class="inp" id="shop-pass" type="password" placeholder="أدخل كلمة المرور..." style="margin-bottom:16px"/>
-            <div style="display:flex;gap:10px">
-              <button class="btn-sm" style="flex:1;padding:13px" onclick="shopBack()">← رجوع</button>
-              <button class="btn-primary" style="flex:2" onclick="shopBuy()">تأكيد الشراء 💎</button>
-            </div>
-          </div>
+      <div id="w-shop" style="display:none">
+        <div class="glass-card" style="padding:20px">
+          <input class="inp" id="shopQty" type="number" placeholder="كمية Quinn" style="margin-bottom:12px">
+          <input class="inp" id="shopPass" type="password" placeholder="كلمة المرور" style="margin-bottom:12px">
+          <button class="btn-primary" onclick="buyFromShop()">شراء 💎</button>
         </div>
       </div>
     </div>
 
+    <!-- التعزيزات -->
     <div id="tab-boost" class="tab-content">
-      <h2 style="font-size:22px;font-weight:900;margin-bottom:16px">⚡ التعزيزات والمهام</h2>
-      <div class="sub-tabs" style="margin-bottom:16px">
-        <button class="sub-tab active" onclick="showBoostTab('boosts',this)">⚡ التعزيزات</button>
-        <button class="sub-tab" onclick="showBoostTab('tasks',this)">📋 المهام</button>
-        <button class="sub-tab" onclick="showBoostTab('passive',this)">💰 الدخل السلبي</button>
-      </div>
-      <div id="btab-boosts"><div id="boosts-list"></div></div>
-      <div id="btab-tasks" style="display:none"><div id="tasks-list"></div></div>
-      <div id="btab-passive" style="display:none">
-        <div class="glass-card" style="padding:16px;margin-bottom:16px;text-align:center">
-          <div style="color:var(--text-dim);font-size:13px">دخلك السلبي الحالي</div>
-          <div id="passive-val" style="font-size:36px;font-weight:900;color:#34d399;margin:8px 0">0</div>
-          <div style="font-size:12px;color:var(--text-dim)">توكن / دقيقة</div>
-        </div>
-        <div id="passive-items"></div>
-      </div>
+      <div class="sub-tabs"><button class="sub-tab active" onclick="showBoostSub('boosts',this)">تعزيزات</button><button class="sub-tab" onclick="showBoostSub('tasks',this)">مهام</button><button class="sub-tab" onclick="showBoostSub('passive',this)">سلبي</button></div>
+      <div id="b-boosts"><div id="boostsList"></div></div>
+      <div id="b-tasks" style="display:none"><div id="tasksList"></div></div>
+      <div id="b-passive" style="display:none"><div id="passiveList"></div></div>
     </div>
 
+    <!-- المتصدرين -->
     <div id="tab-leaderboard" class="tab-content">
-      <h2 style="font-size:22px;font-weight:900;margin-bottom:16px">🏆 المتصدرون</h2>
-      <div id="podium-wrap"></div>
-      <div id="lb-list"></div>
+      <div id="podiumContainer"></div>
+      <div id="leaderboardList"></div>
     </div>
 
+    <!-- الإحالات -->
     <div id="tab-referral" class="tab-content">
-      <h2 style="font-size:22px;font-weight:900;margin-bottom:16px">👥 الإحالات</h2>
-      <div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(59,130,246,0.1))">
-        <div style="color:var(--text-dim);font-size:13px;margin-bottom:8px">كود الإحالة</div>
-        <div id="ref-code" style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:10px;padding:12px 20px;display:inline-block;margin-bottom:12px;color:#a78bfa;font-weight:700;font-size:18px;letter-spacing:2px"></div>
-        <p style="color:var(--text-faint);font-size:12px;margin-bottom:14px">شارك الكود للحصول على 5000 توكن لكل تحويل حقيقي</p>
-        <button class="btn-primary" onclick="copyRefCode()">📋 نسخ الكود</button>
+      <div class="glass" style="padding:20px;text-align:center">
+        <div>🏆 كود الإحالة الخاص بك</div>
+        <div id="refCodeDisplay" style="background:#00000040;padding:10px;border-radius:12px;margin:12px 0;font-weight:bold;font-size:18px"></div>
+        <button class="btn-primary" onclick="copyRefCode()">نسخ الكود</button>
+        <button class="btn-primary" style="margin-top:10px" onclick="shareReferralLink()">🔗 مشاركة الرابط</button>
+        <div style="margin-top:16px">👥 عدد الإحالات: <span id="refCount">0</span></div>
+        <div>💰 أرباح الإحالات: <span id="refEarnings">0</span> توكن</div>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">
-        <div class="glass-card" style="padding:16px;text-align:center">
-          <div style="font-size:24px;margin-bottom:6px">👥</div>
-          <div id="ref-count" style="font-size:18px;font-weight:900">0</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:4px">تحويلات ناجحة</div>
-        </div>
-        <div class="glass-card" style="padding:16px;text-align:center">
-          <div style="font-size:24px;margin-bottom:6px">💰</div>
-          <div id="ref-earnings" style="font-size:18px;font-weight:900;color:#34d399">0</div>
-          <div style="font-size:11px;color:var(--text-dim);margin-top:4px">الأرباح</div>
-        </div>
-      </div>
-      <h3 style="font-size:15px;margin-bottom:10px">📋 آخر الإحالات</h3>
-      <div id="ref-list"></div>
+      <div id="referralsList" style="margin-top:16px"></div>
     </div>
 
+    <!-- الملف الشخصي -->
     <div id="tab-profile" class="tab-content">
-      <div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(59,130,246,0.08))">
-        <div id="prof-avatar" style="width:78px;height:78px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:44px;border:3px solid var(--purple);background:rgba(139,92,246,0.15);box-shadow:0 0 30px rgba(139,92,246,0.3)"></div>
-        <h3 id="prof-name" style="font-size:20px;font-weight:900;margin-bottom:4px;display:flex;align-items:center;justify-content:center;gap:8px"></h3>
-        <div id="prof-tg" style="color:var(--text-dim);font-size:13px;margin-bottom:14px"></div>
-        <div style="display:flex;justify-content:center;gap:24px">
-          <div><div id="prof-quinn" style="font-size:20px;font-weight:900;color:#a78bfa">0</div><div style="font-size:11px;color:var(--text-faint)">Quinn</div></div>
-          <div style="width:1px;background:rgba(255,255,255,0.08)"></div>
-          <div><div id="prof-clicks" style="font-size:20px;font-weight:900;color:#34d399">0</div><div style="font-size:11px;color:var(--text-faint)">نقرة</div></div>
-          <div style="width:1px;background:rgba(255,255,255,0.08)"></div>
-          <div><div id="prof-lvl-icon" style="font-size:20px;font-weight:900;color:#fbbf24">🌱</div><div style="font-size:11px;color:var(--text-faint)">المستوى</div></div>
+      <div class="glass" style="padding:20px;text-align:center">
+        <div id="profAvatar" style="font-size:64px"></div>
+        <div id="profName" style="font-size:20px;font-weight:900"></div>
+        <div id="profUsername" style="font-size:12px;color:#aaa"></div>
+        <div class="stat-row" style="margin-top:16px">
+          <div class="stat-box"><div id="profQuinn">0</div><div>Quinn</div></div>
+          <div class="stat-box"><div id="profClicks">0</div><div>نقرة</div></div>
+          <div class="stat-box"><div id="profLevelIcon">🌱</div><div>المستوى</div></div>
         </div>
       </div>
-      <div class="sub-tabs">
-        <button class="sub-tab active" onclick="showProfileTab('info',this)">👤 معلومات</button>
-        <button class="sub-tab" onclick="showProfileTab('avatar',this)">🖼️ الصورة</button>
-        <button class="sub-tab" onclick="showProfileTab('verify',this)">✅ التوثيق</button>
-      </div>
-      <div id="ptab-info"><div id="prof-info-list"></div></div>
-      <div id="ptab-avatar" style="display:none">
-        <p style="color:var(--text-dim);font-size:13px;margin-bottom:14px;text-align:center">اختر صورة فريدة — لا تتكرر بين الأعضاء 🔒</p>
-        <div class="avatar-grid" id="avatar-grid"></div>
-      </div>
-      <div id="ptab-verify" style="display:none"><div id="verify-content"></div></div>
+      <div class="sub-tabs"><button class="sub-tab active" onclick="showProfileSub('info',this)">معلومات</button><button class="sub-tab" onclick="showProfileSub('avatar',this)">الصورة</button><button class="sub-tab" onclick="showProfileSub('verify',this)">توثيق</button></div>
+      <div id="p-info"><div id="infoList"></div></div>
+      <div id="p-avatar" style="display:none"><div id="avatarGrid" class="avatar-grid"></div></div>
+      <div id="p-verify" style="display:none"><div id="verifyPanel"></div></div>
     </div>
   </div>
-
   <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="showTab('home')" id="nav-home"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button>
-    <button class="nav-btn" onclick="showTab('boost')" id="nav-boost"><span class="nav-icon">⚡</span><span class="nav-label">التعزيزات</span></button>
-    <button class="nav-btn" onclick="showTab('wallet')" id="nav-wallet"><span class="nav-icon">💼</span><span class="nav-label">المحفظة</span></button>
-    <button class="nav-btn" onclick="showTab('leaderboard')" id="nav-leaderboard"><span class="nav-icon">🏆</span><span class="nav-label">المتصدرون</span></button>
-    <button class="nav-btn" onclick="showTab('referral')" id="nav-referral"><span class="nav-icon">👥</span><span class="nav-label">الإحالات</span></button>
-    <button class="nav-btn" onclick="showTab('profile')" id="nav-profile"><span class="nav-icon">👤</span><span class="nav-label">ملفي</span></button>
+    <button class="nav-btn active" onclick="showTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button>
+    <button class="nav-btn" onclick="showTab('boost')"><span class="nav-icon">⚡</span><span class="nav-label">التعزيزات</span></button>
+    <button class="nav-btn" onclick="showTab('wallet')"><span class="nav-icon">💼</span><span class="nav-label">المحفظة</span></button>
+    <button class="nav-btn" onclick="showTab('leaderboard')"><span class="nav-icon">🏆</span><span class="nav-label">المتصدرون</span></button>
+    <button class="nav-btn" onclick="showTab('referral')"><span class="nav-icon">👥</span><span class="nav-label">الإحالات</span></button>
+    <button class="nav-btn" onclick="showTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">ملفي</span></button>
   </nav>
 </div>
 
 <script>
-// CONFIG
-const BOT_USERNAME = 'Quinnofficialbot';
-const SHOP_PASS = 'T9@xQ#4mL!2vZ$7pR';
+// ===================== الإعدادات الثابتة =====================
+const BOT_USERNAME = 'Quinnofficialbot'; // اسم البوت الخاص بك
+const SHOP_PASSWORD = 'T9@xQ#4mL!2vZ$7pR';
 const TOKENS_PER_QUINN = 10000;
 const MAX_ENERGY = 1000;
-const REFERRAL_BONUS = 5000;
-const VERIFICATION_COST = 50; // Quinn
+const REF_BONUS = 5000;
+const VERIFY_COST = 50; // Quinn
 const SECOND_LIFE_COST = 30; // Quinn
 
-// AVATARS
 const AVATARS = [
-  {id:1,emoji:'🦁',label:'الأسد',color:'#f59e0b'},{id:2,emoji:'🐯',label:'النمر',color:'#ef4444'},
-  {id:3,emoji:'🦊',label:'الثعلب',color:'#f97316'},{id:4,emoji:'🐺',label:'الذئب',color:'#6b7280'},
-  {id:5,emoji:'🦅',label:'النسر',color:'#3b82f6'},{id:6,emoji:'🐉',label:'التنين',color:'#8b5cf6'},
-  {id:7,emoji:'🦋',label:'الفراشة',color:'#ec4899'},{id:8,emoji:'🐬',label:'الدلفين',color:'#06b6d4'},
-  {id:9,emoji:'🦄',label:'اليونيكورن',color:'#a855f7'},{id:10,emoji:'🐸',label:'الضفدع',color:'#22c55e'},
-  {id:11,emoji:'🦉',label:'البومة',color:'#78716c'},{id:12,emoji:'🦈',label:'القرش',color:'#0ea5e9'},
+  {id:1,emoji:'🦁',name:'الأسد',color:'#f59e0b'},{id:2,emoji:'🐯',name:'النمر',color:'#ef4444'},
+  {id:3,emoji:'🦊',name:'الثعلب',color:'#f97316'},{id:4,emoji:'🐺',name:'الذئب',color:'#9ca3af'},
+  {id:5,emoji:'🦅',name:'النسر',color:'#3b82f6'},{id:6,emoji:'🐉',name:'التنين',color:'#8b5cf6'},
+  {id:7,emoji:'🦋',name:'الفراشة',color:'#ec4899'},{id:8,emoji:'🐬',name:'الدلفين',color:'#06b6d4'},
+  {id:9,emoji:'🦄',name:'اليونيكورن',color:'#a855f7'},{id:10,emoji:'🐸',name:'الضفدع',color:'#22c55e'}
 ];
+
 const LEVELS = [
   {name:'مبتدئ',icon:'🌱',min:0,max:10000},
   {name:'محترف',icon:'⚡',min:10000,max:50000},
   {name:'خبير',icon:'🔥',min:50000,max:200000},
   {name:'أسطورة',icon:'💎',min:200000,max:1000000},
-  {name:'إله',icon:'👑',min:1000000,max:Infinity},
+  {name:'إله',icon:'👑',min:1000000,max:Infinity}
 ];
+
 const BOOSTS = [
-  {id:'turbo',name:'توربو',desc:'ضرب النقرات x5 لـ 30 ثانية',cost:500,icon:'⚡',duration:30000},
-  {id:'magnet',name:'مغناطيس',desc:'جمع تلقائي لمدة دقيقة',cost:1000,icon:'🧲',duration:60000},
-  {id:'shield',name:'درع',desc:'حماية من خسارة الطاقة',cost:300,icon:'🛡️',duration:60000},
+  {id:'turbo',name:'توربو',desc:'×5 نقرة',cost:500,icon:'⚡',duration:30000},
+  {id:'magnet',name:'مغناطيس',desc:'+3 توكن/0.5ث',cost:1000,icon:'🧲',duration:60000},
+  {id:'shield',name:'درع',desc:'لا تستهلك طاقة',cost:300,icon:'🛡️',duration:60000}
 ];
+
 const TASKS = [
-  {id:1,name:'انقر 100 مرة',reward:500,type:'clicks',target:100,icon:'👆'},
-  {id:2,name:'انقر 500 مرة',reward:1500,type:'clicks',target:500,icon:'🖱️'},
-  {id:3,name:'انقر 1000 مرة',reward:3000,type:'clicks',target:1000,icon:'💥'},
-  {id:4,name:'اشترك في القناة',reward:2000,type:'social',icon:'📢'},
-  {id:5,name:'ادعُ صديقاً',reward:5000,type:'referral',icon:'👥'},
-  {id:6,name:'وثّق حسابك',reward:10000,type:'verify',icon:'✅'},
+  {id:1,name:'انقر 100 مرة',reward:500,target:100,icon:'👆'},
+  {id:2,name:'انقر 500 مرة',reward:1500,target:500,icon:'🖱️'},
+  {id:3,name:'انقر 1000 مرة',reward:3000,target:1000,icon:'💥'},
+  {id:4,name:'ادعُ صديقاً',reward:5000,type:'referral',icon:'👥'},
+  {id:5,name:'وثّق حسابك',reward:10000,type:'verify',icon:'✅'}
 ];
+
 const PASSIVE_ITEMS = [
-  {id:'farm',name:'مزرعة توكن صغيرة',rate:10,cost:50000,icon:'🌱'},
-  {id:'factory',name:'مصنع توكن',rate:50,cost:200000,icon:'🏭'},
-  {id:'complex',name:'مجمع توكن',rate:200,cost:800000,icon:'🏗️'},
-  {id:'server',name:'سيرفر تعدين',rate:1000,cost:5000000,icon:'🖥️'},
+  {id:'farm',name:'مزرعة صغيرة',rate:10,cost:50000,icon:'🌱'},
+  {id:'factory',name:'مصنع',rate:50,cost:200000,icon:'🏭'},
+  {id:'complex',name:'مجمع',rate:200,cost:800000,icon:'🏗️'},
+  {id:'server',name:'خادم تعدين',rate:1000,cost:5000000,icon:'🖥️'}
 ];
 
-let state = null; // will hold current user data
-let allUsers = {}; // all users stored in localStorage
+// ===================== الحالة العامة =====================
+let currentUser = null;
+let allUsers = {};  // كل المستخدمين { userId: data }
+let pendingConfirm = null;
 
-// helper functions
-function fmt(n) { if (n>=1e6) return (n/1e6).toFixed(1)+'M'; if (n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n).toString(); }
+// دوال مساعدة
+function fmt(n) { if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n).toString(); }
 function toQuinn(t) { return (t/TOKENS_PER_QUINN).toFixed(2); }
 function toTokens(q) { return q * TOKENS_PER_QUINN; }
-function getLevel(tokens) { return LEVELS.find(l => tokens >= l.min && tokens < l.max) || LEVELS[0]; }
+function getLevel(tokens) { return LEVELS.find(l => tokens>=l.min && tokens<l.max) || LEVELS[0]; }
 function getAvatar(id) { return AVATARS.find(a=>a.id===id) || AVATARS[0]; }
-function notify(msg, type='success') { let el=document.getElementById('notif'); el.textContent=msg; el.style.color=type==='error'?'#f87171':type==='warn'?'#fbbf24':'#34d399'; el.style.display='block'; clearTimeout(window._notifTimer); window._notifTimer=setTimeout(()=>el.style.display='none',3000); }
+function notify(msg, type='info') { let el=document.getElementById('notif'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
 function haptic(t='light') { window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(t); }
 
-// Global confirm
-let confirmCallback = null;
-function showConfirm(title, msg, callback) { document.getElementById('confirmTitle').textContent=title; document.getElementById('confirmMsg').textContent=msg; confirmCallback=callback; document.getElementById('confirmModal').classList.add('active'); }
-function closeConfirm() { document.getElementById('confirmModal').classList.remove('active'); confirmCallback=null; }
-function confirmAction() { if(confirmCallback) confirmCallback(); closeConfirm(); }
+// حفظ كل البيانات
+function saveAll() { localStorage.setItem('quinn_all_users', JSON.stringify(allUsers)); }
 
-// Save all users
-function persistAllUsers() { localStorage.setItem('quinn_all_users', JSON.stringify(allUsers)); }
-// Load current user from allUsers
+// تحميل أو إنشاء مستخدم
 function loadUser(telegramUser) {
-  let id = String(telegramUser.id);
-  if (!allUsers[id]) {
-    // create new user
-    let usedAvatars = [];
-    let available = AVATARS.filter(a=>!usedAvatars.includes(a.id));
-    let selectedAvatar = available[0]?.id || 1;
+  let uid = String(telegramUser.id);
+  if(!allUsers[uid]) {
     let newUser = {
-      id: id,
+      id: uid,
       name: (telegramUser.first_name||'') + ' ' + (telegramUser.last_name||''),
       username: telegramUser.username || '',
       tokens: 1000,
@@ -681,171 +471,395 @@ function loadUser(telegramUser) {
       energy: MAX_ENERGY,
       passiveIncome: 0,
       boostActive: null,
-      boostTimer: null,
+      boostEnd: 0,
       completedTasks: [],
       transactions: [],
-      selectedAvatar: selectedAvatar,
-      usedAvatars: [selectedAvatar],
+      avatar: 1,
       verified: false,
-      verifyExpireDate: null,
+      verifyExpire: 0,
       secondLife: false,
-      secondLifeStart: null,
-      joinDate: new Date().toLocaleDateString('ar'),
-      referralCode: `QUINN${String(id).slice(-4).toUpperCase()}`,
+      secondLifeExpire: 0,
+      referralCode: `REF${uid.slice(-6)}`,
       referrals: [],
       referralEarnings: 0,
       ownedPassive: {}
     };
-    newUser.transactions.push({id:Date.now(),type:'bonus',desc:'مكافأة التسجيل 🎉',amount:1000,time:new Date().toLocaleTimeString('ar')});
-    allUsers[id] = newUser;
-    persistAllUsers();
-    // handle referral if start_param exists
+    newUser.transactions.push({desc:'🎁 مكافأة التسجيل',amount:1000,time:new Date().toLocaleTimeString()});
+    allUsers[uid] = newUser;
+    saveAll();
+    // معالجة الإحالة إذا دخل عبر رابط
     let startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
-    if (startParam && startParam.startsWith('ref_')) {
+    if(startParam && startParam.startsWith('ref_')) {
       let refCode = startParam.replace('ref_','');
-      let referrerId = Object.keys(allUsers).find(uid => allUsers[uid].referralCode === refCode);
-      if (referrerId && referrerId !== id && !allUsers[id].referralProcessed) {
-        allUsers[id].referralProcessed = true;
-        let bonus = REFERRAL_BONUS;
-        allUsers[referrerId].tokens += bonus;
-        allUsers[referrerId].referralEarnings += bonus;
-        allUsers[referrerId].referrals.push({name:newUser.name,bonus:bonus,date:new Date().toLocaleString('ar')});
-        allUsers[referrerId].transactions.unshift({id:Date.now(),type:'referral',desc:`إحالة ناجحة: ${newUser.name}`,amount:bonus,time:new Date().toLocaleTimeString('ar')});
-        persistAllUsers();
-        if (referrerId === id) notify('لا يمكنك إحالة نفسك', 'warn');
-        else notify(`تمت إضافة ${fmt(bonus)} توكن من الإحالة!`, 'success');
+      let referrerId = Object.keys(allUsers).find(id => allUsers[id].referralCode === refCode);
+      if(referrerId && referrerId !== uid && !allUsers[uid].referralProcessed) {
+        allUsers[uid].referralProcessed = true;
+        allUsers[referrerId].tokens += REF_BONUS;
+        allUsers[referrerId].referralEarnings += REF_BONUS;
+        allUsers[referrerId].referrals.push({name:newUser.name, bonus:REF_BONUS, date:new Date().toLocaleString()});
+        allUsers[referrerId].transactions.unshift({desc:`إحالة: ${newUser.name}`, amount:REF_BONUS, time:new Date().toLocaleTimeString()});
+        saveAll();
+        notify(`تمت إضافة ${fmt(REF_BONUS)} توكن من الإحالة!`, 'success');
       }
     }
   }
-  let userData = allUsers[id];
-  // check verification expiry
-  if (userData.verified && userData.verifyExpireDate && new Date() > new Date(userData.verifyExpireDate)) {
-    userData.verified = false;
-    userData.verifyExpireDate = null;
-    userData.transactions.unshift({id:Date.now(),type:'expire',desc:'انتهت صلاحية التوثيق',amount:0,time:new Date().toLocaleTimeString('ar')});
-    notify('انتهت صلاحية التوثيق الشهري, قم بتجديده', 'warn');
-    persistAllUsers();
+  let user = allUsers[uid];
+  // التحقق من انتهاء التوثيق
+  if(user.verified && user.verifyExpire && Date.now() > user.verifyExpire) {
+    user.verified = false;
+    user.transactions.unshift({desc:'انتهى التوثيق الشهري', amount:0, time:new Date().toLocaleTimeString()});
+    saveAll();
   }
-  // check second life
-  if (userData.secondLife && userData.secondLifeStart && new Date() > new Date(userData.secondLifeStart)) {
-    userData.secondLife = false;
-    userData.transactions.unshift({id:Date.now(),type:'expire',desc:'انتهت الحياة الثانية',amount:0,time:new Date().toLocaleTimeString('ar')});
-    persistAllUsers();
+  if(user.secondLife && user.secondLifeExpire && Date.now() > user.secondLifeExpire) {
+    user.secondLife = false;
+    saveAll();
   }
-  return userData;
+  return user;
 }
 
-function updateCurrentUser(newData) { let id=String(state.user.id); allUsers[id]=newData; persistAllUsers(); state=newData; }
-
-function addTx(desc, amount) { state.transactions.unshift({id:Date.now(),type:'tx',desc,amount,time:new Date().toLocaleTimeString('ar')}); if(state.transactions.length>50) state.transactions.pop(); updateCurrentUser(state); }
-
-function spawnParticle(x,y,txt) { let el=document.createElement('div'); el.className='particle'; el.textContent=txt; el.style.left=x+'px'; el.style.top=y+'px'; document.body.appendChild(el); el.addEventListener('animationend',()=>el.remove()); }
-
-function handleCoin(e) { let x=e.clientX, y=e.clientY; if(state.boostActive!=='shield' && state.energy<=0) { notify('الطاقة نفدت! انتظر قليلاً ⚡','error'); return; } haptic('light'); let mult = state.boostActive==='turbo'?5:1; let gain = mult; state.tokens += gain; state.clicks++; if(state.boostActive!=='shield') state.energy = Math.max(0, state.energy-1); spawnParticle(x,y,`+${gain}`); updateHome(); checkTasks(); updateCurrentUser(state); }
-
-function updateEnergy() { let pct=(state.energy/MAX_ENERGY)*100; let bar=document.getElementById('energy-bar'); let txt=document.getElementById('energy-txt'); if(bar){ bar.style.width=pct+'%'; bar.className='progress-fill '+(pct>50?'energy-high':pct>20?'energy-mid':'energy-low'); txt.textContent=`${state.energy}/${MAX_ENERGY}`; } }
-
-function updateHome() { let lvl=getLevel(state.tokens); let nextLvl=LEVELS[LEVELS.indexOf(lvl)+1]; let pct=nextLvl?((state.tokens-lvl.min)/(nextLvl.min-lvl.min))*100:100; document.getElementById('s-tokens').textContent=fmt(state.tokens); document.getElementById('s-quinn').textContent=toQuinn(state.tokens); document.getElementById('s-clicks').textContent=fmt(state.clicks); document.getElementById('lvl-name').innerHTML=`${lvl.icon} ${lvl.name}`; document.getElementById('lvl-next').textContent=nextLvl?`→ ${nextLvl.name}`:'🏆 أقصى مستوى'; document.getElementById('lvl-bar').style.width=Math.min(pct,100)+'%'; document.getElementById('passive-txt').textContent=`${state.passiveIncome} توكن/دقيقة`; let banner=document.getElementById('boost-active-banner'); if(state.boostActive){ let b=BOOSTS.find(x=>x.id===state.boostActive); banner.style.display='block'; banner.textContent=`🚀 البوست نشط: ${b?.name} ${b?.icon}`; document.getElementById('coin-btn').className=state.boostActive==='turbo'?'turbo-active':''; } else { banner.style.display='none'; document.getElementById('coin-btn').className=''; } updateEnergy(); updateHeader(); }
-
-function updateHeader() { let av=getAvatar(state.selectedAvatar); let lvl=getLevel(state.tokens); document.getElementById('hdr-avatar').textContent=av.emoji; document.getElementById('hdr-avatar').style.borderColor=av.color; document.getElementById('hdr-name').textContent=state.name||'Quinn'; document.getElementById('hdr-verified').style.display=state.verified?'inline-flex':'none'; document.getElementById('hdr-level').innerHTML=`${lvl.icon} ${lvl.name}`; document.getElementById('hdr-quinn').innerHTML=`${toQuinn(state.tokens)} <span style="font-size:12px;color:var(--text-dim)">Q</span>`; document.getElementById('hdr-tokens').textContent=fmt(state.tokens)+' توكن'; }
-
-function renderAll() { updateHeader(); updateHome(); renderTxList(); renderBoostTab(); renderReferral(); if(currentTab==='leaderboard') renderLeaderboard(); if(currentTab==='profile') renderProfile(); }
-
-function renderTxList() { let el=document.getElementById('tx-list'); if(!el) return; if(!state.transactions.length){ el.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-faint)">لا توجد عمليات بعد</div>'; return; } el.innerHTML=state.transactions.slice(0,12).map(tx=>`<div class="tx-item"><div><div style="font-weight:600;font-size:14px">${tx.desc}</div><div style="font-size:11px;color:var(--text-faint)">${tx.time}</div></div><div style="font-weight:900;font-size:15px;color:${tx.amount>0?'#34d399':'#f87171'}">${tx.amount>0?'+':''}${fmt(Math.abs(tx.amount))}</div></div>`).join(''); }
-
-function renderWallet() { document.getElementById('w-quinn').innerHTML=`${toQuinn(state.tokens)} <span style="font-size:20px;color:#a78bfa">Quinn</span>`; document.getElementById('w-tokens').textContent=`≈ ${fmt(state.tokens)} توكن`; let uid=String(state.user.id); let username=state.username; document.getElementById('recv-id').textContent=username?`@${username}`:`ID: ${uid}`; renderTxList(); }
-
-function updateSendPreview(){ let v=parseFloat(document.getElementById('send-amt').value)||0; document.getElementById('send-preview').textContent=v>0?`= ${fmt(toTokens(v))} توكن`:''; }
-function updateShopPreview(){ let v=parseFloat(document.getElementById('shop-qty').value)||0; document.getElementById('shop-preview').textContent=v>0?`ستحصل على ${fmt(toTokens(v))} توكن`:''; }
-
-function requestTransfer() { let toInput=document.getElementById('send-to').value.trim(); let amt=parseFloat(document.getElementById('send-amt').value); if(!toInput || !amt || amt<=0){ notify('بيانات غير صحيحة','error'); return; } let cost=toTokens(amt); if(state.tokens<cost){ notify('رصيدك غير كافٍ','error'); return; } showConfirm('تأكيد التحويل',`هل تريد تحويل ${amt} Quinn إلى ${toInput}؟`,()=>doTransfer(toInput, amt, cost)); }
-
-function doTransfer(toInput, amt, cost) {
-  let targetId = null;
-  if(toInput.startsWith('@')){ let uname=toInput.slice(1); targetId=Object.keys(allUsers).find(uid=>allUsers[uid].username===uname); } else { targetId=toInput; }
-  if(!targetId || !allUsers[targetId]){ notify('المستخدم غير موجود','error'); return; }
-  if(targetId === String(state.user.id)){ notify('لا يمكنك التحويل لنفسك','error'); return; }
-  state.tokens -= cost;
-  allUsers[targetId].tokens += cost;
-  addTx(`إرسال ${amt} Quinn إلى ${toInput}`, -cost);
-  allUsers[targetId].transactions.unshift({id:Date.now(),type:'receive',desc:`استلام ${amt} Quinn من ${state.name}`,amount:cost,time:new Date().toLocaleTimeString('ar')});
-  persistAllUsers();
-  notify(`تم إرسال ${amt} Quinn إلى ${toInput} ✅`);
-  document.getElementById('send-to').value=''; document.getElementById('send-amt').value=''; document.getElementById('send-preview').textContent='';
-  updateCurrentUser(allUsers[String(state.user.id)]);
-  renderAll();
-  haptic('medium');
+// تحديث الواجهة الرئيسية
+function refreshUI() {
+  if(!currentUser) return;
+  let lvl = getLevel(currentUser.tokens);
+  let nextLvl = LEVELS[LEVELS.indexOf(lvl)+1];
+  let pct = nextLvl ? ((currentUser.tokens - lvl.min)/(nextLvl.min - lvl.min))*100 : 100;
+  document.getElementById('s-tokens').innerText = fmt(currentUser.tokens);
+  document.getElementById('s-quinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('s-clicks').innerText = fmt(currentUser.clicks);
+  document.getElementById('lvl-name').innerHTML = `${lvl.icon} ${lvl.name}`;
+  document.getElementById('lvl-next').innerText = nextLvl ? `→ ${nextLvl.name}` : '🏆 أعلى مستوى';
+  document.getElementById('lvl-bar').style.width = Math.min(pct,100)+'%';
+  document.getElementById('passive-txt').innerText = `${currentUser.passiveIncome} توكن/دقيقة`;
+  let energyPct = (currentUser.energy/MAX_ENERGY)*100;
+  document.getElementById('energy-bar').style.width = energyPct+'%';
+  document.getElementById('energy-txt').innerText = `${currentUser.energy}/${MAX_ENERGY}`;
+  document.getElementById('hdr-name').innerText = currentUser.name.split(' ')[0];
+  document.getElementById('hdr-level').innerHTML = `${lvl.icon} ${lvl.name}`;
+  document.getElementById('hdr-quinn').innerHTML = `${toQuinn(currentUser.tokens)} <span style="font-size:11px">Q</span>`;
+  document.getElementById('hdr-tokens').innerText = fmt(currentUser.tokens)+' توكن';
+  let av = getAvatar(currentUser.avatar);
+  document.getElementById('hdr-avatar').innerText = av.emoji;
+  // بانر التعزيز
+  let banner = document.getElementById('boost-banner');
+  if(currentUser.boostActive && Date.now() < currentUser.boostEnd) {
+    let boost = BOOSTS.find(b=>b.id===currentUser.boostActive);
+    banner.style.display = 'block';
+    banner.innerText = `🚀 مفعل: ${boost.name} ${boost.icon}`;
+    document.getElementById('coin-btn').classList.toggle('turbo-active', currentUser.boostActive==='turbo');
+  } else {
+    banner.style.display = 'none';
+    if(currentUser.boostActive) { currentUser.boostActive=null; saveAll(); }
+    document.getElementById('coin-btn').classList.remove('turbo-active');
+  }
 }
 
-function copyId() { let uid=String(state.user.id); let username=state.username; let idText=username?`@${username}`:uid; navigator.clipboard?.writeText(idText).then(()=>notify('تم نسخ المعرف 📋')); }
+// النقر على العملة
+function handleClick(e) {
+  if(currentUser.boostActive !== 'shield' && currentUser.energy <= 0) { notify('لا طاقة! انتظر قليلاً', 'error'); return; }
+  let mult = (currentUser.boostActive === 'turbo') ? 5 : 1;
+  let gain = mult;
+  currentUser.tokens += gain;
+  currentUser.clicks++;
+  if(currentUser.boostActive !== 'shield') currentUser.energy = Math.max(0, currentUser.energy-1);
+  // تأثير الجسيم
+  let x = e.clientX, y = e.clientY;
+  let particle = document.createElement('div');
+  particle.className = 'particle';
+  particle.innerText = `+${gain}`;
+  particle.style.position = 'fixed';
+  particle.style.left = x+'px';
+  particle.style.top = y+'px';
+  particle.style.fontSize = '24px';
+  particle.style.fontWeight = 'bold';
+  particle.style.color = '#fbbf24';
+  particle.style.pointerEvents = 'none';
+  particle.style.zIndex = '9999';
+  document.body.appendChild(particle);
+  setTimeout(()=>particle.remove(), 800);
+  refreshUI();
+  checkTasks();
+  saveAll();
+}
 
-function shopNext() { let qty=parseFloat(document.getElementById('shop-qty').value); if(!qty || qty<=0){ notify('أدخل كمية صحيحة','error'); return; } document.getElementById('shop-confirm-lbl').textContent=`شراء ${qty} Quinn = ${fmt(toTokens(qty))} توكن`; document.getElementById('shop-step1').style.display='none'; document.getElementById('shop-step2').style.display='block'; }
-function shopBack() { document.getElementById('shop-step1').style.display='block'; document.getElementById('shop-step2').style.display='none'; document.getElementById('shop-pass').value=''; }
-function shopBuy() { let pass=document.getElementById('shop-pass').value; let qty=parseFloat(document.getElementById('shop-qty').value); if(pass!==SHOP_PASS){ notify('كلمة المرور خاطئة ❌','error'); haptic('error'); return; } let gain=toTokens(qty); state.tokens+=gain; addTx(`شراء ${qty} Quinn 💎`, gain); notify(`تم إضافة ${qty} Quinn بنجاح! 💎`); document.getElementById('shop-qty').value=''; document.getElementById('shop-pass').value=''; shopBack(); updateCurrentUser(state); renderAll(); haptic('success'); }
+function checkTasks() {
+  TASKS.forEach(task => {
+    if(currentUser.completedTasks.includes(task.id)) return;
+    if(task.target && currentUser.clicks >= task.target) {
+      completeTask(task.id);
+    }
+    if(task.type === 'referral' && currentUser.referrals.length > 0 && !currentUser.completedTasks.includes(task.id)) completeTask(task.id);
+    if(task.type === 'verify' && currentUser.verified && !currentUser.completedTasks.includes(task.id)) completeTask(task.id);
+  });
+}
 
-function renderBoostTab() { document.getElementById('boosts-list').innerHTML=BOOSTS.map(b=>`<div class="glass-card" style="padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px"><div style="font-size:34px">${b.icon}</div><div style="flex:1"><div style="font-weight:700;font-size:15px">${b.name}</div><div style="color:var(--text-dim);font-size:12px;margin:3px 0">${b.desc}</div><div style="color:#fbbf24;font-weight:700;font-size:13px">💰 ${fmt(b.cost)} توكن</div></div><button class="btn-sm" onclick="activateBoost('${b.id}')" ${state.boostActive===b.id?'disabled':''}>${state.boostActive===b.id?'نشط ✓':'تفعيل'}</button></div>`).join(''); document.getElementById('tasks-list').innerHTML=TASKS.map(t=>{ let done=state.completedTasks.includes(t.id); let progress=t.target?Math.min(state.clicks/t.target,1):0; return `<div class="glass-card" style="padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px;opacity:${done?0.6:1}"><div style="font-size:30px">${t.icon}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${t.name}</div><div style="color:#34d399;font-size:13px;margin:3px 0">+${fmt(t.reward)} توكن</div>${t.target&&!done?`<div class="progress-bar" style="margin-top:6px;height:5px"><div class="progress-fill" style="background:linear-gradient(90deg,#8b5cf6,#3b82f6);width:${progress*100}%"></div></div><div style="font-size:10px;color:var(--text-faint);margin-top:2px">${Math.min(state.clicks,t.target)}/${t.target}</div>`:''}</div><button class="btn-sm" onclick="completeTask(${t.id})" ${done?'disabled':''}>${done?'✓':'إنجاز'}</button></div>`; }).join(''); document.getElementById('passive-val').textContent=state.passiveIncome; document.getElementById('passive-items').innerHTML=PASSIVE_ITEMS.map(item=>`<div class="glass-card" style="padding:16px;margin-bottom:10px;display:flex;align-items:center;gap:14px"><div style="font-size:30px">${item.icon}</div><div style="flex:1"><div style="font-weight:700;font-size:14px">${item.name}</div><div style="color:#34d399;font-size:12px">+${item.rate} توكن/دقيقة</div><div style="color:#fbbf24;font-size:12px">💰 ${fmt(item.cost)} توكن</div>${state.ownedPassive[item.id]?`<div style="font-size:11px;color:#a78bfa">✓ تمتلكه (×${state.ownedPassive[item.id]})</div>`:''}</div><button class="btn-sm" onclick="buyPassive('${item.id}')" ${state.tokens<item.cost?'disabled':''}>شراء</button></div>`).join(''); }
+function completeTask(taskId) {
+  if(currentUser.completedTasks.includes(taskId)) return;
+  let task = TASKS.find(t=>t.id===taskId);
+  if(!task) return;
+  currentUser.tokens += task.reward;
+  currentUser.completedTasks.push(taskId);
+  currentUser.transactions.unshift({desc:`مهمة: ${task.name}`, amount:task.reward, time:new Date().toLocaleTimeString()});
+  notify(`🎉 أنجزت "${task.name}" وربحت +${fmt(task.reward)} توكن`);
+  refreshUI();
+  saveAll();
+}
 
-function activateBoost(id) { let b=BOOSTS.find(x=>x.id===id); if(state.tokens<b.cost){ notify('رصيدك غير كافٍ','error'); return; } showConfirm('تفعيل التعزيز',`هل تريد تفعيل ${b.name} مقابل ${fmt(b.cost)} توكن؟`,()=>{ state.tokens-=b.cost; state.boostActive=id; addTx(`تفعيل ${b.name}`, -b.cost); clearTimeout(state.boostTimer); state.boostTimer=setTimeout(()=>{ state.boostActive=null; updateCurrentUser(state); renderAll(); }, b.duration); notify(`${b.name} مفعّل! ${b.icon}`); haptic('medium'); updateCurrentUser(state); renderAll(); }); }
+// المحفظة والتحويلات
+function requestTransfer() {
+  let to = document.getElementById('sendTo').value.trim();
+  let amt = parseFloat(document.getElementById('sendAmt').value);
+  if(!to || isNaN(amt) || amt<=0) { notify('بيانات غير صحيحة','error'); return; }
+  let costTokens = toTokens(amt);
+  if(currentUser.tokens < costTokens) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('تأكيد التحويل', `إرسال ${amt} Quinn إلى ${to}؟`, () => {
+    let targetId = null;
+    if(to.startsWith('@')) {
+      let uname = to.slice(1);
+      targetId = Object.keys(allUsers).find(uid => allUsers[uid].username === uname);
+    } else {
+      targetId = to;
+    }
+    if(!targetId || !allUsers[targetId]) { notify('المستخدم غير موجود','error'); return; }
+    if(targetId === currentUser.id) { notify('لا يمكن التحويل لنفسك','error'); return; }
+    currentUser.tokens -= costTokens;
+    allUsers[targetId].tokens += costTokens;
+    currentUser.transactions.unshift({desc:`إرسال ${amt} Quinn إلى ${to}`, amount:-costTokens, time:new Date().toLocaleTimeString()});
+    allUsers[targetId].transactions.unshift({desc:`استلام ${amt} Quinn من ${currentUser.name}`, amount:costTokens, time:new Date().toLocaleTimeString()});
+    saveAll();
+    notify(`تم الإرسال بنجاح ✅`, 'success');
+    refreshUI();
+    if(document.getElementById('tab-wallet').classList.contains('active')) renderWallet();
+  });
+}
 
-function buyPassive(id) { let item=PASSIVE_ITEMS.find(x=>x.id===id); if(state.tokens<item.cost){ notify('رصيدك غير كافٍ','error'); return; } showConfirm('شراء دخل سلبي',`هل تريد شراء ${item.name} مقابل ${fmt(item.cost)} توكن؟`,()=>{ state.tokens-=item.cost; state.passiveIncome+=item.rate; state.ownedPassive[id]=(state.ownedPassive[id]||0)+1; addTx(`شراء ${item.name}`, -item.cost); notify(`${item.icon} تم شراء ${item.name}! +${item.rate} توكن/دقيقة`); haptic('medium'); updateCurrentUser(state); renderAll(); }); }
+function renderWallet() {
+  document.getElementById('w-quinn').innerHTML = `${toQuinn(currentUser.tokens)} <span style="font-size:16px">Quinn</span>`;
+  document.getElementById('w-tokens').innerText = `≈ ${fmt(currentUser.tokens)} توكن`;
+  let recvId = currentUser.username ? `@${currentUser.username}` : currentUser.id;
+  document.getElementById('recvId').innerText = recvId;
+  let txHtml = currentUser.transactions.slice(0,10).map(tx => `<div class="tx-item"><div>${tx.desc}</div><div style="color:${tx.amount>0?'#10b981':'#ef4444'}">${tx.amount>0?'+':''}${fmt(Math.abs(tx.amount))}</div></div>`).join('');
+  document.getElementById('tx-list').innerHTML = txHtml || '<div class="glass-card" style="padding:20px;text-align:center">لا توجد معاملات</div>';
+}
 
-function completeTask(id) { let t=TASKS.find(x=>x.id===id); if(state.completedTasks.includes(id)) return; if(t.type==='clicks' && state.clicks<t.target){ notify(`تحتاج ${t.target-state.clicks} نقرة أخرى`,'warn'); return; } if(t.type==='verify' && !state.verified){ notify('وثّق حسابك أولاً','warn'); return; } state.completedTasks.push(id); state.tokens+=t.reward; addTx(`مهمة: ${t.name}`, t.reward); notify(`أنجزت المهمة! +${fmt(t.reward)} توكن 🎯`); haptic('success'); updateCurrentUser(state); renderAll(); }
+function copyReceiveId() { let id = currentUser.username ? `@${currentUser.username}` : currentUser.id; navigator.clipboard?.writeText(id); notify('تم نسخ المعرف'); }
 
-function checkTasks() { TASKS.forEach(t=>{ if(!state.completedTasks.includes(t.id) && t.type==='clicks' && state.clicks>=t.target) { /* auto complete maybe? but we keep manual */ } }); }
+function buyFromShop() {
+  let qty = parseFloat(document.getElementById('shopQty').value);
+  let pass = document.getElementById('shopPass').value;
+  if(!qty || qty<=0) { notify('أدخل كمية صحيحة','error'); return; }
+  if(pass !== SHOP_PASSWORD) { notify('كلمة المرور خاطئة ❌','error'); return; }
+  let gainTokens = toTokens(qty);
+  currentUser.tokens += gainTokens;
+  currentUser.transactions.unshift({desc:`شراء ${qty} Quinn`, amount:gainTokens, time:new Date().toLocaleTimeString()});
+  saveAll();
+  notify(`تمت إضافة ${qty} Quinn بنجاح!`, 'success');
+  refreshUI();
+  document.getElementById('shopQty').value = '';
+  document.getElementById('shopPass').value = '';
+}
 
-function renderLeaderboard() { let allUsersList = Object.values(allUsers).map(u=>({id:u.id, name:u.name, avatar:u.selectedAvatar, tokens:u.tokens, verified:u.verified, isMe: String(u.id)===String(state.user.id) })); allUsersList.sort((a,b)=>b.tokens-a.tokens); let top3 = [allUsersList[1], allUsersList[0], allUsersList[2]]; let podiumH=[100,130,90]; let medals=['🥈','🥇','🥉']; let podiumColors=['#9ca3af','#fbbf24','#d97706']; document.getElementById('podium-wrap').innerHTML=`<div class="podium">${top3.map((m,i)=>{ if(!m) return '<div style="flex:1"></div>'; let av=getAvatar(m.avatar); return `<div class="podium-item"><div style="font-size:22px;margin-bottom:4px">${medals[i]}</div><div style="width:50px;height:50px;border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;font-size:26px;border:2px solid ${av.color};background:${av.color}22">${av.emoji}</div><div style="font-size:11px;color:#fff;font-weight:700;margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${(m.name||'').split(' ')[0]}</div><div class="podium-stand" style="height:${podiumH[i]}px;border-color:${podiumColors[i]}44"><div style="color:${podiumColors[i]};font-weight:900;font-size:12px">${(m.tokens/TOKENS_PER_QUINN).toFixed(1)} Q</div></div></div>`; }).join('')}</div>`; document.getElementById('lb-list').innerHTML=allUsersList.map((m,i)=>{ let av=getAvatar(m.avatar); let rankColor=i===0?'#fbbf24':i===1?'#9ca3af':i===2?'#d97706':'var(--text-faint)'; return `<div class="glass-card" style="padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;${m.isMe?'border-color:rgba(139,92,246,0.5);background:rgba(139,92,246,0.08)':''}"><div style="color:${rankColor};font-weight:900;font-size:16px;width:26px;text-align:center">${i+1}</div><div style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;border:2px solid ${av.color};background:${av.color}22">${av.emoji}</div><div style="flex:1"><div style="font-weight:700;font-size:14px;display:flex;align-items:center;gap:5px">${m.name||'مجهول'}${m.verified?'<span class="verified-badge">✓</span>':''}${m.isMe?'<span style="color:#a78bfa;font-size:11px">(أنت)</span>':''}</div><div style="font-size:11px;color:var(--text-faint)">${fmt(m.tokens)} توكن</div></div><div style="font-weight:900;font-size:15px;color:#a78bfa">${(m.tokens/TOKENS_PER_QUINN).toFixed(1)} Q</div></div>`; }).join(''); }
+// التعزيزات
+function renderBoosts() {
+  let html = BOOSTS.map(b => `<div class="glass-card" style="padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><div style="font-weight:bold">${b.icon} ${b.name}</div><div style="font-size:12px">${b.desc}</div><div style="color:#fbbf24">💰 ${fmt(b.cost)} توكن</div></div><button class="btn-sm" onclick="activateBoost('${b.id}')" ${currentUser.boostActive && Date.now()<currentUser.boostEnd?'disabled':''}>${currentUser.boostActive===b.id?'مفعل':'تفعيل'}</button></div>`).join('');
+  document.getElementById('boostsList').innerHTML = html;
+}
+function activateBoost(id) {
+  let boost = BOOSTS.find(b=>b.id===id);
+  if(currentUser.tokens < boost.cost) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('تفعيل تعزيز', `تفعيل ${boost.name} مقابل ${fmt(boost.cost)} توكن؟`, () => {
+    currentUser.tokens -= boost.cost;
+    currentUser.boostActive = id;
+    currentUser.boostEnd = Date.now() + boost.duration;
+    currentUser.transactions.unshift({desc:`تفعيل ${boost.name}`, amount:-boost.cost, time:new Date().toLocaleTimeString()});
+    saveAll();
+    refreshUI();
+    renderBoosts();
+    notify(`تم تفعيل ${boost.name} 🚀`);
+  });
+}
+function renderTasks() {
+  let html = TASKS.map(t => {
+    let done = currentUser.completedTasks.includes(t.id);
+    let progress = t.target ? Math.min(currentUser.clicks/t.target,1)*100 : 0;
+    return `<div class="glass-card" style="padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><div>${t.icon} ${t.name}</div><div style="color:#10b981">+${fmt(t.reward)} توكن</div>${t.target?`<div class="progress-bar" style="width:100px;margin-top:5px"><div class="progress-fill" style="width:${progress}%;background:#8b5cf6"></div></div>`:''}</div><button class="btn-sm" onclick="completeTask(${t.id})" ${done?'disabled':''}>${done?'✓':'إنجاز'}</button></div>`;
+  }).join('');
+  document.getElementById('tasksList').innerHTML = html;
+}
+function renderPassive() {
+  let html = PASSIVE_ITEMS.map(item => {
+    let owned = currentUser.ownedPassive[item.id] || 0;
+    return `<div class="glass-card" style="padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center"><div><div>${item.icon} ${item.name}</div><div>+${item.rate} توكن/دقيقة</div><div style="color:#fbbf24">💰 ${fmt(item.cost)} توكن</div>${owned?`<div style="font-size:11px">✓ تمتلك ${owned}</div>`:''}</div><button class="btn-sm" onclick="buyPassive('${item.id}')" ${currentUser.tokens<item.cost?'disabled':''}>شراء</button></div>`;
+  }).join('');
+  document.getElementById('passiveList').innerHTML = html;
+}
+function buyPassive(id) {
+  let item = PASSIVE_ITEMS.find(i=>i.id===id);
+  if(currentUser.tokens < item.cost) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('شراء دخل سلبي', `شراء ${item.name} مقابل ${fmt(item.cost)} توكن؟`, () => {
+    currentUser.tokens -= item.cost;
+    currentUser.passiveIncome += item.rate;
+    currentUser.ownedPassive[id] = (currentUser.ownedPassive[id]||0)+1;
+    currentUser.transactions.unshift({desc:`شراء ${item.name}`, amount:-item.cost, time:new Date().toLocaleTimeString()});
+    saveAll();
+    refreshUI();
+    renderPassive();
+    notify(`تم شراء ${item.name} بنجاح!`);
+  });
+}
 
-function renderReferral() { document.getElementById('ref-code').textContent=state.referralCode; document.getElementById('ref-count').textContent=state.referrals.length; document.getElementById('ref-earnings').textContent=fmt(state.referralEarnings); let refList=document.getElementById('ref-list'); if(!state.referrals.length){ refList.innerHTML='<div style="text-align:center;padding:30px;color:var(--text-faint)">لا توجد إحالات بعد</div>'; return; } refList.innerHTML=state.referrals.slice(0,10).map(ref=>`<div class="glass-card" style="padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between"><div><div style="font-weight:600;font-size:14px">${ref.name}</div><div style="font-size:11px;color:var(--text-faint)">${ref.date}</div></div><div style="font-weight:900;font-size:15px;color:#34d399">+${fmt(ref.bonus)}</div></div>`).join(''); }
+// المتصدرين
+function renderLeaderboard() {
+  let all = Object.values(allUsers).map(u => ({ name: u.name, tokens: u.tokens, avatar: u.avatar, verified: u.verified, isMe: u.id === currentUser.id }));
+  all.sort((a,b)=>b.tokens - a.tokens);
+  let top3 = [all[1], all[0], all[2]];
+  let medals = ['🥈','🥇','🥉'];
+  let heights = [100,130,90];
+  let podiumHtml = `<div class="podium">${top3.map((u,i)=> u ? `<div class="podium-item"><div style="font-size:22px">${medals[i]}</div><div style="font-size:32px">${getAvatar(u.avatar).emoji}</div><div>${u.name.split(' ')[0]}</div><div class="podium-stand" style="height:${heights[i]}px"><div>${toQuinn(u.tokens)} Q</div></div></div>` : '<div></div>').join('')}</div>`;
+  document.getElementById('podiumContainer').innerHTML = podiumHtml;
+  let listHtml = all.map((u,i) => `<div class="glass-card" style="padding:12px;margin-bottom:8px;display:flex;align-items:center;gap:12px;${u.isMe?'border:1px solid #8b5cf6':''}"><div style="width:30px">${i+1}</div><div style="font-size:28px">${getAvatar(u.avatar).emoji}</div><div style="flex:1"><div>${u.name} ${u.verified?'✓':''} ${u.isMe?'(أنت)':''}</div><div style="font-size:11px">${fmt(u.tokens)} توكن</div></div><div>${toQuinn(u.tokens)} Q</div></div>`).join('');
+  document.getElementById('leaderboardList').innerHTML = listHtml;
+}
 
-function copyRefCode() { navigator.clipboard?.writeText(state.referralCode).then(()=>notify('تم نسخ كود الإحالة 📋')); }
+// الإحالات
+function renderReferral() {
+  document.getElementById('refCodeDisplay').innerText = currentUser.referralCode;
+  document.getElementById('refCount').innerText = currentUser.referrals.length;
+  document.getElementById('refEarnings').innerText = fmt(currentUser.referralEarnings);
+  let refsHtml = currentUser.referrals.map(r => `<div class="glass-card" style="padding:10px;margin-bottom:6px"><div>👤 ${r.name}</div><div style="font-size:12px">${r.date}</div><div style="color:#10b981">+${fmt(r.bonus)} توكن</div></div>`).join('');
+  document.getElementById('referralsList').innerHTML = refsHtml || '<div class="glass-card" style="padding:20px;text-align:center">لا توجد إحالات بعد</div>';
+}
+function copyRefCode() { navigator.clipboard?.writeText(currentUser.referralCode); notify('تم نسخ الكود'); }
+function shareReferralLink() {
+  let link = `https://t.me/${BOT_USERNAME}?start=ref_${currentUser.referralCode}`;
+  navigator.clipboard?.writeText(link);
+  notify('تم نسخ رابط الإحالة 📋 يمكنك مشاركته الآن');
+}
 
-function renderProfile() { let av=getAvatar(state.selectedAvatar); let lvl=getLevel(state.tokens); document.getElementById('prof-avatar').textContent=av.emoji; document.getElementById('prof-avatar').style.borderColor=av.color; document.getElementById('prof-name').innerHTML=`${state.name} ${state.verified?'<span class="verified-badge">✓ موثّق</span>':''}`; document.getElementById('prof-tg').textContent=state.username?`@${state.username}`:`ID: ${state.user.id}`; document.getElementById('prof-quinn').textContent=toQuinn(state.tokens); document.getElementById('prof-clicks').textContent=fmt(state.clicks); document.getElementById('prof-lvl-icon').textContent=lvl.icon; document.getElementById('prof-info-list').innerHTML=[['🆔','المعرف',state.username?`@${state.username}`:state.user.id],['🌍','الاسم الكامل',state.name],['📅','تاريخ الانضمام',state.joinDate],['🎯','كود الإحالة',state.referralCode],['📊','المستوى',`${lvl.icon} ${lvl.name}`],['💎','الرصيد',`${toQuinn(state.tokens)} Quinn`],['🪙','التوكن',`${fmt(state.tokens)} توكن`],['👆','إجمالي النقرات',fmt(state.clicks)],['💰','الدخل السلبي',`${state.passiveIncome} توكن/دقيقة`]].map(([ic,lbl,val])=>`<div class="glass-card" style="padding:13px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px"><span style="font-size:20px">${ic}</span><div style="flex:1"><div style="font-size:11px;color:var(--text-dim)">${lbl}</div><div style="font-weight:600;font-size:14px">${val}</div></div></div>`).join(''); renderAvatarGrid(); renderVerify(); }
+// الملف الشخصي
+function renderProfile() {
+  let av = getAvatar(currentUser.avatar);
+  document.getElementById('profAvatar').innerText = av.emoji;
+  document.getElementById('profName').innerHTML = `${currentUser.name} ${currentUser.verified?'<span style="background:#2563eb;padding:2px 6px;border-radius:20px;font-size:11px">موثّق</span>':''}`;
+  document.getElementById('profUsername').innerText = currentUser.username ? `@${currentUser.username}` : `ID: ${currentUser.id}`;
+  document.getElementById('profQuinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('profClicks').innerText = fmt(currentUser.clicks);
+  document.getElementById('profLevelIcon').innerText = getLevel(currentUser.tokens).icon;
+  let infoHtml = [
+    ['🆔','المعرف', currentUser.username || currentUser.id],
+    ['📅','تاريخ الانضمام', new Date().toLocaleDateString()],
+    ['🎯','كود الإحالة', currentUser.referralCode],
+    ['💎','الرصيد', `${toQuinn(currentUser.tokens)} Quinn`]
+  ].map(([ic,lb,val]) => `<div class="glass-card" style="padding:12px;margin-bottom:8px"><div style="font-size:12px;color:#aaa">${lb}</div><div>${val}</div></div>`).join('');
+  document.getElementById('infoList').innerHTML = infoHtml;
+  renderAvatarGrid();
+  renderVerifyPanel();
+}
+function renderAvatarGrid() {
+  let takenAvatars = Object.values(allUsers).filter(u=>u.id !== currentUser.id).map(u=>u.avatar);
+  let html = AVATARS.map(av => {
+    let taken = takenAvatars.includes(av.id);
+    let selected = currentUser.avatar === av.id;
+    return `<div class="avatar-item ${selected?'selected':''} ${taken?'taken':''}" onclick="if(!${taken}) changeAvatar(${av.id})"><div style="font-size:32px">${av.emoji}</div><div>${av.name}</div>${selected?'<div style="position:absolute;top:4px;left:4px;background:#8b5cf6;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px">✓</div>':''}</div>`;
+  }).join('');
+  document.getElementById('avatarGrid').innerHTML = html;
+}
+function changeAvatar(id) {
+  let taken = Object.values(allUsers).filter(u=>u.id !== currentUser.id).map(u=>u.avatar).includes(id);
+  if(taken) { notify('هذه الصورة مستخدمة من قبل عضو آخر','error'); return; }
+  currentUser.avatar = id;
+  saveAll();
+  renderProfile();
+  refreshUI();
+  notify('تم تغيير الصورة بنجاح');
+}
+function renderVerifyPanel() {
+  let panel = document.getElementById('verifyPanel');
+  if(currentUser.verified && currentUser.verifyExpire > Date.now()) {
+    let days = Math.ceil((currentUser.verifyExpire - Date.now())/(1000*3600*24));
+    panel.innerHTML = `<div class="glass-card" style="padding:20px;text-align:center"><div style="font-size:50px">✅</div><div>حسابك موثّق</div><div>متبقي ${days} يوم</div><button class="btn-primary" style="margin-top:12px" onclick="renewVerify()">تجديد التوثيق (${VERIFY_COST} Quinn)</button><button class="btn-sm" style="margin-top:8px" onclick="activateSecondLife()">الحياة الثانية (${SECOND_LIFE_COST} Quinn)</button></div>`;
+  } else {
+    let costTokens = toTokens(VERIFY_COST);
+    let can = currentUser.tokens >= costTokens;
+    panel.innerHTML = `<div class="glass-card" style="padding:20px;text-align:center"><div>✅ توثيق الحساب</div><div style="color:#fbbf24">${VERIFY_COST} Quinn شهرياً</div><button class="btn-primary" style="margin-top:12px" onclick="requestVerify()" ${!can?'disabled':''}>${can?'توثيق الآن':'رصيد غير كاف'}</button></div>`;
+  }
+}
+function requestVerify() {
+  let cost = toTokens(VERIFY_COST);
+  if(currentUser.tokens < cost) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('توثيق الحساب', `تأكيد توثيق الحساب مقابل ${VERIFY_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.verified = true;
+    currentUser.verifyExpire = Date.now() + 30*24*3600*1000;
+    currentUser.transactions.unshift({desc:`توثيق الحساب`, amount:-cost, time:new Date().toLocaleTimeString()});
+    saveAll();
+    refreshUI();
+    renderVerifyPanel();
+    notify('تم توثيق حسابك بنجاح ✅');
+  });
+}
+function renewVerify() {
+  let cost = toTokens(VERIFY_COST);
+  if(currentUser.tokens < cost) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('تجديد التوثيق', `تجديد التوثيق لشهر إضافي مقابل ${VERIFY_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.verifyExpire = Date.now() + 30*24*3600*1000;
+    currentUser.transactions.unshift({desc:`تجديد التوثيق`, amount:-cost, time:new Date().toLocaleTimeString()});
+    saveAll();
+    refreshUI();
+    renderVerifyPanel();
+    notify('تم تجديد التوثيق ✅');
+  });
+}
+function activateSecondLife() {
+  if(currentUser.secondLife && currentUser.secondLifeExpire > Date.now()) { notify('الحياة الثانية مفعلة بالفعل'); return; }
+  let cost = toTokens(SECOND_LIFE_COST);
+  if(currentUser.tokens < cost) { notify('رصيد غير كاف','error'); return; }
+  showConfirm('الحياة الثانية', `تفعيل الحياة الثانية لمدة شهر مقابل ${SECOND_LIFE_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.secondLife = true;
+    currentUser.secondLifeExpire = Date.now() + 30*24*3600*1000;
+    currentUser.transactions.unshift({desc:`تفعيل الحياة الثانية`, amount:-cost, time:new Date().toLocaleTimeString()});
+    saveAll();
+    notify('تم تفعيل الحياة الثانية! يمكنك تجديد التوثيق بسعر مخفض');
+    renderVerifyPanel();
+  });
+}
 
-function renderAvatarGrid() { let takenByOthers = Object.values(allUsers).filter(u=>String(u.id)!==String(state.user.id)).map(u=>u.selectedAvatar); document.getElementById('avatar-grid').innerHTML=AVATARS.map(av=>{ let takenByOther=takenByOthers.includes(av.id); let isSelected=state.selectedAvatar===av.id; return `<div class="avatar-item ${isSelected?'selected':''} ${takenByOther?'taken':''}" onclick="${takenByOther?'notify(\"هذه الصورة محجوزة ❌\",\"error\")':`changeAvatar(${av.id})`}" style="border-color:${isSelected?av.color:'rgba(255,255,255,0.08)'}"><div style="font-size:36px">${av.emoji}</div><div style="font-size:11px;font-weight:600;margin-top:6px;color:${isSelected?av.color:'var(--text-dim)'}">${av.label}</div>${isSelected?`<div style="position:absolute;top:6px;left:6px;width:16px;height:16px;border-radius:50%;background:${av.color};display:flex;align-items:center;justify-content:center;font-size:10px;color:#fff;font-weight:900">✓</div>`:''}${takenByOther?'<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.4);border-radius:14px;font-size:22px">🔒</div>':''}</div>`; }).join(''); }
+// دوال التبويبات
+let currentTab = 'home';
+function showTab(tab) { document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.getElementById(`tab-${tab}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.querySelector(`[onclick="showTab('${tab}')"]`).classList.add('active'); currentTab=tab; if(tab==='wallet') renderWallet(); if(tab==='leaderboard') renderLeaderboard(); if(tab==='referral') renderReferral(); if(tab==='boost') { renderBoosts(); renderTasks(); renderPassive(); } if(tab==='profile') renderProfile(); haptic('selection'); }
+function showWalletSub(sub,btn) { ['overview','send','receive','shop'].forEach(s=>document.getElementById(`w-${s}`).style.display='none'); document.getElementById(`w-${sub}`).style.display='block'; document.querySelectorAll('#tab-wallet .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(sub==='overview') renderWallet(); }
+function showBoostSub(sub,btn) { ['boosts','tasks','passive'].forEach(s=>document.getElementById(`b-${s}`).style.display='none'); document.getElementById(`b-${sub}`).style.display='block'; document.querySelectorAll('#tab-boost .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(sub==='boosts') renderBoosts(); if(sub==='tasks') renderTasks(); if(sub==='passive') renderPassive(); }
+function showProfileSub(sub,btn) { ['info','avatar','verify'].forEach(s=>document.getElementById(`p-${s}`).style.display='none'); document.getElementById(`p-${sub}`).style.display='block'; document.querySelectorAll('#tab-profile .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(sub==='avatar') renderAvatarGrid(); if(sub==='verify') renderVerifyPanel(); }
 
-function changeAvatar(id) { let takenByOthers = Object.values(allUsers).filter(u=>String(u.id)!==String(state.user.id)).map(u=>u.selectedAvatar); if(takenByOthers.includes(id)) return; state.selectedAvatar=id; notify('تم تغيير الصورة ✅'); haptic('light'); updateCurrentUser(state); renderProfile(); updateHeader(); }
+// تاكيد عام
+function showConfirm(title, msg, callback) { document.getElementById('confirmTitle').innerText = title; document.getElementById('confirmMsg').innerText = msg; pendingConfirm = callback; document.getElementById('confirmModal').classList.add('active'); }
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('active'); pendingConfirm=null; }
+function confirmAction() { if(pendingConfirm) pendingConfirm(); closeConfirm(); }
 
-function renderVerify() { let el=document.getElementById('verify-content'); if(state.verified){ let expDate=new Date(state.verifyExpireDate); let daysLeft=Math.ceil((expDate-new Date())/(1000*60*60*24)); el.innerHTML=`<div style="text-align:center"><div style="font-size:60px;margin-bottom:14px">✅</div><h3 style="color:#34d399;font-size:20px;font-weight:900">حسابك موثّق!</h3><p style="color:var(--text-dim);font-size:14px;margin-top:8px;margin-bottom:16px">تمتع بمميزات الحساب الموثّق</p><div style="background:rgba(59,130,246,0.15);border:1px solid rgba(59,130,246,0.3);border-radius:10px;padding:10px;margin-bottom:16px;color:#93c5fd;font-size:12px">⏰ صلاحية التوثيق: ${daysLeft} يوم متبقي</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px">${['شارة التوثيق ✓','أولوية الدعم 🎯','إحصاءات مفصّلة 📊','مزايا حصرية 💎'].map(f=>`<div style="background:rgba(52,211,153,0.08);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:10px;font-size:12px;color:#34d399;text-align:center">${f}</div>`).join('')}</div>${daysLeft<=7?`<button class="btn-primary" onclick="showConfirm('تجديد التوثيق','تجديد التوثيق لشهر إضافي بـ 50 Quinn؟',()=>doRenewVerify())">🔄 تجديد التوثيق</button>`:''}</div>`; } else { let canAfford=state.tokens>=toTokens(VERIFICATION_COST); el.innerHTML=`<h3 style="font-size:18px;margin-bottom:10px">✅ توثيق الحساب</h3><div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.35);border-radius:10px;padding:14px;margin-bottom:16px"><div style="color:#fbbf24;font-weight:700;font-size:16px">💎 ${VERIFICATION_COST} Quinn / شهرياً</div><div style="color:var(--text-faint);font-size:12px;margin-top:4px">احصل على شارة التوثيق ومزايا حصرية</div></div>${['شارة ✓ في ملفك الشخصي','أولوية في الليدربورد','إحصاءات تفصيلية','دعم ذا أولوية'].map(f=>`<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="color:#34d399">✓</span><span style="color:var(--text-dim);font-size:14px">${f}</span></div>`).join('')}<div style="color:var(--text-faint);font-size:12px;margin:14px 0 10px">رصيدك: ${toQuinn(state.tokens)} Quinn</div><button class="btn-primary" onclick="showConfirm('تأكيد التوثيق','هل تريد توثيق حسابك بـ 50 Quinn؟',()=>doVerify())" ${canAfford?'':'disabled'}>${canAfford?'اشترك الآن — 50 Quinn ✅':`تحتاج ${(VERIFICATION_COST-parseFloat(toQuinn(state.tokens))).toFixed(2)} Quinn إضافية`}</button>`; } }
+// مؤقتات
+function startTimers() {
+  setInterval(() => { if(currentUser.energy < MAX_ENERGY) { currentUser.energy = Math.min(MAX_ENERGY, currentUser.energy+3); refreshUI(); saveAll(); } }, 1500);
+  setInterval(() => { if(currentUser.passiveIncome > 0) { currentUser.tokens += currentUser.passiveIncome; currentUser.transactions.unshift({desc:'دخل سلبي', amount:currentUser.passiveIncome, time:new Date().toLocaleTimeString()}); refreshUI(); saveAll(); } }, 60000);
+  setInterval(() => { if(currentUser.boostActive === 'magnet' && Date.now() < currentUser.boostEnd) { currentUser.tokens += 3; refreshUI(); saveAll(); } }, 500);
+  setInterval(() => { if(currentUser.boostActive && Date.now() > currentUser.boostEnd) { currentUser.boostActive = null; refreshUI(); renderBoosts(); saveAll(); } }, 1000);
+}
 
-function doVerify() { let cost=toTokens(VERIFICATION_COST); if(state.tokens<cost){ notify('رصيدك غير كافٍ','error'); return; } state.tokens-=cost; state.verified=true; let expDate=new Date(); expDate.setMonth(expDate.getMonth()+1); state.verifyExpireDate=expDate.toISOString(); addTx('رسوم التوثيق الشهري', -cost); notify('تم توثيق حسابك ✅ أنت الآن موثّق!'); haptic('success'); updateCurrentUser(state); renderAll(); }
-
-function doRenewVerify() { let cost=toTokens(VERIFICATION_COST); if(state.tokens<cost){ notify('رصيدك غير كافٍ','error'); return; } state.tokens-=cost; let expDate=new Date(); expDate.setMonth(expDate.getMonth()+1); state.verifyExpireDate=expDate.toISOString(); addTx('تجديد رسوم التوثيق', -cost); notify('تم تجديد التوثيق ✅'); haptic('success'); updateCurrentUser(state); renderAll(); }
-
-// timers
-function startTimers() { setInterval(()=>{ if(state.energy<MAX_ENERGY){ state.energy=Math.min(MAX_ENERGY, state.energy+3); updateEnergy(); updateCurrentUser(state); } },1500); setInterval(()=>{ if(state.passiveIncome>0){ state.tokens+=state.passiveIncome; addTx('دخل سلبي 💰', state.passiveIncome); updateCurrentUser(state); renderAll(); } },60000); setInterval(()=>{ if(state.boostActive==='magnet'){ state.tokens+=3; updateCurrentUser(state); renderAll(); } },500); setInterval(()=>{ persistAllUsers(); },15000); }
-
-// tabs
-let currentTab='home';
-function showTab(tab){ document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active')); document.getElementById('tab-'+tab).classList.add('active'); document.getElementById('nav-'+tab).classList.add('active'); currentTab=tab; haptic('selection'); if(tab==='wallet') renderWallet(); if(tab==='leaderboard') renderLeaderboard(); if(tab==='profile') renderProfile(); if(tab==='boost') renderBoostTab(); if(tab==='referral') renderReferral(); }
-function showWalletTab(tab,btn){ ['overview','send','receive','shop'].forEach(t=>{ document.getElementById('wtab-'+t).style.display=t===tab?'block':'none'; }); document.querySelectorAll('#tab-wallet .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-function showBoostTab(tab,btn){ ['boosts','tasks','passive'].forEach(t=>{ document.getElementById('btab-'+t).style.display=t===tab?'block':'none'; }); document.querySelectorAll('#tab-boost .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }
-function showProfileTab(tab,btn){ ['info','avatar','verify'].forEach(t=>{ document.getElementById('ptab-'+t).style.display=t===tab?'block':'none'; }); document.querySelectorAll('#tab-profile .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); if(tab==='avatar') renderAvatarGrid(); if(tab==='verify') renderVerify(); }
-
-// bootstrap
-function initTelegram() {
+// بدء التشغيل
+function init() {
   let tg = window.Telegram?.WebApp;
-  if(!tg) {
-    let fakeUser = {id:'dev123', first_name:'مستخدم', last_name:'تجريبي', username:'devuser'};
-    let stored = localStorage.getItem('quinn_all_users');
-    if(stored) allUsers = JSON.parse(stored); else allUsers = {};
-    state = loadUser(fakeUser);
-    bootApp();
-    return;
-  }
-  tg.ready(); tg.expand(); tg.disableVerticalSwipes?.();
-  let u = tg.initDataUnsafe?.user;
-  if(!u) u = {id:'guest',first_name:'ضيف',last_name:'',username:'guest'};
+  let user;
+  if(tg) { tg.ready(); tg.expand(); user = tg.initDataUnsafe?.user; if(!user) user = {id: Date.now(), first_name:'زائر'}; }
+  else user = {id: 'guest'+Date.now(), first_name:'تجريبي'};
   let stored = localStorage.getItem('quinn_all_users');
   if(stored) allUsers = JSON.parse(stored); else allUsers = {};
-  state = loadUser(u);
-  bootApp();
-}
-function bootApp() {
-  renderAll();
+  currentUser = loadUser(user);
+  refreshUI();
   startTimers();
-  notify('مرحباً ' + state.name + ' في Quinn! 💎','success');
+  // عرض التبويب الأول
+  showTab('home');
 }
-window.addEventListener('DOMContentLoaded', initTelegram);
+window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
