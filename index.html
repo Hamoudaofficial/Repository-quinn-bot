@@ -517,34 +517,38 @@ function shareReferralLink(){ let link=`https://t.me/${BOT_USERNAME}?start=ref_$
 function renderProfile(){ let rank=getRankByTokens(currentUser.tokens); let avatarDisplay=(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl)?`url(${currentUser.telegramAvatarUrl})`:null; document.getElementById('profAvatar').style.backgroundImage=avatarDisplay||'none'; document.getElementById('profAvatar').innerText=avatarDisplay?'':(getAvatar(currentUser.avatar).emoji); document.getElementById('profName').innerHTML=`${currentUser.name} ${currentUser.verified?'<span style="background:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px">موثّق</span>':''}`; document.getElementById('profUsername').innerText=currentUser.username?`@${currentUser.username}`:`ID: ${currentUser.id}`; document.getElementById('profQuinn').innerText=toQuinn(currentUser.tokens); document.getElementById('profClicks').innerText=fmt(currentUser.clicks); document.getElementById('profRankIcon').innerHTML=`${rank.eraIcon} ${rank.eraName} ${rank.level}`; document.getElementById('infoList').innerHTML=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🆔 المعرف</div><div>${currentUser.username||currentUser.id}</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🎯 المستوى</div><div>${rank.index+1}/50 - ${rank.eraName} ${rank.level}</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>💎 الرصيد</div><div>${toQuinn(currentUser.tokens)} Quinn</div></div>`; renderAvatarGrid(); renderTelegramAvatarPanel(); renderVerifyPanel(); }
 function renderAvatarGrid(){ let taken=Object.values(allUsers).filter(u=>u.id!==currentUser.id).map(u=>u.avatar); document.getElementById('avatarGrid').innerHTML=AVATARS.map(av=>{let takenFlag=taken.includes(av.id); return `<div class="avatar-item ${currentUser.avatar===av.id?'selected':''} ${takenFlag?'taken':''}" onclick="if(!${takenFlag}) changeAvatar(${av.id})"><div style="font-size:38px">${av.emoji}</div><div>${av.name}</div></div>`;}).join(''); }
 function changeAvatar(id){ if(Object.values(allUsers).filter(u=>u.id!==currentUser.id).map(u=>u.avatar).includes(id)) return notify('هذه الصورة مستخدمة'); currentUser.avatar=id; saveAll(); renderProfile(); refreshUI(); notify('تم تغيير الصورة'); }
-function renderTelegramAvatarPanel(){ 
+function renderTelegramAvatarPanel() {
   let preview = document.getElementById('tgAvatarPreview');
   let status = document.getElementById('tgAvatarStatus');
   let btn = document.getElementById('buyTelegramAvatarBtn');
   if(!preview) return;
-  if(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl){
+  // حالة الصورة
+  if(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl) {
     preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
     preview.style.backgroundSize = 'cover';
     preview.innerText = '';
     status.innerHTML = '✅ صورتك الشخصية من تليجرام مفعلة';
-    if(btn) { btn.style.display = 'flex'; btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>✓</span> تم الشراء'; }
-  } else if(currentUser.telegramAvatarUrl){
+    if(btn) { btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>✓</span> تم الشراء'; }
+  } 
+  else if(currentUser.telegramAvatarUrl) {
     preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
     preview.style.backgroundSize = 'cover';
     preview.innerText = '';
     status.innerHTML = `📸 صورتك جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`;
-    if(btn) { btn.style.display = 'flex'; btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<span>📸</span> شراء صورة تليجرام (500 Quinn)'; }
-  } else {
+    if(btn) { btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<span>📸</span> شراء صورة تليجرام (500 Quinn)'; }
+  } 
+  else {
     preview.innerText = '📷';
     preview.style.backgroundImage = 'none';
-    status.innerHTML = '⚠️ لا توجد صورة تليجرام متاحة. حمّل صورة شخصية في تليجرام أولاً.';
-    if(btn) btn.style.display = 'none';
+    status.innerHTML = '⚠️ لا توجد صورة تليجرام متاحة. قم بتعيين صورة شخصية في تليجرام أولاً.';
+    if(btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.innerHTML = '<span>🚫</span> لا توجد صورة'; }
   }
 }
 function purchaseTelegramAvatar(){ 
-  if(!currentUser.telegramAvatarUrl) { notify('لا توجد صورة تليجرام متاحة'); return; }
+  if(!currentUser.telegramAvatarUrl) { notify('❌ لا توجد صورة تليجرام متاحة. قم بتعيين صورة شخصية في تطبيق تليجرام أولاً.'); return; }
+  if(currentUser.telegramAvatarPurchased) { notify('✅ لقد اشتريت الصورة بالفعل'); return; }
   let cost = toTokens(TELEGRAM_AVATAR_COST);
-  if(currentUser.tokens < cost) { notify(`رصيد غير كافٍ (${TELEGRAM_AVATAR_COST} Quinn)`); return; }
+  if(currentUser.tokens < cost) { notify(`⚠️ رصيد غير كافٍ. تحتاج إلى ${TELEGRAM_AVATAR_COST} Quinn`); return; }
   showConfirm('شراء صورة تليجرام', `شراء صورتك الشخصية من تليجرام مقابل ${TELEGRAM_AVATAR_COST} Quinn؟`, () => {
     currentUser.tokens -= cost;
     currentUser.telegramAvatarPurchased = true;
