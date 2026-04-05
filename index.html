@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-<title>Quinn Bot - Crypto Ranks | 50 رتبة عملات رقمية</title>
+<title>Quinn Bot - العصور التاريخية | 50 مستوى | صورة تليجرام</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
 <style>
@@ -69,7 +69,7 @@ body {
   border-radius: var(--radius-sm);
   transition: all 0.2s ease;
 }
-.glass-card:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.3); }
+.glass-card:hover { transform: translateY(-2px); border-color: rgba(139,92,246,0.4); }
 .tab-content { display: none; }
 .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
@@ -110,8 +110,6 @@ body {
   overflow: hidden;
 }
 .btn-primary:active { transform: scale(0.97); }
-.btn-primary::after { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255,255,255,0.3); transform: translate(-50%, -50%); transition: width 0.3s, height 0.3s; }
-.btn-primary:active::after { width: 200%; height: 200%; }
 .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 .btn-sm {
   padding: 8px 16px;
@@ -125,6 +123,15 @@ body {
   transition: all 0.15s;
 }
 .btn-sm:active { transform: scale(0.94); }
+.btn-telegram {
+  background: linear-gradient(135deg, #2aabee, #0088cc);
+  box-shadow: 0 4px 15px rgba(42,171,238,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.btn-telegram:active { transform: scale(0.96); }
 .inp {
   width: 100%;
   padding: 12px 16px;
@@ -294,6 +301,13 @@ body {
   0% { opacity: 1; transform: translateY(0) scale(1); }
   100% { opacity: 0; transform: translateY(-60px) scale(1.3); }
 }
+.rank-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(139,92,246,0.2);
+  font-size: 11px;
+}
 </style>
 </head>
 <body>
@@ -305,10 +319,10 @@ body {
   <div class="header"><div style="display:flex;align-items:center;gap:10px"><div id="hdr-avatar" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;background:#1e1b2e;border:2px solid #8b5cf6;background-size:cover;background-position:center" onclick="showTab('profile')"></div><div><div id="hdr-name" style="font-weight:800"></div><div id="hdr-rank" style="font-size:11px;color:#aaa"></div></div></div><div style="text-align:left"><div id="hdr-quinn" style="font-weight:900"></div><div id="hdr-tokens" style="font-size:11px;color:#aaa"></div></div></div>
   <div class="content">
     <div id="tab-home" class="tab-content active">
-      <div class="stat-row"><div class="stat-box"><div class="stat-val" id="s-tokens">0</div><div class="stat-lbl">🪙 التوكن</div></div><div class="stat-box"><div class="stat-val" id="s-quinn">0</div><div class="stat-lbl">🪙 Quinn</div></div><div class="stat-box"><div class="stat-val" id="s-clicks">0</div><div class="stat-lbl">👆 نقرات</div></div></div>
-      <div class="glass-card" style="padding:14px;margin-bottom:16px"><div style="display:flex;justify-content:space-between"><span id="rank-name"></span><span id="rank-next" style="font-size:12px"></span></div><div class="progress-bar" style="margin-top:6px"><div id="rank-bar" class="progress-fill" style="width:0%"></div></div><div style="font-size:12px;margin-top:6px">⚡ مضاعف النقرة: <span id="click-multiplier">1.00</span>x</div></div>
+      <div class="stat-row"><div class="stat-box"><div class="stat-val" id="s-tokens">0</div><div class="stat-lbl">🪙 التوكن</div></div><div class="stat-box"><div class="stat-val" id="s-quinn">0</div><div class="stat-lbl">💎 Quinn</div></div><div class="stat-box"><div class="stat-val" id="s-clicks">0</div><div class="stat-lbl">👆 نقرات</div></div></div>
+      <div class="glass-card" style="padding:14px;margin-bottom:16px"><div style="display:flex;justify-content:space-between"><span id="rank-name"></span><span id="rank-next" style="font-size:12px"></span></div><div class="progress-bar" style="margin-top:6px"><div id="rank-bar" class="progress-fill" style="width:0%"></div></div><div style="font-size:12px;margin-top:6px">⚡ مضاعف النقرة: <span id="click-multiplier">1.00</span>x</div><div style="font-size:11px;margin-top:5px"><span id="rank-level" class="rank-badge"></span></div></div>
       <div id="boost-banner" style="display:none;background:#f59e0b20;border:1px solid #f59e0b;border-radius:12px;padding:10px;text-align:center;margin-bottom:14px"></div>
-      <div style="display:flex;justify-content:center;margin:20px 0"><button id="coin-btn" onclick="handleClick(event)">🪙</button></div>
+      <div style="display:flex;justify-content:center;margin:20px 0"><button id="coin-btn" onclick="handleClick(event)">💎</button></div>
       <div class="glass-card" style="padding:12px"><div style="display:flex;justify-content:space-between"><span>⚡ الطاقة</span><span id="energy-txt"></span></div><div class="progress-bar" style="margin-top:6px"><div id="energy-bar" class="progress-fill" style="width:100%"></div></div></div>
       <div class="glass-card" style="padding:12px;margin-top:12px;display:flex;justify-content:space-between"><span>💰 الدخل السلبي</span><span id="passive-txt">0</span></div>
     </div>
@@ -316,7 +330,14 @@ body {
     <div id="tab-boost" class="tab-content"><div class="sub-tabs"><button class="sub-tab active" onclick="showBoostSub('boosts',this)">تعزيزات</button><button class="sub-tab" onclick="showBoostSub('tasks',this)">مهام</button><button class="sub-tab" onclick="showBoostSub('passive',this)">سلبي</button></div><div id="b-boosts"><div id="boostsList"></div></div><div id="b-tasks" style="display:none"><div id="tasksList"></div></div><div id="b-passive" style="display:none"><div id="passiveList"></div></div></div>
     <div id="tab-leaderboard" class="tab-content"><div id="podiumContainer"></div><div id="leaderboardList"></div></div>
     <div id="tab-referral" class="tab-content"><div class="glass" style="padding:20px;text-align:center"><div>🏆 كود الإحالة الخاص بك</div><div id="refCodeDisplay" style="background:#00000040;padding:10px;border-radius:12px;margin:12px 0;font-weight:bold;font-size:18px"></div><button class="btn-primary" onclick="copyRefCode()">نسخ الكود</button><button class="btn-primary" style="margin-top:10px" onclick="shareReferralLink()">🔗 مشاركة الرابط</button><button class="btn-primary" style="margin-top:10px; background: #3b82f6" onclick="openManualReferralModal()">📝 إدخال كود إحالة يدوي</button><div style="margin-top:16px">👥 عدد الإحالات: <span id="refCount">0</span></div><div>💰 أرباح الإحالات: <span id="refEarnings">0</span> توكن</div><div>🎁 مكافآت متدرجة: <span id="tierRewards">0</span> توكن</div></div><div id="referralsList" style="margin-top:16px"></div></div>
-    <div id="tab-profile" class="tab-content"><div class="glass" style="padding:20px;text-align:center"><div id="profAvatar" style="font-size:64px;margin:0 auto;width:85px;height:85px;display:flex;align-items:center;justify-content:center;background:#1e1b2e;border-radius:50%;margin-bottom:8px;background-size:cover;background-position:center"></div><div id="profName" style="font-size:20px;font-weight:900"></div><div id="profUsername" style="font-size:12px;color:#aaa"></div><div class="stat-row" style="margin-top:16px"><div class="stat-box"><div id="profQuinn">0</div><div>Quinn</div></div><div class="stat-box"><div id="profClicks">0</div><div>نقرة</div></div><div class="stat-box"><div id="profRankIcon">🏆</div><div>الرتبة</div></div></div></div><div class="sub-tabs"><button class="sub-tab active" onclick="showProfileSub('info',this)">معلومات</button><button class="sub-tab" onclick="showProfileSub('avatar',this)">الصور الافتراضية</button><button class="sub-tab" onclick="showProfileSub('telegramAvatar',this)">صورة تليجرام</button><button class="sub-tab" onclick="showProfileSub('verify',this)">توثيق</button></div><div id="p-info"><div id="infoList"></div></div><div id="p-avatar" style="display:none"><div id="avatarGrid" class="avatar-grid"></div></div><div id="p-telegramAvatar" style="display:none"><div class="glass-card" style="padding:20px;text-align:center"><div>🖼️ استخدم صورتك الحقيقية من تليجرام</div><div id="tgAvatarPreview" class="telegram-avatar-preview">📷</div><div id="tgAvatarStatus"></div><button id="buyTelegramAvatarBtn" class="btn-primary" style="margin-top:12px" onclick="purchaseTelegramAvatar()">شراء الصورة الشخصية (500 Quinn)</button></div></div><div id="p-verify" style="display:none"><div id="verifyPanel"></div></div></div>
+    <div id="tab-profile" class="tab-content">
+      <div class="glass" style="padding:20px;text-align:center"><div id="profAvatar" style="font-size:64px;margin:0 auto;width:85px;height:85px;display:flex;align-items:center;justify-content:center;background:#1e1b2e;border-radius:50%;margin-bottom:8px;background-size:cover;background-position:center"></div><div id="profName" style="font-size:20px;font-weight:900"></div><div id="profUsername" style="font-size:12px;color:#aaa"></div><div class="stat-row" style="margin-top:16px"><div class="stat-box"><div id="profQuinn">0</div><div>Quinn</div></div><div class="stat-box"><div id="profClicks">0</div><div>نقرة</div></div><div class="stat-box"><div id="profRankIcon">🏆</div><div>الرتبة</div></div></div></div>
+      <div class="sub-tabs"><button class="sub-tab active" onclick="showProfileSub('info',this)">معلومات</button><button class="sub-tab" onclick="showProfileSub('avatar',this)">الصور الافتراضية</button><button class="sub-tab" onclick="showProfileSub('telegramAvatar',this)">صورة تليجرام</button><button class="sub-tab" onclick="showProfileSub('verify',this)">توثيق</button></div>
+      <div id="p-info"><div id="infoList"></div></div>
+      <div id="p-avatar" style="display:none"><div id="avatarGrid" class="avatar-grid"></div></div>
+      <div id="p-telegramAvatar" style="display:none"><div class="glass-card" style="padding:20px;text-align:center"><div style="font-size:48px;margin-bottom:10px">🖼️</div><div style="font-weight:bold;margin-bottom:8px">صورتك الشخصية من تليجرام</div><div id="tgAvatarPreview" class="telegram-avatar-preview">📷</div><div id="tgAvatarStatus" style="font-size:13px;margin:10px 0;color:#aaa"></div><button id="buyTelegramAvatarBtn" class="btn-primary btn-telegram" onclick="purchaseTelegramAvatar()" style="display:flex;align-items:center;justify-content:center;gap:10px"><span>📸</span> شراء صورة تليجرام (500 Quinn)</button></div></div>
+      <div id="p-verify" style="display:none"><div id="verifyPanel"></div></div>
+    </div>
   </div>
   <nav class="bottom-nav"><button class="nav-btn active" onclick="showTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button><button class="nav-btn" onclick="showTab('boost')"><span class="nav-icon">⚡</span><span class="nav-label">التعزيزات</span></button><button class="nav-btn" onclick="showTab('wallet')"><span class="nav-icon">💼</span><span class="nav-label">المحفظة</span></button><button class="nav-btn" onclick="showTab('leaderboard')"><span class="nav-icon">🏆</span><span class="nav-label">المتصدرون</span></button><button class="nav-btn" onclick="showTab('referral')"><span class="nav-icon">👥</span><span class="nav-label">الإحالات</span></button><button class="nav-btn" onclick="showTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">ملفي</span></button></nav>
 </div>
@@ -332,26 +353,38 @@ const VERIFY_COST = 50;
 const SECOND_LIFE_COST = 30;
 const TELEGRAM_AVATAR_COST = 500;
 
-// 50 رتبة بأسماء عملات رقمية مشهورة
-const CRYPTO_RANKS = [
-  "Banano", "Chia", "Nano", "Ripple", "Stellar", "Tron", "Cardano", "Polkadot", "Solana", "Avalanche",
-  "Dogecoin", "Litecoin", "Bitcoin Cash", "Monero", "Dash", "Zcash", "Chainlink", "Uniswap", "Polygon", "Near",
-  "Aptos", "Sui", "Arbitrum", "Optimism", "Filecoin", "Theta", "Helium", "Flow", "Algorand", "Vechain",
-  "Cosmos", "Fantom", "Harmony", "Cronos", "Bitcoin", "Ethereum", "BNB", "XRP", "ADA", "DOT",
-  "MATIC", "SHIB", "LINK", "ETC", "EOS", "XTZ", "ATOM", "ALGO", "VET", "QTUM"
+// 50 مستوى - 10 عصور كل عصر 5 مستويات
+const ERA_NAMES = [
+  {icon:"🪨", name:"العصر الحجري", levels:5, baseMult:1.0},
+  {icon:"⚙️", name:"العصر البرونزي", levels:5, baseMult:1.1},
+  {icon:"🥈", name:"العصر الحديدي", levels:5, baseMult:1.2},
+  {icon:"🥇", name:"العصر الكلاسيكي", levels:5, baseMult:1.35},
+  {icon:"💎", name:"العصر الوسيط", levels:5, baseMult:1.5},
+  {icon:"👑", name:"العصر الإمبراطوري", levels:5, baseMult:1.7},
+  {icon:"🌟", name:"العصر الصناعي", levels:5, baseMult:1.9},
+  {icon:"⚡", name:"العصر الرقمي", levels:5, baseMult:2.2},
+  {icon:"🏆", name:"العصر الذكي", levels:5, baseMult:2.6},
+  {icon:"🎖️", name:"العصر الفائق", levels:5, baseMult:3.0}
 ];
 const RANKS = [];
-for (let i = 0; i < 50; i++) {
-  let minTokens = i === 0 ? 0 : Math.floor(800 * Math.pow(1.65, i-1));
-  if (i > 35) minTokens = minTokens * 8;
-  RANKS.push({
-    index: i,
-    name: CRYPTO_RANKS[i],
-    icon: i<5?'🥉':i<10?'🥈':i<15?'🥇':i<20?'💎':i<25?'💠':i<30?'🔷':i<35?'💜':i<40?'🔶':i<45?'🌟':'👑',
-    minTokens: minTokens,
-    maxTokens: i===49?Infinity:Math.floor(800 * Math.pow(1.65, i)),
-    clickMultiplier: 1 + (i * 0.025)
-  });
+let rankIndex = 0;
+for(let era of ERA_NAMES) {
+  for(let sub = 1; sub <= era.levels; sub++) {
+    let minTokens = rankIndex === 0 ? 0 : Math.floor(600 * Math.pow(1.58, rankIndex-1));
+    if(rankIndex > 35) minTokens = minTokens * 6;
+    RANKS.push({
+      index: rankIndex,
+      eraIcon: era.icon,
+      eraName: era.name,
+      level: sub,
+      fullName: `${era.icon} ${era.name} (${sub}/5)`,
+      displayName: `${era.icon} ${era.name} ${sub}`,
+      minTokens: minTokens,
+      maxTokens: rankIndex === 49 ? Infinity : Math.floor(600 * Math.pow(1.58, rankIndex)),
+      clickMultiplier: era.baseMult + ((sub-1) * 0.04)
+    });
+    rankIndex++;
+  }
 }
 function getRankByTokens(tokens) { for(let i=RANKS.length-1; i>=0; i--) if(tokens >= RANKS[i].minTokens) return RANKS[i]; return RANKS[0]; }
 
@@ -362,10 +395,7 @@ function toTokens(q) { return q * TOKENS_PER_QUINN; }
 function notify(msg) { let el=document.getElementById('notif'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2300); }
 function saveAll() { localStorage.setItem('quinn_all_users', JSON.stringify(allUsers)); }
 
-// 15 صورة افتراضية متنوعة
-const AVATARS = [
-  {id:1,emoji:'🦁',name:'الأسد الملك'},{id:2,emoji:'🐉',name:'التنين الناري'},{id:3,emoji:'🦊',name:'الثعلب الماكر'},{id:4,emoji:'🐺',name:'الذئب الفضي'},{id:5,emoji:'🦅',name:'النسر الحر'},{id:6,emoji:'🐬',name:'الدلفين اللطيف'},{id:7,emoji:'🦄',name:'اليونيكورن السحري'},{id:8,emoji:'🐸',name:'الضفدع القافز'},{id:9,emoji:'🐙',name:'الأخطبوط الذكي'},{id:10,emoji:'🦇',name:'الخفاش الليلي'},{id:11,emoji:'🐋',name:'الحوت العملاق'},{id:12,emoji:'🦚',name:'الطاووس الجميل'},{id:13,emoji:'🐲',name:'التنين الشرقي'},{id:14,emoji:'🦖',name:'الديناصور'},{id:15,emoji:'🐱',name:'القط الأسطوري'}
-];
+const AVATARS = [{id:1,emoji:'🦁',name:'الأسد'},{id:2,emoji:'🐉',name:'التنين'},{id:3,emoji:'🦊',name:'الثعلب'},{id:4,emoji:'🐺',name:'الذئب'},{id:5,emoji:'🦅',name:'النسر'},{id:6,emoji:'🐬',name:'الدلفين'},{id:7,emoji:'🦄',name:'اليونيكورن'},{id:8,emoji:'🐸',name:'الضفدع'},{id:9,emoji:'🐙',name:'الأخطبوط'},{id:10,emoji:'🦇',name:'الخفاش'},{id:11,emoji:'🐋',name:'الحوت'},{id:12,emoji:'🦚',name:'الطاووس'},{id:13,emoji:'🐲',name:'التنين الشرقي'},{id:14,emoji:'🦖',name:'الديناصور'},{id:15,emoji:'🐱',name:'القط'},{id:16,emoji:'🐼',name:'الباندا'}];
 function getAvatar(id) { return AVATARS.find(a=>a.id===id) || AVATARS[0]; }
 
 function applyReferralCodeManually(refCode, userId) {
@@ -425,7 +455,6 @@ function loadUser(telegramUser) {
   return user;
 }
 
-// دوال اللعبة الأساسية
 const BOOSTS = [{id:'turbo',name:'توربو',desc:'×5 نقرة',cost:500,icon:'⚡',duration:30000},{id:'magnet',name:'مغناطيس',desc:'+3 توكن/0.5ث',cost:1000,icon:'🧲',duration:60000},{id:'shield',name:'درع',desc:'لا تستهلك طاقة',cost:300,icon:'🛡️',duration:60000}];
 const TASKS = [{id:1,name:'انقر 100 مرة',reward:500,target:100,icon:'👆'},{id:2,name:'انقر 500 مرة',reward:1500,target:500,icon:'🖱️'},{id:3,name:'انقر 1000 مرة',reward:3000,target:1000,icon:'💥'},{id:4,name:'ادعُ صديقاً',reward:5000,type:'referral',icon:'👥'},{id:5,name:'وثّق حسابك',reward:10000,type:'verify',icon:'✅'}];
 const PASSIVE_ITEMS = [{id:'farm',name:'مزرعة صغيرة',rate:10,cost:50000,icon:'🌱'},{id:'factory',name:'مصنع',rate:50,cost:200000,icon:'🏭'},{id:'complex',name:'مجمع',rate:200,cost:800000,icon:'🏗️'},{id:'server',name:'خادم تعدين',rate:1000,cost:5000000,icon:'🖥️'}];
@@ -438,16 +467,17 @@ function refreshUI() {
   document.getElementById('s-tokens').innerText = fmt(currentUser.tokens);
   document.getElementById('s-quinn').innerText = toQuinn(currentUser.tokens);
   document.getElementById('s-clicks').innerText = fmt(currentUser.clicks);
-  document.getElementById('rank-name').innerHTML = `${rank.icon} ${rank.name}`;
-  document.getElementById('rank-next').innerText = nextRank ? `→ ${nextRank.name}` : '🏆 القمة';
+  document.getElementById('rank-name').innerHTML = `${rank.eraIcon} ${rank.eraName} (${rank.level}/5)`;
+  document.getElementById('rank-next').innerText = nextRank ? `→ ${nextRank.eraIcon} ${nextRank.eraName} ${nextRank.level}` : '🏆 القمة';
   document.getElementById('rank-bar').style.width = Math.min(pct,100)+'%';
   document.getElementById('click-multiplier').innerText = rank.clickMultiplier.toFixed(2);
+  document.getElementById('rank-level').innerText = `المستوى ${rank.index+1}/50`;
   document.getElementById('passive-txt').innerText = `${currentUser.passiveIncome} توكن/دقيقة`;
   let energyPct = (currentUser.energy/MAX_ENERGY)*100;
   document.getElementById('energy-bar').style.width = energyPct+'%';
   document.getElementById('energy-txt').innerText = `${currentUser.energy}/${MAX_ENERGY}`;
   document.getElementById('hdr-name').innerText = currentUser.name.split(' ')[0];
-  document.getElementById('hdr-rank').innerHTML = `${rank.icon} ${rank.name}`;
+  document.getElementById('hdr-rank').innerHTML = `${rank.eraIcon} ${rank.eraName} ${rank.level}`;
   document.getElementById('hdr-quinn').innerHTML = `${toQuinn(currentUser.tokens)} <span style="font-size:11px">Q</span>`;
   document.getElementById('hdr-tokens').innerText = fmt(currentUser.tokens)+' توكن';
   let avatarDisplay = (currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl) ? `url(${currentUser.telegramAvatarUrl})` : null;
@@ -461,7 +491,7 @@ function handleClick(e) {
   let rank = getRankByTokens(currentUser.tokens);
   let mult = rank.clickMultiplier;
   if(currentUser.boostActive === 'turbo') mult *= 5;
-  if(currentUser.boostActive !== 'shield' && currentUser.energy <= 0) { notify('لا طاقة! انتظر قليلاً'); return; }
+  if(currentUser.boostActive !== 'shield' && currentUser.energy <= 0) { notify('لا طاقة!'); return; }
   let gain = Math.max(1, Math.floor(mult));
   currentUser.tokens += gain;
   currentUser.clicks++;
@@ -484,11 +514,47 @@ function renderLeaderboard(){ let all=Object.values(allUsers).map(u=>({name:u.na
 function renderReferral(){ document.getElementById('refCodeDisplay').innerText=currentUser.referralCode; document.getElementById('refCount').innerText=currentUser.referrals.length; document.getElementById('refEarnings').innerText=fmt(currentUser.referralEarnings); document.getElementById('tierRewards').innerText=fmt(currentUser.referralTierBonus||0); document.getElementById('referralsList').innerHTML=currentUser.referrals.map(r=>`<div class="glass-card" style="padding:10px;margin-bottom:6px"><div>👤 ${r.name}</div><div>+${fmt(r.bonus)} توكن</div></div>`).join('')||'<div class="glass-card" style="padding:20px;text-align:center">لا توجد إحالات بعد</div>'; }
 function copyRefCode(){ navigator.clipboard?.writeText(currentUser.referralCode); notify('تم نسخ الكود'); }
 function shareReferralLink(){ let link=`https://t.me/${BOT_USERNAME}?start=ref_${currentUser.referralCode}`; navigator.clipboard?.writeText(link); notify('تم نسخ رابط الإحالة'); }
-function renderProfile(){ let rank=getRankByTokens(currentUser.tokens); let avatarDisplay=(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl)?`url(${currentUser.telegramAvatarUrl})`:null; document.getElementById('profAvatar').style.backgroundImage=avatarDisplay||'none'; document.getElementById('profAvatar').innerText=avatarDisplay?'':(getAvatar(currentUser.avatar).emoji); document.getElementById('profName').innerHTML=`${currentUser.name} ${currentUser.verified?'<span style="background:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px">موثّق</span>':''}`; document.getElementById('profUsername').innerText=currentUser.username?`@${currentUser.username}`:`ID: ${currentUser.id}`; document.getElementById('profQuinn').innerText=toQuinn(currentUser.tokens); document.getElementById('profClicks').innerText=fmt(currentUser.clicks); document.getElementById('profRankIcon').innerHTML=`${rank.icon} ${rank.name}`; document.getElementById('infoList').innerHTML=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🆔 المعرف</div><div>${currentUser.username||currentUser.id}</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🎯 الرتبة</div><div>${rank.name} (${rank.clickMultiplier.toFixed(2)}x)</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>💎 الرصيد</div><div>${toQuinn(currentUser.tokens)} Quinn</div></div>`; renderAvatarGrid(); renderTelegramAvatarPanel(); renderVerifyPanel(); }
+function renderProfile(){ let rank=getRankByTokens(currentUser.tokens); let avatarDisplay=(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl)?`url(${currentUser.telegramAvatarUrl})`:null; document.getElementById('profAvatar').style.backgroundImage=avatarDisplay||'none'; document.getElementById('profAvatar').innerText=avatarDisplay?'':(getAvatar(currentUser.avatar).emoji); document.getElementById('profName').innerHTML=`${currentUser.name} ${currentUser.verified?'<span style="background:#2563eb;padding:2px 8px;border-radius:20px;font-size:11px">موثّق</span>':''}`; document.getElementById('profUsername').innerText=currentUser.username?`@${currentUser.username}`:`ID: ${currentUser.id}`; document.getElementById('profQuinn').innerText=toQuinn(currentUser.tokens); document.getElementById('profClicks').innerText=fmt(currentUser.clicks); document.getElementById('profRankIcon').innerHTML=`${rank.eraIcon} ${rank.eraName} ${rank.level}`; document.getElementById('infoList').innerHTML=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🆔 المعرف</div><div>${currentUser.username||currentUser.id}</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>🎯 المستوى</div><div>${rank.index+1}/50 - ${rank.eraName} ${rank.level}</div></div><div class="glass-card" style="padding:12px;margin-bottom:8px"><div>💎 الرصيد</div><div>${toQuinn(currentUser.tokens)} Quinn</div></div>`; renderAvatarGrid(); renderTelegramAvatarPanel(); renderVerifyPanel(); }
 function renderAvatarGrid(){ let taken=Object.values(allUsers).filter(u=>u.id!==currentUser.id).map(u=>u.avatar); document.getElementById('avatarGrid').innerHTML=AVATARS.map(av=>{let takenFlag=taken.includes(av.id); return `<div class="avatar-item ${currentUser.avatar===av.id?'selected':''} ${takenFlag?'taken':''}" onclick="if(!${takenFlag}) changeAvatar(${av.id})"><div style="font-size:38px">${av.emoji}</div><div>${av.name}</div></div>`;}).join(''); }
 function changeAvatar(id){ if(Object.values(allUsers).filter(u=>u.id!==currentUser.id).map(u=>u.avatar).includes(id)) return notify('هذه الصورة مستخدمة'); currentUser.avatar=id; saveAll(); renderProfile(); refreshUI(); notify('تم تغيير الصورة'); }
-function renderTelegramAvatarPanel(){ let preview=document.getElementById('tgAvatarPreview'); let status=document.getElementById('tgAvatarStatus'); let btn=document.getElementById('buyTelegramAvatarBtn'); if(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl){ preview.style.backgroundImage=`url(${currentUser.telegramAvatarUrl})`; preview.style.backgroundSize='cover'; preview.innerText=''; status.innerHTML='✅ صورتك الشخصية من تليجرام مفعلة'; if(btn) btn.style.display='none'; } else if(currentUser.telegramAvatarUrl){ preview.style.backgroundImage=`url(${currentUser.telegramAvatarUrl})`; preview.style.backgroundSize='cover'; preview.innerText=''; status.innerHTML=`📸 صورتك جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`; if(btn) btn.style.display='block'; } else { preview.innerText='📷'; preview.style.backgroundImage='none'; status.innerHTML='لا توجد صورة تليجرام متاحة. حمّل صورة شخصية في تليجرام أولاً.'; if(btn) btn.style.display='none'; } }
-function purchaseTelegramAvatar(){ if(!currentUser.telegramAvatarUrl) return notify('لا توجد صورة تليجرام متاحة'); let cost=toTokens(TELEGRAM_AVATAR_COST); if(currentUser.tokens<cost) return notify(`رصيد غير كافٍ (${TELEGRAM_AVATAR_COST} Quinn)`); showConfirm('شراء صورة تليجرام',`شراء صورتك الشخصية مقابل ${TELEGRAM_AVATAR_COST} Quinn؟`,()=>{ currentUser.tokens-=cost; currentUser.telegramAvatarPurchased=true; currentUser.transactions.unshift({desc:'شراء صورة تليجرام', amount:-cost, time:new Date().toLocaleTimeString()}); saveAll(); renderProfile(); refreshUI(); notify('تم شراء الصورة!'); }); }
+function renderTelegramAvatarPanel(){ 
+  let preview = document.getElementById('tgAvatarPreview');
+  let status = document.getElementById('tgAvatarStatus');
+  let btn = document.getElementById('buyTelegramAvatarBtn');
+  if(!preview) return;
+  if(currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl){
+    preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
+    preview.style.backgroundSize = 'cover';
+    preview.innerText = '';
+    status.innerHTML = '✅ صورتك الشخصية من تليجرام مفعلة';
+    if(btn) { btn.style.display = 'flex'; btn.disabled = true; btn.style.opacity = '0.6'; btn.innerHTML = '<span>✓</span> تم الشراء'; }
+  } else if(currentUser.telegramAvatarUrl){
+    preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
+    preview.style.backgroundSize = 'cover';
+    preview.innerText = '';
+    status.innerHTML = `📸 صورتك جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`;
+    if(btn) { btn.style.display = 'flex'; btn.disabled = false; btn.style.opacity = '1'; btn.innerHTML = '<span>📸</span> شراء صورة تليجرام (500 Quinn)'; }
+  } else {
+    preview.innerText = '📷';
+    preview.style.backgroundImage = 'none';
+    status.innerHTML = '⚠️ لا توجد صورة تليجرام متاحة. حمّل صورة شخصية في تليجرام أولاً.';
+    if(btn) btn.style.display = 'none';
+  }
+}
+function purchaseTelegramAvatar(){ 
+  if(!currentUser.telegramAvatarUrl) { notify('لا توجد صورة تليجرام متاحة'); return; }
+  let cost = toTokens(TELEGRAM_AVATAR_COST);
+  if(currentUser.tokens < cost) { notify(`رصيد غير كافٍ (${TELEGRAM_AVATAR_COST} Quinn)`); return; }
+  showConfirm('شراء صورة تليجرام', `شراء صورتك الشخصية من تليجرام مقابل ${TELEGRAM_AVATAR_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.telegramAvatarPurchased = true;
+    currentUser.transactions.unshift({desc: 'شراء صورة تليجرام', amount: -cost, time: new Date().toLocaleTimeString()});
+    saveAll();
+    renderProfile();
+    refreshUI();
+    notify('🎉 تم شراء الصورة الشخصية بنجاح!');
+  });
+}
 function renderVerifyPanel(){ let panel=document.getElementById('verifyPanel'); if(currentUser.verified && currentUser.verifyExpire>Date.now()){ let days=Math.ceil((currentUser.verifyExpire-Date.now())/86400000); panel.innerHTML=`<div class="glass-card" style="padding:20px;text-align:center"><div>✅ حساب موثّق</div><div>متبقي ${days} يوم</div><button class="btn-primary" onclick="renewVerify()">تجديد (${VERIFY_COST} Quinn)</button><button class="btn-sm" style="margin-top:8px" onclick="activateSecondLife()">الحياة الثانية (${SECOND_LIFE_COST} Quinn)</button></div>`; } else { panel.innerHTML=`<div class="glass-card" style="padding:20px;text-align:center"><div>🔒 حساب غير موثّق</div><button class="btn-primary" onclick="requestVerify()">توثيق (${VERIFY_COST} Quinn)</button></div>`; } }
 function requestVerify(){ let cost=toTokens(VERIFY_COST); if(currentUser.tokens<cost) return notify('رصيد غير كاف'); showConfirm('توثيق',`توثيق الحساب مقابل ${VERIFY_COST} Quinn؟`,()=>{ currentUser.tokens-=cost; currentUser.verified=true; currentUser.verifyExpire=Date.now()+30*86400000; currentUser.transactions.unshift({desc:'توثيق الحساب', amount:-cost, time:new Date().toLocaleTimeString()}); saveAll(); refreshUI(); renderVerifyPanel(); notify('تم التوثيق'); }); }
 function renewVerify(){ let cost=toTokens(VERIFY_COST); if(currentUser.tokens<cost) return notify('رصيد غير كاف'); showConfirm('تجديد',`تجديد التوثيق مقابل ${VERIFY_COST} Quinn؟`,()=>{ currentUser.tokens-=cost; currentUser.verifyExpire=Date.now()+30*86400000; saveAll(); refreshUI(); renderVerifyPanel(); notify('تم التجديد'); }); }
