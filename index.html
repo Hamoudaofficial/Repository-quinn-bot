@@ -1073,9 +1073,14 @@ html {
         <div style="color:var(--text-tertiary);font-size:13px;margin-bottom:10px;">كود الإحالة الخاص بك</div>
         <div id="ref-code" style="background:rgba(255,255,255,0.06);border:1px solid rgba(139,92,246,0.3);border-radius:12px;padding:14px;display:inline-block;margin-bottom:14px;color:var(--purple-light);font-weight:700;font-size:18px;letter-spacing:2px;font-family:monospace;"></div>
         <div style="color:var(--text-tertiary);font-size:11px;margin-bottom:14px;line-height:1.6;">شارك الكود أو الرابط للحصول على 5000 توكن لكل إحالة ناجحة</div>
-        <div style="display:flex;gap:10px;">
+        <div style="display:flex;gap:10px;margin-bottom:10px;">
           <button class="btn-sm" style="flex:1;" onclick="copyRefCode()">📋 نسخ الكود</button>
           <button class="btn-sm" style="flex:1;" onclick="shareReferralLink()">🔗 شارك الرابط</button>
+        </div>
+        <div id="enterRefCodeSection" style="margin-top:4px;">
+          <button class="btn-sm" style="width:100%;background:linear-gradient(135deg,rgba(16,185,129,0.5),rgba(5,150,105,0.5));border-color:rgba(16,185,129,0.4);" onclick="openManualReferralModal()">
+            🎁 عندي كود دعوة — أدخله هنا
+          </button>
         </div>
       </div>
 
@@ -1162,10 +1167,18 @@ html {
           <div id="tgAvatarStatus" class="telegram-avatar-status">جاري التحميل...</div>
           <button id="buyTelegramAvatarBtn" class="btn-primary" style="margin-top:12px;display:none;" onclick="purchaseTelegramAvatar()">شراء الصورة 💎</button>
         </div>
+        <div class="glass-card" style="padding:14px;margin-bottom:12px;background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);">
+          <div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;">🔗 إدخال رابط الصورة يدوياً</div>
+          <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:10px;line-height:1.5;">
+            إذا لم تظهر صورتك تلقائياً، يمكنك إدخال رابط صورتك الشخصية هنا:
+          </div>
+          <input id="manualPhotoUrl" class="inp" placeholder="https://..." style="margin-bottom:10px;font-size:12px;" />
+          <button class="btn-sm" style="width:100%;" onclick="applyManualPhotoUrl()">✅ تطبيق الصورة</button>
+        </div>
         <div class="glass-card" style="padding:14px;background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2);">
           <div style="font-size:12px;font-weight:700;color:var(--blue);margin-bottom:6px;">ℹ️ معلومات</div>
           <div style="font-size:11px;color:var(--text-tertiary);line-height:1.6;">
-            صورتك الشخصية من Telegram ستظهر في الملف الشخصي والمتصدرين عند الشراء. تحديث تلقائي عند تغييرك الصورة.
+            صورتك الشخصية من Telegram ستظهر في الملف الشخصي والمتصدرين عند الشراء. إذا لم تظهر تلقائياً استخدم إدخال الرابط أعلاه.
           </div>
         </div>
       </div>
@@ -2039,6 +2052,16 @@ function renderReferral() {
           )
           .join('')
       : '<div class="glass-card" style="padding:24px;text-align:center;color:var(--text-tertiary);">لا توجد إحالات بعد</div>') || '';
+
+  // Update enter-code button state
+  const enterSection = document.getElementById('enterRefCodeSection');
+  if (enterSection) {
+    if (currentUser.referralProcessed) {
+      enterSection.innerHTML = '<div style="text-align:center;font-size:12px;color:var(--green);padding:8px 0;">✅ لقد استخدمت كود دعوة بالفعل</div>';
+    } else {
+      enterSection.innerHTML = '<button class="btn-sm" style="width:100%;background:linear-gradient(135deg,rgba(16,185,129,0.5),rgba(5,150,105,0.5));border-color:rgba(16,185,129,0.4);" onclick="openManualReferralModal()">🎁 عندي كود دعوة — أدخله هنا</button>';
+    }
+  }
 }
 
 function copyRefCode() {
@@ -2151,25 +2174,47 @@ function renderTelegramAvatarPanel() {
   const status = document.getElementById('tgAvatarStatus');
   const btn = document.getElementById('buyTelegramAvatarBtn');
   
-  if (currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl) {
-    preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
-    preview.style.backgroundSize = 'cover';
-    preview.textContent = '';
+  const url = currentUser.telegramAvatarUrl || null;
+  
+  function showAvatar(u) {
+    if (!u) {
+      preview.textContent = '📷';
+      preview.style.backgroundImage = 'none';
+      return false;
+    }
+    const img = new Image();
+    img.onload = function() {
+      preview.style.backgroundImage = `url(${u})`;
+      preview.style.backgroundSize = 'cover';
+      preview.style.backgroundPosition = 'center';
+      preview.textContent = '';
+    };
+    img.onerror = function() {
+      preview.textContent = '📷';
+      preview.style.backgroundImage = 'none';
+    };
+    img.src = u;
+    return true;
+  }
+
+  if (currentUser.telegramAvatarPurchased && url) {
+    showAvatar(url);
     status.innerHTML = '✅ صورتك الشخصية من Telegram مفعلة';
     if (btn) btn.style.display = 'none';
-  } else if (currentUser.telegramAvatarUrl) {
-    preview.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
-    preview.style.backgroundSize = 'cover';
-    preview.textContent = '';
+  } else if (url) {
+    showAvatar(url);
     status.innerHTML = `📸 صورتك جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`;
     if (btn) btn.style.display = 'block';
   } else {
     preview.textContent = '📷';
     preview.style.backgroundImage = 'none';
-    status.innerHTML =
-      'لا توجد صورة Telegram. حمّل صورة شخصية في Telegram أولاً ثم أعد تحميل الصفحة.';
+    status.innerHTML = 'لا توجد صورة Telegram تلقائية. أدخل رابط صورتك يدوياً أدناه.';
     if (btn) btn.style.display = 'none';
   }
+  
+  // Pre-fill manual URL if exists
+  const manualInput = document.getElementById('manualPhotoUrl');
+  if (manualInput && url) manualInput.value = url;
 }
 
 function purchaseTelegramAvatar() {
@@ -2203,6 +2248,33 @@ function purchaseTelegramAvatar() {
       refreshUI();
     }
   );
+}
+
+function applyManualPhotoUrl() {
+  const input = document.getElementById('manualPhotoUrl');
+  const url = (input ? input.value.trim() : '');
+  if (!url) {
+    notify('❌ أدخل رابط الصورة أولاً');
+    return;
+  }
+  // Basic URL validation
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    notify('❌ الرابط يجب أن يبدأ بـ https://');
+    return;
+  }
+  // Test image load
+  const testImg = new Image();
+  testImg.onload = function() {
+    currentUser.telegramAvatarUrl = url;
+    saveAll();
+    notify('✅ تم تعيين الصورة! اشترها الآن لتظهر في ملفك');
+    renderTelegramAvatarTab();
+    renderProfile();
+  };
+  testImg.onerror = function() {
+    notify('❌ تعذّر تحميل الصورة، تحقق من الرابط');
+  };
+  testImg.src = url;
 }
 
 function renderVerifyPanel() {
