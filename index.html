@@ -2,662 +2,406 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>Quinn Bot - السوق الداخلي الحقيقي</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quinn Bot - المراتب والإحالات المتطورة</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 :root {
-  --bg-dark: #05020f;
-  --bg-card: rgba(15, 12, 35, 0.7);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --purple-neon: #b77eff;
-  --green: #10b981;
-  --red: #ef4444;
-  --text: #ffffff;
-  --text-dim: rgba(255, 255, 255, 0.65);
+  --bg: #0a0818; --bg2: #110e2a; --purple: #8b5cf6; --blue: #3b82f6;
+  --gold: #f59e0b; --green: #10b981; --red: #ef4444;
+  --glass: rgba(255,255,255,0.06); --glass-border: rgba(255,255,255,0.12);
+  --text: #ffffff; --text-dim: rgba(255,255,255,0.5);
+  --radius: 18px; --radius-sm: 12px;
 }
-body {
-  background: var(--bg-dark);
-  font-family: 'Inter', sans-serif;
-  color: var(--text);
-  overflow: hidden;
-  height: 100vh;
-}
-.animated-bg {
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(circle at 20% 30%, rgba(139, 92, 246, 0.2), transparent 60%),
-              radial-gradient(circle at 80% 70%, rgba(59, 130, 246, 0.15), transparent 60%);
-  animation: bgPulse 6s ease infinite alternate;
-}
-@keyframes bgPulse { 0% { opacity: 0.6; } 100% { opacity: 1; } }
-.grid-overlay {
-  position: fixed;
-  inset: 0;
-  background-image: linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
-                    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px);
-  background-size: 40px 40px;
-  pointer-events: none;
-}
-.app {
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  z-index: 2;
-}
-.header {
-  backdrop-filter: blur(20px);
-  background: rgba(5, 2, 15, 0.7);
-  border-bottom: 1px solid var(--glass-border);
-  padding: 12px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-shrink: 0;
-}
-.user-info { display: flex; align-items: center; gap: 12px; }
-.avatar-circle {
-  width: 48px;
-  height: 48px;
-  background: linear-gradient(135deg, #8b5cf6, #ec4899);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26px;
-  box-shadow: 0 0 12px rgba(139, 92, 246, 0.5);
-}
-.quinn-amount {
-  font-size: 22px;
-  font-weight: 900;
-  background: linear-gradient(135deg, #fff, #b77eff);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 16px 16px 80px;
-  scrollbar-width: thin;
-}
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(5, 2, 15, 0.85);
-  backdrop-filter: blur(25px);
-  border-top: 1px solid var(--glass-border);
-  display: flex;
-  justify-content: space-around;
-  padding: 8px 12px 20px;
-  z-index: 100;
-}
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-  background: none;
-  border: none;
-  color: var(--text-dim);
-  font-size: 12px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-.nav-item.active { color: var(--purple-neon); transform: translateY(-2px); }
-.nav-icon { font-size: 24px; }
-.glass-card {
-  background: var(--bg-card);
-  backdrop-filter: blur(15px);
-  border: 1px solid var(--glass-border);
-  border-radius: 28px;
-  padding: 16px;
-  margin-bottom: 16px;
-}
-.coin-btn {
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(circle at 30% 30%, #fff, #8b5cf6);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 70px;
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.6);
-  cursor: pointer;
-  margin: 10px auto;
-  transition: transform 0.05s linear;
-}
-.coin-btn:active { transform: scale(0.94); }
-.energy-bar {
-  height: 8px;
-  background: rgba(255,255,255,0.1);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-top: 6px;
-}
-.energy-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #10b981, #fbbf24);
-  transition: width 0.2s;
-}
-.tab-pane { display: none; }
-.tab-pane.active { display: block; animation: fadeIn 0.3s ease; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
-.stock-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.stock-price { font-family: monospace; font-size: 16px; font-weight: bold; }
-.up { color: #10b981; }
-.down { color: #ef4444; }
-.small-btn {
-  background: rgba(139,92,246,0.6);
-  border: none;
-  padding: 5px 12px;
-  border-radius: 40px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-canvas {
-  background: rgba(0,0,0,0.4);
-  border-radius: 20px;
-  width: 100%;
-  height: 180px;
-  margin-top: 12px;
-}
-.flying-number {
-  position: fixed;
-  pointer-events: none;
-  font-weight: 900;
-  font-size: 24px;
-  color: #fbbf24;
-  text-shadow: 0 0 5px #f59e0b;
-  z-index: 1000;
-  animation: flyUp 0.8s forwards;
-}
-@keyframes flyUp {
-  0% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-80px); }
-}
-.switch { position: relative; display: inline-block; width: 44px; height: 24px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 34px; }
-.slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
-input:checked + .slider { background-color: #8b5cf6; }
-input:checked + .slider:before { transform: translateX(20px); }
-.tx-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-.leaderboard-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; user-select: none; }
+html, body { height: 100%; overflow: hidden; }
+body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); direction: rtl; }
+.bg-mesh { position: fixed; inset: 0; pointer-events: none; z-index: 0; background: radial-gradient(circle at 20% 30%, rgba(139,92,246,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 70%, rgba(59,130,246,0.1) 0%, transparent 50%); }
+#app { position: relative; z-index: 1; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+.header { padding: 10px 16px; background: rgba(10,8,24,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+.content { flex: 1; overflow-y: auto; padding: 14px 14px 90px; }
+.glass { background: var(--glass); backdrop-filter: blur(20px); border: 1px solid var(--glass-border); border-radius: var(--radius); }
+.glass-card { background: rgba(255,255,255,0.04); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); }
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+.bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(10,8,24,0.95); backdrop-filter: blur(24px); border-top: 1px solid var(--glass-border); display: flex; justify-content: space-around; padding: 8px 8px 20px; z-index: 999; gap: 4px; }
+.nav-btn { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: none; cursor: pointer; padding: 6px 0; border-radius: 14px; transition: all 0.2s; }
+.nav-btn:active { transform: scale(0.92); background: rgba(255,255,255,0.05); }
+.nav-icon { font-size: 24px; transition: transform 0.1s; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text-dim); }
+.nav-btn.active .nav-icon { filter: drop-shadow(0 0 8px var(--purple)); transform: translateY(-2px); }
+.nav-btn.active .nav-label { color: #c4b5fd; font-weight: 800; }
+.btn-primary { width: 100%; padding: 14px; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border: none; border-radius: var(--radius-sm); color: #fff; font-weight: 700; font-size: 15px; cursor: pointer; transition: transform 0.1s; }
+.btn-primary:active { transform: scale(0.97); }
+.btn-sm { padding: 8px 14px; background: rgba(139,92,246,0.7); border-radius: 10px; color: white; font-weight: 700; font-size: 12px; cursor: pointer; border: none; }
+.inp { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.15); border-radius: var(--radius-sm); color: #fff; font-family: 'Cairo', sans-serif; font-size: 15px; outline: none; }
+.inp:focus { border-color: #8b5cf6; }
+#coin-btn { width: 180px; height: 180px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #3b82f6); border: 3px solid rgba(255,255,255,0.2); box-shadow: 0 0 40px rgba(139,92,246,0.6); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 75px; transition: transform 0.08s; margin: 0 auto; }
+#coin-btn:active { transform: scale(0.93); }
+.progress-bar { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s; }
+.stat-row { display: flex; gap: 10px; margin-bottom: 14px; }
+.stat-box { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: var(--radius-sm); padding: 12px 8px; text-align: center; }
+.stat-val { font-size: 18px; font-weight: 900; }
+.stat-lbl { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.sub-tabs { display: flex; gap: 8px; margin-bottom: 16px; overflow-x: auto; }
+.sub-tab { white-space: nowrap; padding: 9px 16px; border-radius: 10px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); font-weight: 700; font-size: 12px; cursor: pointer; }
+.sub-tab.active { border-color: #8b5cf6; background: rgba(139,92,246,0.2); color: #c4b5fd; }
+.tx-item { display: flex; justify-content: space-between; padding: 12px; background: rgba(255,255,255,0.04); border-radius: var(--radius-sm); margin-bottom: 8px; }
+.avatar-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.avatar-item { border-radius: 14px; padding: 14px 8px; text-align: center; cursor: pointer; border: 1.5px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.04); transition: all 0.2s; }
+.avatar-item.selected { border-color: #8b5cf6; background: rgba(139,92,246,0.2); }
+.avatar-item:active { transform: scale(0.95); }
+.telegram-avatar-btn { background: linear-gradient(135deg, #2a9d8f, #264653); margin-top: 12px; }
+.podium { display: flex; align-items: flex-end; justify-content: center; gap: 10px; margin-bottom: 20px; }
+.podium-item { flex: 1; text-align: center; }
+.podium-stand { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px 10px 0 0; padding: 8px; }
+.podium-item.first .podium-stand { background: rgba(245,158,11,0.3); box-shadow: 0 0 15px #f59e0b; border-color: #f59e0b; }
+.podium-item.second .podium-stand { background: rgba(192,192,192,0.2); box-shadow: 0 0 10px silver; border-color: silver; }
+.podium-item.third .podium-stand { background: rgba(205,127,50,0.2); box-shadow: 0 0 8px #cd7f32; border-color: #cd7f32; }
+.leaderboard-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: rgba(255,255,255,0.04); margin-bottom: 8px; border-radius: 12px; }
+.leaderboard-row.high-ref { background: rgba(245,158,11,0.15); border-right: 3px solid var(--gold); }
+#notif { position: fixed; top: 70px; left: 50%; transform: translateX(-50%); z-index: 9998; padding: 10px 20px; border-radius: 12px; background: #1e1b2e; border: 1px solid rgba(255,255,255,0.2); color: white; font-weight: bold; display: none; white-space: nowrap; }
+.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 10000; align-items: center; justify-content: center; }
+.modal.active { display: flex; }
+.modal-content { background: #1a1635; border-radius: 20px; padding: 24px; max-width: 90%; text-align: center; }
+.modal-btns { display: flex; gap: 10px; margin-top: 20px; }
+.modal-btns button { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
+.modal-btns button.cancel { background: rgba(255,255,255,0.1); color: white; }
+.modal-btns button.confirm { background: #8b5cf6; color: white; }
 </style>
 </head>
 <body>
-<div class="animated-bg"></div>
-<div class="grid-overlay"></div>
+<div id="notif"></div>
+<div id="confirmModal" class="modal"><div class="modal-content"><div class="modal-title">تأكيد</div><p id="confirmMsg"></p><div class="modal-btns"><button class="cancel" onclick="closeConfirm()">إلغاء</button><button class="confirm" onclick="confirmAction()">تأكيد</button></div></div></div>
 
-<div class="app">
-  <div class="header">
-    <div class="user-info">
-      <div class="avatar-circle" id="avatarPreview">🦁</div>
-      <div><div id="userName">Quinn User</div><div id="userLevel" style="font-size:12px;color:#b77eff">🌱 المستوى 1</div></div>
-    </div>
-    <div class="stats-header">
-      <div class="quinn-amount" id="headerQuinn">0.00 Q</div>
-      <div class="token-amount" id="headerTokens">0 توكن</div>
-    </div>
-  </div>
-
+<div id="app">
+  <div class="header"><div style="display:flex;align-items:center;gap:10px"><div id="hdr-avatar" style="width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:#1e1b2e;border:2px solid #8b5cf6;overflow:hidden" onclick="showTab('profile')"></div><div><div id="hdr-name" style="font-weight:700"></div><div id="hdr-level" style="font-size:11px;color:#aaa"></div></div></div><div style="text-align:left"><div id="hdr-quinn" style="font-weight:900"></div><div id="hdr-tokens" style="font-size:11px;color:#aaa"></div></div></div>
+  
   <div class="content">
     <!-- الرئيسية -->
-    <div id="homeTab" class="tab-pane active">
-      <div class="glass-card">
-        <div style="display: flex; justify-content: space-between;"><span>💎 الرصيد</span><span id="homeTokens">0 توكن</span></div>
-        <div style="display: flex; justify-content: space-between; margin-top: 8px;"><span>👆 النقرات</span><span id="homeClicks">0</span></div>
-      </div>
-      <div class="coin-btn" id="coinBtn">💎</div>
-      <div class="glass-card">
-        <div style="display: flex; justify-content: space-between;"><span>⚡ الطاقة</span><span id="energyText">1000/1000</span></div>
-        <div class="energy-bar"><div class="energy-fill" id="energyFill" style="width:100%"></div></div>
-      </div>
-      <div class="glass-card">
-        <div style="display: flex; justify-content: space-between;"><span>💰 الدخل السلبي</span><span id="passiveIncome">0 توكن/دقيقة</span></div>
-      </div>
+    <div id="tab-home" class="tab-content active">
+      <div class="stat-row"><div class="stat-box"><div class="stat-val" id="s-tokens">0</div><div class="stat-lbl">🪙 التوكن</div></div><div class="stat-box"><div class="stat-val" id="s-quinn">0</div><div class="stat-lbl">💎 Quinn</div></div><div class="stat-box"><div class="stat-val" id="s-clicks">0</div><div class="stat-lbl">👆 نقرات</div></div></div>
+      <div class="glass-card" style="padding:14px;margin-bottom:16px"><div style="display:flex;justify-content:space-between"><span id="lvl-name"></span><span id="lvl-next" style="font-size:12px"></span></div><div class="progress-bar" style="margin-top:6px"><div id="lvl-bar" class="progress-fill" style="width:0%"></div></div></div>
+      <div id="boost-banner" style="display:none;background:#f59e0b20;border:1px solid #f59e0b;border-radius:12px;padding:10px;text-align:center;margin-bottom:14px"></div>
+      <div style="display:flex;justify-content:center;margin:20px 0"><button id="coin-btn" onclick="handleClick(event)">💎</button></div>
+      <div class="glass-card" style="padding:12px"><div style="display:flex;justify-content:space-between"><span>⚡ الطاقة</span><span id="energy-txt"></span></div><div class="progress-bar" style="margin-top:6px"><div id="energy-bar" class="progress-fill" style="width:100%"></div></div></div>
+      <div class="glass-card" style="padding:12px;margin-top:12px;display:flex;justify-content:space-between"><span>💰 الدخل السلبي</span><span id="passive-txt">0</span></div>
     </div>
 
     <!-- المحفظة -->
-    <div id="walletTab" class="tab-pane">
-      <div class="glass-card" style="text-align:center">
-        <div>الرصيد الكلي</div>
-        <div id="walletQuinn" style="font-size:32px; font-weight:900">0 Q</div>
-        <div id="walletTokens" style="font-size:14px">0 توكن</div>
-        <button class="small-btn" style="margin-top:12px" onclick="showBuyQuinn()">💎 شراء Quinn</button>
-      </div>
-      <div class="glass-card">
-        <h3>📤 إرسال Quinn</h3>
-        <input type="text" id="sendTo" class="small-btn" style="width:100%; margin-bottom:8px; background:#1e1b2e" placeholder="@username أو ID">
-        <input type="number" id="sendAmount" class="small-btn" style="width:100%; margin-bottom:8px" placeholder="الكمية (Quinn)">
-        <button class="small-btn" style="width:100%" onclick="requestTransfer()">إرسال</button>
-      </div>
-      <div class="glass-card">
-        <h3>📋 آخر العمليات</h3>
-        <div id="transactionsList">لا توجد معاملات</div>
-      </div>
-    </div>
+    <div id="tab-wallet" class="tab-content"><div class="glass" style="padding:20px;text-align:center;margin-bottom:16px"><div>الرصيد الكلي</div><div id="w-quinn" style="font-size:36px;font-weight:900"></div><div id="w-tokens" style="font-size:12px"></div><div style="font-size:11px;margin-top:8px">10,000 توكن = 1 Quinn</div></div><div class="sub-tabs"><button class="sub-tab active" onclick="showWalletSub('overview',this)">نظرة عامة</button><button class="sub-tab" onclick="showWalletSub('send',this)">إرسال</button><button class="sub-tab" onclick="showWalletSub('receive',this)">استقبال</button><button class="sub-tab" onclick="showWalletSub('shop',this)">متجر</button></div><div id="w-overview"><div id="tx-list"></div></div><div id="w-send" style="display:none"><div class="glass-card" style="padding:20px"><input class="inp" id="sendTo" placeholder="@username أو المعرف الرقمي" style="margin-bottom:12px"><input class="inp" id="sendAmt" type="number" placeholder="الكمية (Quinn)" style="margin-bottom:12px"><button class="btn-primary" onclick="requestTransfer()">إرسال 💎</button></div></div><div id="w-receive" style="display:none"><div class="glass-card" style="padding:20px;text-align:center"><div style="font-size:50px">📱</div><div style="margin:10px 0">معرف الاستقبال</div><div id="recvId" style="background:#00000030;padding:8px;border-radius:10px;font-weight:bold"></div><button class="btn-primary" style="margin-top:14px" onclick="copyReceiveId()">نسخ المعرف</button></div></div><div id="w-shop" style="display:none"><div class="glass-card" style="padding:20px"><input class="inp" id="shopQty" type="number" placeholder="كمية Quinn" style="margin-bottom:12px"><input class="inp" id="shopPass" type="password" placeholder="كلمة المرور" style="margin-bottom:12px"><button class="btn-primary" onclick="buyFromShop()">شراء 💎</button></div></div></div>
 
-    <!-- السوق الداخلي -->
-    <div id="marketTab" class="tab-pane">
-      <div class="glass-card">
-        <h3>📈 السوق الداخلي (عرض وطلب حقيقي)</h3>
-        <div id="stocksList"></div>
-        <canvas id="priceChart" width="400" height="180"></canvas>
-      </div>
-      <div class="glass-card">
-        <h3>📊 محفظتي الاستثمارية</h3>
-        <div id="portfolioList"></div>
-      </div>
-    </div>
+    <!-- التعزيزات -->
+    <div id="tab-boost" class="tab-content"><div class="sub-tabs"><button class="sub-tab active" onclick="showBoostSub('boosts',this)">تعزيزات</button><button class="sub-tab" onclick="showBoostSub('tasks',this)">مهام</button><button class="sub-tab" onclick="showBoostSub('passive',this)">سلبي</button></div><div id="b-boosts"><div id="boostsList"></div></div><div id="b-tasks" style="display:none"><div id="tasksList"></div></div><div id="b-passive" style="display:none"><div id="passiveList"></div></div></div>
 
-    <!-- المتصدرين -->
-    <div id="leaderboardTab" class="tab-pane">
-      <div class="glass-card">
-        <h3>🏆 قائمة المتصدرين</h3>
-        <div id="leaderboardList"></div>
-      </div>
+    <!-- المتصدرين - بنفس الشكل الأصلي -->
+    <div id="tab-leaderboard" class="tab-content">
+      <div id="podiumContainer"></div>
+      <div id="leaderboardList"></div>
     </div>
 
     <!-- الإحالات -->
-    <div id="referralTab" class="tab-pane">
-      <div class="glass-card" style="text-align:center">
-        <div>كود الإحالة الخاص بك</div>
-        <div id="refCode" style="font-size:20px; font-weight:bold; margin:8px 0; background:#00000040; padding:8px; border-radius:40px;">CODE123</div>
-        <button class="small-btn" id="copyRefBtn" style="background:#8b5cf6; padding:8px 20px;">📋 نسخ الرابط</button>
-        <div style="margin-top:16px;">👥 عدد المدعوين: <span id="refCount">0</span></div>
-        <div>🏆 أرباح الإحالات: <span id="refEarnings">0</span> توكن</div>
+    <div id="tab-referral" class="tab-content">
+      <div class="glass" style="padding:20px;text-align:center">
+        <div>🏆 كود الإحالة الخاص بك</div><div id="refCodeDisplay" style="background:#00000040;padding:10px;border-radius:12px;margin:12px 0;font-weight:bold;font-size:18px"></div>
+        <button class="btn-primary" onclick="copyRefCode()">نسخ الكود</button><button class="btn-primary" style="margin-top:10px" onclick="shareReferralLink()">🔗 مشاركة الرابط</button>
+        <div style="margin-top:16px">👥 عدد الإحالات: <span id="refCount">0</span></div><div>💰 أرباح الإحالات: <span id="refEarnings">0</span> توكن</div>
       </div>
-      <div id="referralsList"></div>
+      <div class="glass-card" style="padding:16px; margin:16px 0;"><div style="font-weight:700; margin-bottom:8px;">✨ أدخل كود الداعي (مرة واحدة فقط)</div><div style="display:flex; gap:8px;"><input type="text" id="refCodeInput" class="inp" style="flex:1;" placeholder="مثال: REF123456"><button class="btn-sm" onclick="applyReferralCode()">تفعيل الكود</button></div><div id="refCodeStatus" style="font-size:12px; margin-top:6px; color:#aaa;"></div></div>
+      <div id="referralsList" style="margin-top:16px"></div>
     </div>
 
-    <!-- الإعدادات -->
-    <div id="settingsTab" class="tab-pane">
-      <div class="glass-card">
-        <div style="display:flex; justify-content:space-between; align-items:center">
-          <span>🔊 المؤثرات الصوتية</span>
-          <label class="switch"><input type="checkbox" id="soundToggle" checked><span class="slider"></span></label>
-        </div>
-        <div style="margin-top:16px;">🎚️ مستوى الصوت <input type="range" id="volumeSlider" min="0" max="100" value="70" style="width:100%; margin-top:8px;"></div>
-      </div>
-      <div class="glass-card">
-        <h3>🏆 تقدم المستوى</h3>
-        <div>المستوى الحالي: <span id="currentLevelNum">1</span> / 100</div>
-        <div class="energy-bar"><div class="energy-fill" id="levelProgressBar" style="width:0%; background:linear-gradient(90deg,#b77eff,#3b82f6);"></div></div>
-        <div id="nextLevelInfo" style="font-size:12px; margin-top:6px;">التالي: 1,000,000 توكن</div>
-      </div>
-      <div class="glass-card">
-        <h3>🖼️ الصور</h3>
-        <div id="freeAvatars" style="display:flex; flex-wrap:wrap; gap:8px;"></div>
-        <div id="paidAvatars" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:16px;"></div>
-      </div>
+    <!-- الملف الشخصي -->
+    <div id="tab-profile" class="tab-content">
+      <div class="glass" style="padding:20px;text-align:center"><div id="profAvatar" style="font-size:64px; width:100px; height:100px; margin:0 auto; border-radius:50%; overflow:hidden; display:flex; align-items:center; justify-content:center; background:#1e1b2e;"></div><div id="profName" style="font-size:20px;font-weight:900;margin-top:8px"></div><div id="profUsername" style="font-size:12px;color:#aaa"></div><div class="stat-row" style="margin-top:16px"><div class="stat-box"><div id="profQuinn">0</div><div>Quinn</div></div><div class="stat-box"><div id="profClicks">0</div><div>نقرة</div></div><div class="stat-box"><div id="profLevelIcon">🌱</div><div>الرتبة</div></div></div></div>
+      <div class="sub-tabs"><button class="sub-tab active" onclick="showProfileSub('info',this)">معلومات</button><button class="sub-tab" onclick="showProfileSub('avatar',this)">الصورة</button><button class="sub-tab" onclick="showProfileSub('verify',this)">توثيق</button></div>
+      <div id="p-info"><div id="infoList"></div></div>
+      <div id="p-avatar" style="display:none"><div id="avatarGrid" class="avatar-grid"></div><button class="btn-primary telegram-avatar-btn" onclick="buyTelegramAvatar()">📸 شراء صورة تليجرام (50 Quinn)</button></div>
+      <div id="p-verify" style="display:none"><div id="verifyPanel"></div></div>
     </div>
   </div>
 
-  <div class="bottom-nav">
-    <button class="nav-item active" data-tab="home"><span class="nav-icon">🏠</span><span>الرئيسية</span></button>
-    <button class="nav-item" data-tab="wallet"><span class="nav-icon">💼</span><span>المحفظة</span></button>
-    <button class="nav-item" data-tab="market"><span class="nav-icon">📈</span><span>السوق</span></button>
-    <button class="nav-item" data-tab="leaderboard"><span class="nav-icon">🏆</span><span>المتصدرين</span></button>
-    <button class="nav-item" data-tab="referral"><span class="nav-icon">👥</span><span>الإحالات</span></button>
-    <button class="nav-item" data-tab="settings"><span class="nav-icon">⚙️</span><span>الإعدادات</span></button>
-  </div>
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button>
+    <button class="nav-btn" onclick="showTab('boost')"><span class="nav-icon">⚡</span><span class="nav-label">تعزيزات</span></button>
+    <button class="nav-btn" onclick="showTab('wallet')"><span class="nav-icon">💼</span><span class="nav-label">محفظتي</span></button>
+    <button class="nav-btn" onclick="showTab('leaderboard')"><span class="nav-icon">🏆</span><span class="nav-label">الترتيب</span></button>
+    <button class="nav-btn" onclick="showTab('referral')"><span class="nav-icon">👥</span><span class="nav-label">إحالات</span></button>
+    <button class="nav-btn" onclick="showTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">حسابي</span></button>
+  </nav>
 </div>
 
 <script>
-  // ========== الصوت ==========
-  let audioCtx = null, soundEnabled = true, volume = 0.7;
-  function initAudio() { if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); }
-  function playBeep(freq=880, dur=0.08, type='sine') { if (!soundEnabled || !audioCtx) return; try { let now=audioCtx.currentTime; let gain=audioCtx.createGain(); gain.gain.setValueAtTime(volume,now); gain.gain.exponentialRampToValueAtTime(0.00001,now+dur); let osc=audioCtx.createOscillator(); osc.type=type; osc.frequency.value=freq; osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(now+dur); } catch(e){} }
-  function playClick() { playBeep(1200,0.05,'sine'); }
-  function playBuy() { playBeep(660,0.2,'sine'); }
-  function playSell() { playBeep(440,0.2,'sine'); }
+// ------------------- 50 رتبة بأسماء فريدة -------------------
+const RANKS = [];
+const rankNames = [
+  "حصاة", "مرو", "كوارتز", "جمشت", "زبرجد", "فيروز", "ياقوت", "زفير", "زمرد", "ألماس",
+  "لؤلؤ", "مرجان", "عنبر", "جزع", "عقيق", "يشب", "لازورد", "أوبال", "توباز", "كريسوليت",
+  "زركون", "إسبنيل", "تورمالين", "مورجانيت", "هيماتيت", "مالاكيت", "أزوريت", "روز كوارتز", "سيترين", "أمازونيت",
+  "لابرادوريت", "مونستون", "سودالايت", "فلوريت", "كالسيت", "جبس", "تلك", "كلوريت", "سربنتين", "جاد",
+  "نيفريد", "يشم", "كريسوبراس", "أفنتورين", "أغات", "جاسبر", "أونيكس", "سارد", "كارنيليان", "هيليوتروب"
+];
+for (let i = 0; i < 50; i++) {
+  let min = i === 0 ? 0 : Math.floor(10000 * Math.pow(1.2, i-1));
+  let max = i === 49 ? Infinity : Math.floor(10000 * Math.pow(1.2, i));
+  RANKS.push({ name: rankNames[i], icon: getRankIcon(i), min: min, max: max });
+}
+function getRankIcon(index) {
+  const icons = ["🌱","🪨","🔮","💎","🌟","⭐","✨","⚡","🔥","💧","🍃","🌙","☀️","🪐","🌍","🏆","👑","🎖️","🏅","🥇","🥈","🥉","🎯","💪","🧠","👀","🦅","🐉","🦁","🐺","🦊","🐻","🐼","🐨","🐸","🐙","🦋","🐝","🌻","🍁","🍂","🌊","⛰️","🏔️","🌋","🗻","🏝️","🏜️","🌌","🌠"];
+  return icons[index % icons.length];
+}
+function getRank(tokens) {
+  for (let i = RANKS.length-1; i >= 0; i--) if (tokens >= RANKS[i].min) return RANKS[i];
+  return RANKS[0];
+}
 
-  // ========== السوق الداخلي (عرض وطلب حقيقي) ==========
-  const STOCKS = [
-    { id: 'telegram', name: 'Telegram Inc.', symbol: 'TLGM', basePrice: 245.80, minPrice: 50, maxPrice: 2000 },
-    { id: 'gold', name: 'صندوق الذهب', symbol: 'GOLD', basePrice: 1920.50, minPrice: 1000, maxPrice: 5000 },
-    { id: 'bitcoin', name: 'Bitcoin ETF', symbol: 'BTCX', basePrice: 63400, minPrice: 20000, maxPrice: 150000 },
-    { id: 'realty', name: 'العقارات الرقمية', symbol: 'REAL', basePrice: 125.30, minPrice: 30, maxPrice: 800 }
-  ];
-  let marketPrices = {};
-  let priceHistory = {};
+// ------------------- ثوابت أخرى -------------------
+const BOT_USERNAME = 'Quinnofficialbot';
+const SHOP_PASSWORD = 'T9@xQ#4mL!2vZ$7pR';
+const TOKENS_PER_QUINN = 10000;
+const MAX_ENERGY = 1000;
+const REF_BONUS = 5000;
+const TELEGRAM_AVATAR_COST = 50; // Quinn
 
-  function initMarket() {
-    let saved = localStorage.getItem('quinn_market_prices');
-    if (saved) {
-      let data = JSON.parse(saved);
-      marketPrices = data.prices;
-      priceHistory = data.history;
-    } else {
-      STOCKS.forEach(s => {
-        marketPrices[s.id] = s.basePrice;
-        priceHistory[s.id] = Array(30).fill(s.basePrice);
-      });
+const AVATARS = [
+  {id:1,emoji:'🦁',name:'الأسد'},{id:2,emoji:'🐯',name:'النمر'},{id:3,emoji:'🦊',name:'الثعلب'},
+  {id:4,emoji:'🐺',name:'الذئب'},{id:5,emoji:'🦅',name:'النسر'},{id:6,emoji:'🐉',name:'التنين'},
+  {id:7,emoji:'🦋',name:'الفراشة'},{id:8,emoji:'🐬',name:'الدلفين'},{id:9,emoji:'🦄',name:'اليونيكورن'},{id:10,emoji:'🐸',name:'الضفدع'}
+];
+
+const BOOSTS = [
+  {id:'turbo',name:'توربو',desc:'×5 نقرة',cost:500,icon:'⚡',duration:30000},
+  {id:'magnet',name:'مغناطيس',desc:'+3 توكن/0.5ث',cost:1000,icon:'🧲',duration:60000},
+  {id:'shield',name:'درع',desc:'لا تستهلك طاقة',cost:300,icon:'🛡️',duration:60000}
+];
+
+const TASKS = [
+  {id:1,name:'انقر 100 مرة',reward:500,target:100,icon:'👆'},{id:2,name:'انقر 500 مرة',reward:1500,target:500,icon:'🖱️'},
+  {id:3,name:'انقر 1000 مرة',reward:3000,target:1000,icon:'💥'},{id:4,name:'ادعُ صديقاً',reward:5000,type:'referral',icon:'👥'},
+  {id:5,name:'وثّق حسابك',reward:10000,type:'verify',icon:'✅'}
+];
+
+const PASSIVE_ITEMS = [
+  {id:'farm',name:'مزرعة صغيرة',rate:10,cost:50000,icon:'🌱'},{id:'factory',name:'مصنع',rate:50,cost:200000,icon:'🏭'},
+  {id:'complex',name:'مجمع',rate:200,cost:800000,icon:'🏗️'},{id:'server',name:'خادم تعدين',rate:1000,cost:5000000,icon:'🖥️'}
+];
+
+// ------------------- الحالة العامة -------------------
+let currentUser = null;
+let allUsers = {};
+let pendingConfirm = null;
+let activeBoostInterval = null;
+let tgUser = null;
+
+function fmt(n) { if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n).toString(); }
+function toQuinn(t) { return (t/TOKENS_PER_QUINN).toFixed(2); }
+function notify(msg) { let el=document.getElementById('notif'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
+function haptic() { window.Telegram?.WebApp?.HapticFeedback?.impactOccurred('light'); }
+function saveAll() { localStorage.setItem('quinn_all_users', JSON.stringify(allUsers)); }
+
+function loadUser(telegramUser) {
+  let uid = String(telegramUser.id);
+  if(!allUsers[uid]) {
+    let newUser = {
+      id: uid, name: (telegramUser.first_name||'')+' '+(telegramUser.last_name||''), username: telegramUser.username||'',
+      tokens: 1000, clicks: 0, energy: MAX_ENERGY, passiveIncome: 0, boostActive: null, boostEnd: 0,
+      completedTasks: [], transactions: [], avatar: 1, avatarType: 'emoji',
+      verified: false, verifyExpire: 0, secondLife: false, secondLifeExpire: 0,
+      referralCode: `REF${uid.slice(-6)}`, referrals: [], referralEarnings: 0, ownedPassive: {},
+      usedReferralCode: false, referredBy: null
+    };
+    newUser.transactions.push({desc:'🎁 مكافأة التسجيل',amount:1000,time:new Date().toLocaleTimeString()});
+    allUsers[uid] = newUser;
+    saveAll();
+    let startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+    if(startParam && startParam.startsWith('ref_')) {
+      let refCode = startParam.replace('ref_','');
+      applyReferralByCode(uid, refCode);
     }
   }
-  function saveMarket() { localStorage.setItem('quinn_market_prices', JSON.stringify({ prices: marketPrices, history: priceHistory })); }
-  function applyBuyImpact(id) { let old=marketPrices[id]; let newPrice=old*1.005; let s=STOCKS.find(s=>s.id===id); if(newPrice>s.maxPrice) newPrice=s.maxPrice; marketPrices[id]=parseFloat(newPrice.toFixed(2)); updateHistory(id); saveMarket(); }
-  function applySellImpact(id) { let old=marketPrices[id]; let newPrice=old*0.995; let s=STOCKS.find(s=>s.id===id); if(newPrice<s.minPrice) newPrice=s.minPrice; marketPrices[id]=parseFloat(newPrice.toFixed(2)); updateHistory(id); saveMarket(); }
-  function updateHistory(id) { priceHistory[id].push(marketPrices[id]); if(priceHistory[id].length>30) priceHistory[id].shift(); }
+  return allUsers[uid];
+}
 
-  // ========== بيانات المستخدمين (نفس المفتاح القديم) ==========
-  let currentUser = null;
-  let allUsers = {};
+function applyReferralByCode(newUserId, refCode) {
+  let newUser = allUsers[newUserId];
+  if(!newUser || newUser.usedReferralCode) return false;
+  let referrerId = null;
+  for(let id in allUsers) if(allUsers[id].referralCode === refCode && id !== newUserId) { referrerId = id; break; }
+  if(!referrerId) return false;
+  let referrer = allUsers[referrerId];
+  if(referrerId === newUserId) return false;
+  
+  newUser.tokens += REF_BONUS;
+  referrer.tokens += REF_BONUS;
+  newUser.referralEarnings += REF_BONUS;
+  referrer.referralEarnings += REF_BONUS;
+  newUser.usedReferralCode = true;
+  newUser.referredBy = referrerId;
+  if(!referrer.referrals.includes(newUserId)) referrer.referrals.push(newUserId);
+  newUser.transactions.unshift({desc:`🎉 مكافأة إحالة من ${referrer.name}`, amount:REF_BONUS, time:new Date().toLocaleTimeString()});
+  referrer.transactions.unshift({desc:`🎁 مكافأة إحالة ${newUser.name}`, amount:REF_BONUS, time:new Date().toLocaleTimeString()});
+  saveAll();
+  notify(`🎉 تم تفعيل الكود! حصلت أنت و${referrer.name} على ${REF_BONUS} توكن`);
+  if(currentUser && currentUser.id === newUserId) refreshUI();
+  return true;
+}
 
-  function saveAll() { localStorage.setItem('quinn_all_users_v3', JSON.stringify(allUsers)); }  // نفس المفتاح القديم للحفاظ على البيانات
-
-  function loadUser(telegramUser) {
-    let uid = String(telegramUser.id);
-    if (!allUsers[uid]) {
-      let newUser = {
-        id: uid, name: (telegramUser.first_name||'') + ' ' + (telegramUser.last_name||''),
-        username: telegramUser.username || '', tokens: 1000, clicks: 0, energy: 1000, passiveIncome: 0,
-        avatar: 1, ownedAvatars: [1], transactions: [], referrals: [], referralEarnings: 0,
-        referralCode: `REF${uid.slice(-6)}`, portfolio: { telegram: 0, gold: 0, bitcoin: 0, realty: 0 }
-      };
-      allUsers[uid] = newUser;
-      saveAll();
-      // معالجة الإحالة عبر start_param
-      let startParam = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
-      if (startParam && startParam.startsWith('ref_')) {
-        let refCode = startParam.replace('ref_', '');
-        let referrerId = Object.keys(allUsers).find(id => allUsers[id].referralCode === refCode);
-        if (referrerId && referrerId !== uid && !allUsers[uid].referralProcessed) {
-          allUsers[uid].referralProcessed = true;
-          allUsers[uid].tokens += 400;
-          allUsers[referrerId].tokens += 500;
-          allUsers[referrerId].referralEarnings += 500;
-          allUsers[referrerId].referrals.push({ name: newUser.name, bonus: 500, date: new Date().toLocaleString() });
-          allUsers[uid].transactions.unshift({ desc: `مكافأة إحالة`, amount: 400, time: new Date().toLocaleTimeString() });
-          allUsers[referrerId].transactions.unshift({ desc: `إحالة ${newUser.name}`, amount: 500, time: new Date().toLocaleTimeString() });
-          saveAll();
-        }
-      }
-    }
-    return allUsers[uid];
-  }
-
-  function formatNumber(n) { if(n>=1e6) return (n/1e6).toFixed(2)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return Math.floor(n).toString(); }
-  function tokensToQuinn(t) { return (t/10000).toFixed(2); }
-  function quinnToTokens(q) { return q * 10000; }
-  function getLevel(tokens) { let lvl = Math.floor(tokens / 1_000_000) + 1; return Math.min(100, Math.max(1, lvl)); }
-
-  // شراء وبيع الأسهم (تؤثر على السوق)
-  function buyStock(id) {
-    let price = marketPrices[id];
-    let cost = Math.floor(price * 10);
-    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
-    currentUser.tokens -= cost;
-    currentUser.portfolio[id]++;
-    currentUser.transactions.unshift({ desc: `شراء ${STOCKS.find(s=>s.id===id).name}`, amount: -cost, time: new Date().toLocaleTimeString() });
-    applyBuyImpact(id);
-    saveAll();
-    playBuy();
+function applyReferralCode() {
+  if(!currentUser) return;
+  if(currentUser.usedReferralCode) { notify('لقد استخدمت كود إحالة بالفعل!'); return; }
+  let code = document.getElementById('refCodeInput').value.trim();
+  if(!code) { notify('أدخل الكود أولاً'); return; }
+  if(applyReferralByCode(currentUser.id, code)) {
+    document.getElementById('refCodeInput').value = '';
+    document.getElementById('refCodeStatus').innerHTML = '✅ تم التفعيل';
     refreshUI();
-  }
-  function sellStock(id) {
-    if (!currentUser.portfolio[id]) { alert('لا تملك هذا الأصل'); return; }
-    let price = marketPrices[id];
-    let gain = Math.floor(price * 10);
-    currentUser.tokens += gain;
-    currentUser.portfolio[id]--;
-    currentUser.transactions.unshift({ desc: `بيع ${STOCKS.find(s=>s.id===id).name}`, amount: gain, time: new Date().toLocaleTimeString() });
-    applySellImpact(id);
-    saveAll();
-    playSell();
-    refreshUI();
-  }
+  } else { notify('الكود غير صالح'); document.getElementById('refCodeStatus').innerHTML = '❌ كود غير صحيح'; }
+}
 
-  // المحفظة: إرسال Quinn
-  function requestTransfer() {
-    let to = document.getElementById('sendTo').value.trim();
-    let amount = parseFloat(document.getElementById('sendAmount').value);
-    if (!to || isNaN(amount) || amount <= 0) { alert('بيانات غير صحيحة'); return; }
-    let cost = quinnToTokens(amount);
-    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
-    let targetId = null;
-    if (to.startsWith('@')) { let uname = to.slice(1); targetId = Object.keys(allUsers).find(id => allUsers[id].username === uname); }
-    else targetId = to;
-    if (!targetId || !allUsers[targetId]) { alert('المستخدم غير موجود'); return; }
-    if (targetId === currentUser.id) { alert('لا يمكن التحويل لنفسك'); return; }
-    currentUser.tokens -= cost;
-    allUsers[targetId].tokens += cost;
-    currentUser.transactions.unshift({ desc: `إرسال ${amount} Quinn إلى ${to}`, amount: -cost, time: new Date().toLocaleTimeString() });
-    allUsers[targetId].transactions.unshift({ desc: `استلام ${amount} Quinn من ${currentUser.name}`, amount: cost, time: new Date().toLocaleTimeString() });
-    saveAll();
-    playClick();
-    refreshUI();
-    document.getElementById('sendTo').value = '';
-    document.getElementById('sendAmount').value = '';
-    alert('تم الإرسال بنجاح');
-  }
-
-  // شراء Quinn من المتجر (بنفس كلمة المرور القديمة)
-  function showBuyQuinn() {
-    let qty = prompt('كمية Quinn المراد شراؤها:', '1');
-    if (!qty) return;
-    let pass = prompt('كلمة مرور المتجر:');
-    if (pass !== 'T9@xQ#4mL!2vZ$7pR') { alert('كلمة المرور خاطئة'); return; }
-    let tokensGain = quinnToTokens(parseFloat(qty));
-    if (isNaN(tokensGain)) return;
-    currentUser.tokens += tokensGain;
-    currentUser.transactions.unshift({ desc: `شراء ${qty} Quinn من المتجر`, amount: tokensGain, time: new Date().toLocaleTimeString() });
-    saveAll();
-    playBuy();
-    refreshUI();
-    alert(`تمت إضافة ${qty} Quinn بنجاح`);
-  }
-
-  // الصور (نفس النظام القديم)
-  const freeAvatars = [{id:1,emoji:'🦁',name:'الأسد'},{id:2,emoji:'🐯',name:'النمر'},{id:3,emoji:'🦊',name:'الثعلب'},{id:4,emoji:'🐺',name:'الذئب'}];
-  const paidAvatars = [
-    {id:5,emoji:'🐉',name:'التنين الذهبي',price:10},{id:6,emoji:'👑',name:'التاج الملكي',price:25},
-    {id:7,emoji:'🚀',name:'صاروخ القمر',price:50},{id:8,emoji:'🌌',name:'المجرة',price:100},
-    {id:9,emoji:'💎',name:'الألماس',price:250},{id:10,emoji:'⚡',name:'البرق',price:500}
-  ];
-  function renderAvatars() {
-    let freeDiv = document.getElementById('freeAvatars');
-    let paidDiv = document.getElementById('paidAvatars');
-    if (freeDiv) freeDiv.innerHTML = freeAvatars.map(av => `<div style="cursor:pointer; text-align:center" onclick="changeAvatar(${av.id})"><div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id?'#b77eff':'#ffffff30'}; border-radius:60px; padding:6px;">${av.emoji}</div><div>${av.name}</div></div>`).join('');
-    if (paidDiv) paidDiv.innerHTML = paidAvatars.map(av => {
-      let owned = currentUser.ownedAvatars.includes(av.id);
-      return `<div style="cursor:pointer; text-align:center" onclick="${owned ? `changeAvatar(${av.id})` : `buyAvatar(${av.id}, ${av.price})`}"><div style="font-size:36px; border:2px solid ${currentUser.avatar===av.id?'#b77eff':'#ffffff30'}; border-radius:60px; padding:6px; opacity:${owned?1:0.6}">${av.emoji}</div><div>${av.name}</div><div style="font-size:10px">${owned ? '✓' : av.price+' Q'}</div></div>`;
-    }).join('');
-  }
-  function buyAvatar(id, priceQ) {
-    let cost = quinnToTokens(priceQ);
-    if (currentUser.tokens < cost) { alert('رصيد غير كاف'); return; }
-    if (currentUser.ownedAvatars.includes(id)) return;
-    currentUser.tokens -= cost;
-    currentUser.ownedAvatars.push(id);
-    currentUser.transactions.unshift({ desc: `شراء صورة ${paidAvatars.find(a=>a.id===id).name}`, amount: -cost, time: new Date().toLocaleTimeString() });
-    saveAll();
-    playBuy();
-    refreshUI();
-  }
-  function changeAvatar(id) {
-    if (!currentUser.ownedAvatars.includes(id)) { alert('لا تملك هذه الصورة'); return; }
-    currentUser.avatar = id;
+function buyTelegramAvatar() {
+  if(!currentUser) return;
+  let costTokens = TELEGRAM_AVATAR_COST * TOKENS_PER_QUINN;
+  if(currentUser.tokens >= costTokens) {
+    currentUser.tokens -= costTokens;
+    currentUser.avatarType = 'telegram';
+    currentUser.transactions.unshift({desc:'📸 شراء صورة تليجرام', amount:-costTokens, time:new Date().toLocaleTimeString()});
     saveAll();
     refreshUI();
-    playClick();
-  }
+    notify('تم شراء صورة تليجرام!');
+  } else { notify(`تحتاج ${TELEGRAM_AVATAR_COST} Quinn لشراء الصورة`); }
+}
 
-  // المتصدرين
-  function renderLeaderboard() {
-    let users = Object.values(allUsers).map(u => ({ name: u.name, tokens: u.tokens, avatar: u.avatar, isMe: u.id === currentUser.id }));
-    users.sort((a,b)=>b.tokens - a.tokens);
-    let html = users.slice(0,50).map((u,i) => `<div class="leaderboard-item"><div style="width:30px">${i+1}</div><div style="font-size:28px">${freeAvatars.concat(paidAvatars).find(a=>a.id===u.avatar)?.emoji || '🦁'}</div><div style="flex:1">${u.name} ${u.isMe?'(أنت)':''}</div><div>${formatNumber(u.tokens)} توكن</div></div>`).join('');
-    document.getElementById('leaderboardList').innerHTML = html || '<div class="glass-card">لا يوجد مستخدمين</div>';
+function getAvatarDisplay() {
+  if(!currentUser) return '👤';
+  if(currentUser.avatarType === 'telegram' && tgUser && tgUser.photo_url) {
+    return `<img src="${tgUser.photo_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+  } else {
+    let av = AVATARS.find(a=>a.id===currentUser.avatar) || AVATARS[0];
+    return av.emoji;
   }
+}
 
-  // النقر الرئيسي
-  function handleClick(e) {
-    if (currentUser.energy <= 0) { alert('لا طاقة! انتظر'); return; }
-    currentUser.tokens++;
-    currentUser.clicks++;
-    currentUser.energy = Math.max(0, currentUser.energy - 1);
-    let x=e.clientX, y=e.clientY;
-    let fly = document.createElement('div'); fly.className='flying-number'; fly.innerText='+1'; fly.style.left=x+'px'; fly.style.top=y+'px'; document.body.appendChild(fly); setTimeout(()=>fly.remove(),800);
-    refreshUI();
-    saveAll();
-    playClick();
-  }
+// دوال التحديث الأساسية
+function refreshUI() {
+  if(!currentUser) return;
+  document.getElementById('s-tokens').innerText = fmt(currentUser.tokens);
+  document.getElementById('s-quinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('s-clicks').innerText = currentUser.clicks;
+  document.getElementById('energy-txt').innerText = `${currentUser.energy}/${MAX_ENERGY}`;
+  document.getElementById('energy-bar').style.width = `${(currentUser.energy/MAX_ENERGY)*100}%`;
+  let rank = getRank(currentUser.tokens);
+  document.getElementById('lvl-name').innerHTML = `${rank.icon} ${rank.name}`;
+  let nextRank = RANKS.find(r => r.min > currentUser.tokens);
+  if(nextRank) { let needed = nextRank.min - currentUser.tokens; document.getElementById('lvl-next').innerText = `للمرتبة التالية: ${fmt(needed)}`; let progress = (currentUser.tokens - rank.min) / (nextRank.min - rank.min) * 100; document.getElementById('lvl-bar').style.width = `${Math.min(100,progress)}%`; }
+  else { document.getElementById('lvl-next').innerText = 'أعلى مرتبة'; document.getElementById('lvl-bar').style.width = '100%'; }
+  let passive = Object.values(currentUser.ownedPassive).reduce((a,b)=>a+b,0);
+  document.getElementById('passive-txt').innerText = fmt(passive)+'/ث';
+  document.getElementById('hdr-name').innerText = currentUser.name;
+  document.getElementById('hdr-level').innerHTML = rank.icon;
+  document.getElementById('hdr-quinn').innerText = toQuinn(currentUser.tokens)+' 💎';
+  document.getElementById('hdr-tokens').innerText = fmt(currentUser.tokens)+' 🪙';
+  let avatarHtml = getAvatarDisplay();
+  document.getElementById('hdr-avatar').innerHTML = avatarHtml;
+  document.getElementById('w-quinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('w-tokens').innerText = fmt(currentUser.tokens)+' توكن';
+  document.getElementById('recvId').innerText = currentUser.id;
+  document.getElementById('profAvatar').innerHTML = avatarHtml;
+  document.getElementById('profName').innerText = currentUser.name;
+  document.getElementById('profUsername').innerText = '@'+(currentUser.username||'unknown');
+  document.getElementById('profQuinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('profClicks').innerText = currentUser.clicks;
+  document.getElementById('profLevelIcon').innerHTML = rank.icon;
+  renderTransactions(); renderLeaderboard(); renderReferrals(); renderBoosts(); renderTasks(); renderPassiveItems(); renderAvatarShop(); renderVerifyPanel();
+}
 
-  // تحديث الواجهة بالكامل
-  function refreshUI() {
-    if (!currentUser) return;
-    let level = getLevel(currentUser.tokens);
-    let nextTokens = level===100 ? 100_000_000 : level * 1_000_000;
-    let progress = ((currentUser.tokens - (level-1)*1_000_000) / (nextTokens - (level-1)*1_000_000))*100;
-    if (level===100) progress=100;
-    document.getElementById('currentLevelNum').innerText = level;
-    document.getElementById('levelProgressBar').style.width = Math.min(100,progress)+'%';
-    document.getElementById('nextLevelInfo').innerHTML = level>=100 ? '🏆 أعلى مستوى' : `التالي: ${formatNumber(nextTokens)} توكن`;
-    document.getElementById('userLevel').innerHTML = (level>=90?'👑':(level>=50?'🔥':'🌱')) + ` المستوى ${level}`;
-    document.getElementById('headerQuinn').innerHTML = tokensToQuinn(currentUser.tokens)+' Q';
-    document.getElementById('headerTokens').innerHTML = formatNumber(currentUser.tokens)+' توكن';
-    document.getElementById('homeTokens').innerHTML = formatNumber(currentUser.tokens)+' توكن';
-    document.getElementById('homeClicks').innerHTML = formatNumber(currentUser.clicks);
-    document.getElementById('passiveIncome').innerHTML = currentUser.passiveIncome+' توكن/دقيقة';
-    let energyPct = (currentUser.energy/1000)*100;
-    document.getElementById('energyFill').style.width = energyPct+'%';
-    document.getElementById('energyText').innerHTML = `${Math.floor(currentUser.energy)}/1000`;
-    let avatarObj = freeAvatars.concat(paidAvatars).find(a=>a.id===currentUser.avatar);
-    document.getElementById('avatarPreview').innerHTML = avatarObj ? avatarObj.emoji : '🦁';
-    document.getElementById('userName').innerHTML = currentUser.name.split(' ')[0];
-    document.getElementById('walletQuinn').innerHTML = tokensToQuinn(currentUser.tokens)+' Q';
-    document.getElementById('walletTokens').innerHTML = formatNumber(currentUser.tokens)+' توكن';
-    let txHtml = currentUser.transactions.slice(0,10).map(tx => `<div class="tx-item"><div>${tx.desc}</div><div style="color:${tx.amount>0?'#10b981':'#ef4444'}">${tx.amount>0?'+':''}${formatNumber(Math.abs(tx.amount))}</div></div>`).join('');
-    document.getElementById('transactionsList').innerHTML = txHtml || 'لا توجد معاملات';
-    document.getElementById('refCode').innerHTML = currentUser.referralCode;
-    document.getElementById('refCount').innerHTML = currentUser.referrals.length;
-    document.getElementById('refEarnings').innerHTML = formatNumber(currentUser.referralEarnings);
-    let refsHtml = currentUser.referrals.map(r => `<div class="glass-card" style="margin-bottom:8px">👤 ${r.name} +${formatNumber(r.bonus)} توكن<br><span style="font-size:11px">${r.date}</span></div>`).join('');
-    document.getElementById('referralsList').innerHTML = refsHtml || '<div class="glass-card">لا توجد إحالات بعد</div>';
-    renderLeaderboard();
-    renderMarketList();
-    renderPortfolio();
-    renderAvatars();
-    drawChart();
-  }
+function renderTransactions() { let html=''; currentUser.transactions.slice(0,10).forEach(tx=>{ html+=`<div class="tx-item"><span>${tx.desc}</span><span>${tx.amount>0?'+'+tx.amount:tx.amount}</span><span style="font-size:10px">${tx.time}</span></div>`; }); document.getElementById('tx-list').innerHTML=html||'<div class="glass-card" style="padding:12px">لا توجد معاملات</div>'; }
 
-  function renderMarketList() {
-    let container = document.getElementById('stocksList');
-    if (!container) return;
-    container.innerHTML = STOCKS.map(s => {
-      let price = marketPrices[s.id];
-      let change = 0;
-      if (priceHistory[s.id] && priceHistory[s.id].length>=2) {
-        let prev = priceHistory[s.id][priceHistory[s.id].length-2];
-        change = ((price - prev)/prev)*100;
-      }
-      return `<div class="stock-item"><div><strong>${s.name}</strong><br><span style="font-size:11px">${s.symbol}</span></div><div><span class="stock-price">${price.toFixed(2)}</span><div class="${change>=0?'up':'down'}">${change>=0?'+':''}${change.toFixed(2)}%</div></div><div><button class="small-btn" onclick="buyStock('${s.id}')">شراء</button> <button class="small-btn" onclick="sellStock('${s.id}')">بيع</button></div></div>`;
-    }).join('');
-  }
-  function renderPortfolio() {
-    let container = document.getElementById('portfolioList');
-    if (!container) return;
-    let items = STOCKS.map(s => {
-      let qty = currentUser.portfolio[s.id] || 0;
-      if (qty===0) return '';
-      let value = (marketPrices[s.id] * 10 * qty).toFixed(0);
-      return `<div class="stock-item"><div>${s.name}</div><div>الكمية: ${qty}</div><div>القيمة: ${formatNumber(value)} توكن</div></div>`;
-    }).filter(i=>i);
-    container.innerHTML = items.length ? items.join('') : '<div class="glass-card" style="text-align:center">محفظتك فارغة</div>';
-  }
-  function drawChart() {
-    let canvas = document.getElementById('priceChart');
-    if (!canvas) return;
-    canvas.width = canvas.clientWidth;
-    canvas.height = 180;
-    let ctx = canvas.getContext('2d');
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    let data = priceHistory['telegram'] || [];
-    if (data.length<2) return;
-    let min=Math.min(...data), max=Math.max(...data), range=max-min||1;
-    ctx.beginPath(); ctx.strokeStyle='#b77eff'; ctx.lineWidth=2.5;
-    for (let i=0; i<data.length; i++) {
-      let x = (i/(data.length-1))*canvas.width;
-      let y = canvas.height - ((data[i]-min)/range)*(canvas.height-30)-15;
-      if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
-    }
-    ctx.stroke();
-    ctx.fillStyle='#fff'; ctx.font='10px monospace'; ctx.fillText(`السعر: ${marketPrices['telegram'].toFixed(2)}`,10,15);
-  }
+// ========== لوحة المتصدرين بنفس الشكل الأصلي ==========
+function renderLeaderboard() {
+  // ترتيب المستخدمين حسب التوكنات + أرباح الإحالات (كما كان في الأصل)
+  let usersArr = Object.values(allUsers).sort((a,b)=> (b.tokens + b.referralEarnings) - (a.tokens + a.referralEarnings));
+  
+  // بناء المنصة للثلاثة الأوائل
+  let podiumHtml = '<div class="podium">';
+  let top3 = usersArr.slice(0,3);
+  top3.forEach((u, idx) => {
+    let cls = idx === 0 ? 'first' : (idx === 1 ? 'second' : 'third');
+    let avatarIcon = (u.avatarType === 'telegram' && allUsers[u.id]?.photo_url) ? '📸' : (AVATARS.find(a=>a.id===u.avatar)?.emoji || '👤');
+    podiumHtml += `
+      <div class="podium-item ${cls}">
+        <div class="podium-stand">
+          <div style="font-size:28px">${avatarIcon}</div>
+          <div>${u.name.slice(0,12)}</div>
+          <div>💰 ${fmt(u.tokens + u.referralEarnings)}</div>
+          <div style="font-size:10px">👥 ${u.referrals.length}</div>
+        </div>
+      </div>
+    `;
+  });
+  podiumHtml += '</div><div id="leaderboardList">';
+  
+  // بقية المستخدمين (من المركز الرابع إلى الخامس عشر)
+  let rest = usersArr.slice(3, 15);
+  rest.forEach((u, i) => {
+    let rankNum = i + 4;
+    let avatarIcon = (u.avatarType === 'telegram' && allUsers[u.id]?.photo_url) ? '📸' : (AVATARS.find(a=>a.id===u.avatar)?.emoji || '👤');
+    let refClass = u.referrals.length >= 3 ? 'high-ref' : '';
+    podiumHtml += `
+      <div class="leaderboard-row ${refClass}">
+        <span>${rankNum}. ${avatarIcon} ${u.name.slice(0,15)}</span>
+        <span>${fmt(u.tokens + u.referralEarnings)} 💎</span>
+        <span style="font-size:11px">👥 ${u.referrals.length}</span>
+      </div>
+    `;
+  });
+  podiumHtml += '</div>';
+  document.getElementById('podiumContainer').innerHTML = podiumHtml;
+}
 
-  // مؤقتات
-  setInterval(() => { if(currentUser && currentUser.energy<1000) { currentUser.energy=Math.min(1000,currentUser.energy+5); refreshUI(); saveAll(); } }, 2000);
-  setInterval(() => { if(currentUser && currentUser.passiveIncome>0) { currentUser.tokens+=currentUser.passiveIncome; currentUser.transactions.unshift({desc:'الدخل السلبي',amount:currentUser.passiveIncome,time:new Date().toLocaleTimeString()}); refreshUI(); saveAll(); } }, 60000);
+function renderReferrals() { document.getElementById('refCount').innerText=currentUser.referrals.length; document.getElementById('refEarnings').innerText=currentUser.referralEarnings; document.getElementById('refCodeDisplay').innerText=currentUser.referralCode; let html=''; currentUser.referrals.forEach(rid=>{ let ru=allUsers[rid]; if(ru) html+=`<div class="tx-item">${ru.name} 🎉</div>`; }); document.getElementById('referralsList').innerHTML=html||'<div class="glass-card" style="padding:12px;text-align:center">لا توجد إحالات</div>'; }
+function renderBoosts() { let html=''; BOOSTS.forEach(b=>{ html+=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>${b.icon} ${b.name} - ${b.desc}</div><div style="font-size:12px">التكلفة: ${b.cost} توكن</div><button class="btn-sm" onclick="buyBoost('${b.id}')">شراء</button></div>`; }); document.getElementById('boostsList').innerHTML=html; }
+function renderTasks() { let html=''; TASKS.forEach(t=>{ let done=currentUser.completedTasks.includes(t.id); html+=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>${t.icon} ${t.name} - مكافأة: ${t.reward} توكن</div>${done?'<span style="color:green">✅ مكتمل</span>':`<button class="btn-sm" onclick="checkTask(${t.id})">إكمال</button>`}</div>`; }); document.getElementById('tasksList').innerHTML=html; }
+function renderPassiveItems() { let html=''; PASSIVE_ITEMS.forEach(p=>{ let owned=currentUser.ownedPassive[p.id]||0; html+=`<div class="glass-card" style="padding:12px;margin-bottom:8px"><div>${p.icon} ${p.name} (${p.rate}/ث)</div><div>الكمية: ${owned} | سعر الوحدة: ${fmt(p.cost)} توكن</div><button class="btn-sm" onclick="buyPassive('${p.id}')">شراء</button></div>`; }); document.getElementById('passiveList').innerHTML=html; }
+function renderAvatarShop() { let html=''; AVATARS.forEach(a=>{ let selected=(currentUser.avatar===a.id && currentUser.avatarType!=='telegram'); html+=`<div class="avatar-item ${selected?'selected':''}" onclick="selectAvatar(${a.id})"><div style="font-size:32px">${a.emoji}</div><div>${a.name}</div></div>`; }); document.getElementById('avatarGrid').innerHTML=html; }
+function renderVerifyPanel() { let html=''; if(currentUser.verified) html=`<div class="glass-card" style="padding:12px">✅ حساب موثق حتى ${new Date(currentUser.verifyExpire).toLocaleDateString()}</div>`; else html=`<div class="glass-card" style="padding:12px"><div>التوثيق يكلف 50 Quinn (يدوم 30 يوم)</div><button class="btn-primary" onclick="verifyAccount()">توثيق الحساب</button></div>`; document.getElementById('verifyPanel').innerHTML=html; }
 
-  // بدء التشغيل
-  function init() {
-    initMarket();
-    let tg = window.Telegram?.WebApp;
-    let userData = tg ? (tg.initDataUnsafe?.user || { id: Date.now(), first_name: 'زائر' }) : { id: 'local'+Date.now(), first_name: 'تجريبي' };
-    if(tg) { tg.ready(); tg.expand(); }
-    let stored = localStorage.getItem('quinn_all_users_v3');  // نفس المفتاح القديم
-    if(stored) allUsers = JSON.parse(stored);
-    else allUsers = {};
-    currentUser = loadUser(userData);
-    initAudio();
-    refreshUI();
+function handleClick(e) {
+  if(currentUser.energy<=0 && !currentUser.boostActive) { notify('الطاقة منخفضة! انتظر قليلاً'); return; }
+  let gain = (currentUser.boostActive==='turbo')?5:1;
+  if(!currentUser.boostActive || currentUser.boostActive!=='shield') currentUser.energy = Math.max(0, currentUser.energy-1);
+  currentUser.tokens += gain;
+  currentUser.clicks += 1;
+  if(currentUser.boostActive==='magnet') setTimeout(()=>{ if(currentUser) currentUser.tokens+=3; refreshUI(); }, 500);
+  saveAll(); refreshUI(); haptic();
+}
+function buyBoost(id) { let b=BOOSTS.find(b=>b.id===id); if(currentUser.tokens>=b.cost) { currentUser.tokens-=b.cost; currentUser.boostActive=id; currentUser.boostEnd=Date.now()+b.duration; saveAll(); notify(`تم تفعيل ${b.name}`); refreshUI(); if(activeBoostInterval) clearInterval(activeBoostInterval); activeBoostInterval=setInterval(()=>{ if(currentUser && currentUser.boostEnd && Date.now()>currentUser.boostEnd) { currentUser.boostActive=null; saveAll(); refreshUI(); clearInterval(activeBoostInterval); notify('انتهى التعزيز'); } refreshUI(); },1000); } else notify('توكن غير كاف'); }
+function checkTask(id) { let t=TASKS.find(t=>t.id===id); if(currentUser.completedTasks.includes(id)) return; if(t.type==='referral' && currentUser.referrals.length===0) { notify('يجب دعوة صديق أولاً'); return; } if(t.type==='verify' && !currentUser.verified) { notify('قم بتوثيق حسابك أولاً'); return; } if(t.target && currentUser.clicks>=t.target) { currentUser.tokens+=t.reward; currentUser.completedTasks.push(id); saveAll(); refreshUI(); notify(`✅ أتممت المهمة وحصلت على ${t.reward} توكن`); } else notify(`تحتاج إلى ${t.target} نقرة`); }
+function buyPassive(id) { let p=PASSIVE_ITEMS.find(p=>p.id===id); if(currentUser.tokens>=p.cost) { currentUser.tokens-=p.cost; currentUser.ownedPassive[id]=(currentUser.ownedPassive[id]||0)+1; saveAll(); refreshUI(); notify(`تم شراء ${p.name}`); } else notify('توكن غير كاف'); }
+function selectAvatar(id) { if(currentUser.avatarType==='telegram') { if(confirm('استخدام صورة تليجرام سيتم استبدالها بالصورة العادية. استمرار؟')) currentUser.avatarType='emoji'; else return; } currentUser.avatar=id; saveAll(); refreshUI(); notify('تم تغيير الصورة'); }
+function verifyAccount() { let cost=50*TOKENS_PER_QUINN; if(currentUser.tokens>=cost) { currentUser.tokens-=cost; currentUser.verified=true; currentUser.verifyExpire=Date.now()+30*24*3600000; saveAll(); refreshUI(); notify('تم توثيق الحساب'); } else notify(`تحتاج 50 Quinn`); }
+function requestTransfer() { let toId=document.getElementById('sendTo').value.trim(); let amt=parseFloat(document.getElementById('sendAmt').value); if(isNaN(amt)||amt<=0) return; let receiver=Object.values(allUsers).find(u=>u.id===toId||u.username===toId); if(!receiver) { notify('المستخدم غير موجود'); return; } let amtTokens=amt*TOKENS_PER_QUINN; if(currentUser.tokens>=amtTokens && currentUser.id!==receiver.id) { currentUser.tokens-=amtTokens; receiver.tokens+=amtTokens; currentUser.transactions.unshift({desc:`إرسال ${amt} Quinn إلى ${receiver.name}`,amount:-amtTokens,time:new Date().toLocaleTimeString()}); receiver.transactions.unshift({desc:`استلام ${amt} Quinn من ${currentUser.name}`,amount:amtTokens,time:new Date().toLocaleTimeString()}); saveAll(); refreshUI(); notify('تم الإرسال'); } else notify('رصيد غير كاف'); }
+function copyReceiveId() { navigator.clipboard.writeText(currentUser.id); notify('تم نسخ المعرف'); }
+function copyRefCode() { navigator.clipboard.writeText(currentUser.referralCode); notify('تم نسخ الكود'); }
+function shareReferralLink() { let link=`https://t.me/${BOT_USERNAME}?start=ref_${currentUser.referralCode}`; navigator.clipboard.writeText(link); notify('تم نسخ رابط الدعوة'); }
+function buyFromShop() { let qty=parseFloat(document.getElementById('shopQty').value); let pass=document.getElementById('shopPass').value; if(pass===SHOP_PASSWORD && qty>0 && currentUser.tokens>=qty*TOKENS_PER_QUINN) { currentUser.tokens-=qty*TOKENS_PER_QUINN; notify('عملية شراء ناجحة (محاكاة)'); refreshUI(); } else notify('بيانات غير صحيحة'); }
 
-    document.getElementById('soundToggle').addEventListener('change', e => soundEnabled = e.target.checked);
-    document.getElementById('volumeSlider').addEventListener('input', e => volume = e.target.value/100);
-    document.getElementById('copyRefBtn').addEventListener('click', () => {
-      let link = `https://t.me/${tg?.initDataUnsafe?.user?.username || 'Quinnofficialbot'}?start=ref_${currentUser.referralCode}`;
-      navigator.clipboard?.writeText(link);
-      alert('تم نسخ رابط الإحالة');
-    });
-    document.getElementById('coinBtn').addEventListener('click', handleClick);
-    document.querySelectorAll('.nav-item').forEach(btn => {
-      btn.addEventListener('click', () => {
-        let tab = btn.getAttribute('data-tab');
-        document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
-        document.getElementById(tab+'Tab').classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-        btn.classList.add('active');
-        if(tab === 'market') drawChart();
-      });
-    });
-  }
-  window.onload = init;
-  window.buyStock = buyStock;
-  window.sellStock = sellStock;
-  window.buyAvatar = buyAvatar;
-  window.changeAvatar = changeAvatar;
-  window.requestTransfer = requestTransfer;
-  window.showBuyQuinn = showBuyQuinn;
+function showTab(tabId) { document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active')); document.getElementById(`tab-${tabId}`).classList.add('active'); document.querySelectorAll('.nav-btn').forEach(btn=>btn.classList.remove('active')); event.target.closest('.nav-btn').classList.add('active'); refreshUI(); }
+function showWalletSub(sub,btn) { document.querySelectorAll('#tab-wallet .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('w-overview').style.display='none'; document.getElementById('w-send').style.display='none'; document.getElementById('w-receive').style.display='none'; document.getElementById('w-shop').style.display='none'; document.getElementById(`w-${sub}`).style.display='block'; if(sub==='overview') renderTransactions(); }
+function showBoostSub(sub,btn) { document.querySelectorAll('#tab-boost .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('b-boosts').style.display='none'; document.getElementById('b-tasks').style.display='none'; document.getElementById('b-passive').style.display='none'; document.getElementById(`b-${sub}`).style.display='block'; }
+function showProfileSub(sub,btn) { document.querySelectorAll('#tab-profile .sub-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active'); document.getElementById('p-info').style.display='none'; document.getElementById('p-avatar').style.display='none'; document.getElementById('p-verify').style.display='none'; document.getElementById(`p-${sub}`).style.display='block'; if(sub==='info') { let html=`<div class="glass-card" style="padding:12px">🆔 ID: ${currentUser.id}<br>📅 التسجيل: ${new Date().toLocaleDateString()}<br>🔗 الكود: ${currentUser.referralCode}</div>`; document.getElementById('infoList').innerHTML=html; } }
+function closeConfirm() { document.getElementById('confirmModal').classList.remove('active'); pendingConfirm=null; }
+function confirmAction() { if(pendingConfirm) { pendingConfirm(); closeConfirm(); } }
+
+let tg = window.Telegram?.WebApp;
+if(tg) { tg.expand(); tg.ready(); let user = tg.initDataUnsafe?.user; if(user) { tgUser = user; currentUser = loadUser(user); refreshUI(); } }
+if(!currentUser) { let demoUser = { id: 999999, first_name: 'زائر', username: 'visitor' }; tgUser = demoUser; currentUser = loadUser(demoUser); refreshUI(); }
+
+setInterval(()=>{ if(currentUser && currentUser.energy<MAX_ENERGY) { currentUser.energy=Math.min(MAX_ENERGY, currentUser.energy+5); saveAll(); refreshUI(); } }, 1000);
+setInterval(()=>{ if(currentUser) { let inc = Object.values(currentUser.ownedPassive).reduce((a,b)=>a+b,0); if(inc>0) { currentUser.tokens+=inc; saveAll(); refreshUI(); } } }, 1000);
+setInterval(()=>{ if(currentUser && currentUser.boostEnd && Date.now()>currentUser.boostEnd) { currentUser.boostActive=null; saveAll(); refreshUI(); notify('انتهى التعزيز'); } }, 1000);
 </script>
 </body>
 </html>
