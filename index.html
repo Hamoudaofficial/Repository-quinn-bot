@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quinn Bot 2026 - الذكاء الاصطناعي المتكامل</title>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, runTransaction, collection, query, orderBy, limit, getDocs, enableIndexedDbPersistence, increment, arrayUnion } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYyxW9P-_D1OEqK6FCQqqBWc",
+    authDomain: "quinnbot-9f797.firebaseapp.com",
+    projectId: "quinnbot-9f797",
+    storageBucket: "quinnbot-9f797.appspot.com",
+    messagingSenderId: "592205334333",
+    appId: "1:592205334333:web:9f8a3b6ec7e7fee81fa754",
+    measurementId: "G-W5HRWB45GX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  try { await enableIndexedDbPersistence(db); } catch(e) { console.log('Persistence:', e.code); }
+
+  window.FB_DB = db;
+  window.FB_doc = doc;
+  window.FB_getDoc = getDoc;
+  window.FB_setDoc = setDoc;
+  window.FB_updateDoc = updateDoc;
+  window.FB_runTransaction = runTransaction;
+  window.FB_collection = collection;
+  window.FB_query = query;
+  window.FB_orderBy = orderBy;
+  window.FB_limit = limit;
+  window.FB_getDocs = getDocs;
+  window.FB_increment = increment;
+  window.FB_arrayUnion = arrayUnion;
+  window.FB_READY = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* جميع الأنماط السابقة كما هي (لم تتغير) */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+:root{--bg:#07091a;--bg2:#0d1028;--purple:#8b5cf6;--purple-d:#6d28d9;--purple-l:#a78bfa;--blue:#3b82f6;--cyan:#06b6d4;--green:#10b981;--gold:#f59e0b;--red:#ef4444;--pink:#ec4899;--glass:rgba(255,255,255,0.04);--border:rgba(255,255,255,0.08);--t1:#fff;--t2:rgba(255,255,255,0.7);--t3:rgba(255,255,255,0.4);--r:24px;--rm:16px;--rs:12px;}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);direction:rtl;}
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 15% 25%,rgba(139,92,246,.18) 0%,transparent 55%),radial-gradient(ellipse at 85% 75%,rgba(59,130,246,.12) 0%,transparent 55%),radial-gradient(ellipse at 50% 50%,rgba(236,72,153,.07) 0%,transparent 70%);}
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.header{padding:12px 16px;background:rgba(7,9,26,.9);backdrop-filter:blur(30px);border-bottom:1px solid rgba(139,92,246,.2);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;box-shadow:0 4px 20px rgba(0,0,0,.5);}
+.header-left{display:flex;align-items:center;gap:10px;}
+.hdr-avatar{width:46px;height:46px;border-radius:50%;border:2px solid rgba(139,92,246,.5);background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(59,130,246,.15));display:flex;align-items:center;justify-content:center;font-size:22px;background-size:cover;background-position:center;flex-shrink:0;overflow:hidden;transition:box-shadow .3s,border-color .3s;}
+.golden-glow{box-shadow:0 0 0 3px rgba(245,158,11,.6),0 0 20px rgba(245,158,11,.4);border-color:#f59e0b!important;animation:pulse-gold 2s infinite;}
+@keyframes pulse-gold{0%{box-shadow:0 0 0 0 rgba(245,158,11,.4);}70%{box-shadow:0 0 0 6px rgba(245,158,11,0);}100%{box-shadow:0 0 0 0 rgba(245,158,11,0);}}
+.hdr-name{font-size:15px;font-weight:800;line-height:1.2;}
+.hdr-rank{font-size:11px;color:var(--t3);margin-top:2px;}
+.hdr-right{text-align:left;}
+.hdr-bal{font-size:19px;font-weight:900;color:var(--purple-l);line-height:1;}
+.hdr-tok{font-size:11px;color:var(--t3);margin-top:3px;}
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:16px;padding-bottom:95px;-webkit-overflow-scrolling:touch;}
+.content::-webkit-scrollbar{width:3px;}
+.content::-webkit-scrollbar-thumb{background:rgba(139,92,246,.3);border-radius:3px;}
+.glass{background:rgba(255,255,255,.05);backdrop-filter:blur(20px);border:1px solid var(--border);border-radius:var(--rm);}
+.card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--rm);padding:14px;transition:.25s ease;cursor:pointer;}
+.card:active{opacity:.85;transform:scale(.98);}
+.btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--blue));border:none;border-radius:var(--rs);color:#fff;font-weight:800;font-size:14px;font-family:'Cairo',sans-serif;cursor:pointer;transition:.2s;box-shadow:0 6px 20px rgba(139,92,246,.35);}
+.btn:active{transform:scale(.96);}
+.btn-sm{padding:8px 16px;background:rgba(139,92,246,.7);border:1px solid rgba(139,92,246,.4);border-radius:30px;color:#fff;font-weight:700;font-size:12px;font-family:'Cairo',sans-serif;cursor:pointer;transition:.2s;}
+.btn-sm:active{transform:scale(.93);}
+.btn-gold{background:linear-gradient(135deg,#f59e0b,#d97706);box-shadow:0 6px 20px rgba(245,158,11,.35);}
+.btn-green{background:linear-gradient(135deg,#10b981,#059669);box-shadow:0 6px 20px rgba(16,185,129,.35);}
+.btn-outline{background:transparent;border:1px solid rgba(139,92,246,.4);color:var(--purple-l);box-shadow:none;}
+.inp{width:100%;padding:12px 16px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:var(--rs);color:#fff;font-size:14px;font-family:'Cairo',sans-serif;outline:none;transition:.2s;}
+.inp:focus{border-color:var(--purple);background:rgba(139,92,246,.1);}
+#coin-btn{width:190px;height:190px;border-radius:50%;background:radial-gradient(circle at 35% 35%,#b57af5,#6d28d9 50%,#1e40af);border:none;box-shadow:0 0 0 4px rgba(139,92,246,.3),0 0 60px rgba(139,92,246,.5),0 0 100px rgba(139,92,246,.2),inset 0 2px 0 rgba(255,255,255,.2);cursor:pointer;display:flex;align-items:center;justify-content:center;margin:16px auto;transition:transform .08s linear,box-shadow .2s;position:relative;overflow:hidden;}
+#coin-btn::before{content:'';position:absolute;width:60%;height:30%;top:15%;left:20%;background:rgba(255,255,255,.12);border-radius:50%;transform:rotate(-20deg);}
+#coin-btn:active{transform:scale(.88);}
+#coin-btn.turbo-active{animation:turboGlow .5s infinite alternate;}
+@keyframes turboGlow{0%{box-shadow:0 0 40px #f59e0b,0 0 0 4px rgba(245,158,11,.5);}100%{box-shadow:0 0 80px #f59e0b,0 0 0 8px rgba(245,158,11,.3);}}
+.coin-emoji{font-size:80px;pointer-events:none;}
+.stat-row{display:flex;gap:12px;margin-bottom:16px;}
+.stat-box{flex:1;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--rm);padding:12px 8px;text-align:center;}
+.stat-val{font-size:20px;font-weight:900;color:var(--purple-l);}
+.stat-lbl{font-size:10px;color:var(--t3);margin-top:4px;}
+.prog-wrap{height:6px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden;margin-top:8px;}
+.prog-fill{height:100%;border-radius:6px;transition:width .4s,background-color .3s;background:linear-gradient(90deg,var(--purple),var(--blue));}
+.prog-fill.energy{background:linear-gradient(90deg,#10b981,#34d399);}
+.prog-fill.energy.mid{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.prog-fill.energy.low{background:linear-gradient(90deg,#ef4444,#f87171);}
+.tab-content{display:none;animation:fadeIn .3s ease;}
+.tab-content.active{display:block;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+.sub-tabs{display:flex;gap:8px;margin-bottom:16px;overflow-x:auto;padding-bottom:2px;}
+.sub-tab{white-space:nowrap;padding:8px 16px;border-radius:30px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:var(--t3);font-weight:700;font-size:12px;font-family:'Cairo',sans-serif;cursor:pointer;transition:.2s;}
+.sub-tab.active{border-color:var(--purple);background:rgba(139,92,246,.25);color:#c4b5fd;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(7,9,26,.95);backdrop-filter:blur(30px);border-top:1px solid rgba(139,92,246,.2);display:flex;justify-content:space-around;padding:6px 0 18px;z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;padding:5px 0;border-radius:16px;transition:.2s;font-family:'Cairo',sans-serif;}
+.nav-btn:active{background:rgba(139,92,246,.15);transform:scale(.9);}
+.nav-icon{font-size:20px;transition:.2s;}
+.nav-label{font-size:8px;font-weight:600;color:var(--t3);}
+.nav-btn.active .nav-icon{filter:drop-shadow(0 0 8px #8b5cf6);transform:scale(1.15);}
+.nav-btn.active .nav-label{color:var(--purple-l);font-weight:900;}
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:11px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:var(--rs);margin-bottom:8px;}
+.tx-desc{font-size:12px;font-weight:600;}
+.tx-time{font-size:10px;color:var(--t3);margin-top:2px;}
+.tx-amount{font-weight:900;font-size:13px;}
+.tx-amount.pos{color:var(--green);}
+.tx-amount.neg{color:var(--red);}
+.vbadge{display:inline-flex;align-items:center;background:rgba(59,130,246,.2);border:1px solid rgba(59,130,246,.4);border-radius:10px;padding:2px 8px;font-size:9px;color:var(--blue);font-weight:700;margin-right:4px;}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);z-index:10000;align-items:center;justify-content:center;padding:20px;}
+.modal.active{display:flex;}
+.modal-box{background:linear-gradient(145deg,#12152e,#07091a);border:1px solid rgba(139,92,246,.3);border-radius:var(--r);padding:26px;width:100%;max-width:380px;max-height:85vh;overflow-y:auto;text-align:center;}
+.modal-title{font-size:20px;font-weight:900;margin-bottom:10px;color:var(--purple-l);}
+.modal-msg{font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6;}
+.modal-btns{display:flex;gap:10px;margin-top:18px;}
+.modal-btns button{flex:1;padding:12px;border-radius:var(--rs);border:none;font-weight:700;font-size:14px;font-family:'Cairo',sans-serif;cursor:pointer;transition:.2s;}
+.modal-btns .cancel{background:rgba(255,255,255,.1);color:#fff;}
+.modal-btns .confirm{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;}
+#notif{position:fixed;top:75px;left:50%;transform:translateX(-50%);background:rgba(14,17,40,.95);border:1px solid rgba(139,92,246,.5);border-radius:40px;padding:10px 24px;color:#fff;font-weight:700;display:none;z-index:10001;white-space:nowrap;backdrop-filter:blur(20px);font-size:13px;box-shadow:0 8px 30px rgba(0,0,0,.5);}
+#netStatus{position:fixed;top:0;left:0;right:0;background:rgba(239,68,68,.95);color:#fff;text-align:center;padding:8px;font-size:12px;font-weight:700;z-index:10002;display:none;backdrop-filter:blur(10px);}
+#netStatus.back{background:rgba(16,185,129,.95);}
+#loadingScreen{position:fixed;inset:0;background:var(--bg);z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;}
+#loadingScreen .logo{font-size:64px;animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}
+#loadingBar{width:200px;height:4px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+#loadingFill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue));border-radius:4px;width:0;transition:width .3s;}
+.particle{position:fixed;pointer-events:none;font-size:22px;font-weight:900;color:#f59e0b;text-shadow:0 0 8px rgba(0,0,0,.8);z-index:9999;animation:floatUp .7s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-90px) scale(1.6);}}
+@keyframes bounce{0%{transform:translateY(0);}100%{transform:translateY(-8px);}}
+.avatar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.av-item{border-radius:18px;padding:10px;text-align:center;cursor:pointer;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);transition:.2s;}
+.av-item.selected{border-color:var(--purple);background:rgba(139,92,246,.2);}
+.av-item.taken{opacity:.4;cursor:not-allowed;}
+.av-emoji{font-size:34px;margin-bottom:4px;}
+.av-name{font-size:10px;color:var(--t3);font-weight:600;}
+.srch-item{display:flex;align-items:center;gap:12px;padding:12px;margin-bottom:8px;cursor:pointer;border-radius:var(--rs);transition:.2s;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);}
+.srch-item:active{background:rgba(139,92,246,.15);}
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:16px;margin-bottom:28px;}
+.pod-item{flex:1;text-align:center;}
+.pod-av{border-radius:50%;margin:0 auto 6px;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center;border:2px solid rgba(255,255,255,.2);overflow:hidden;}
+.pod-name{font-size:11px;font-weight:700;margin-bottom:4px;}
+.pod-stand{background:rgba(255,255,255,.05);border-radius:14px 14px 0 0;padding:8px;font-weight:900;font-size:13px;}
+.tg-preview{width:100px;height:100px;border-radius:50%;margin:10px auto;display:flex;align-items:center;justify-content:center;font-size:50px;border:3px solid var(--purple);background:rgba(139,92,246,.1);overflow:hidden;background-size:cover;background-position:center;}
+.sec-hdr{font-size:22px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.star-pkg{border:1px solid rgba(245,158,11,.3);border-radius:var(--rm);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;background:rgba(245,158,11,.05);cursor:pointer;transition:.2s;}
+.star-pkg:active{background:rgba(245,158,11,.15);transform:scale(.97);}
+.switch{position:relative;display:inline-block;width:44px;height:22px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(255,255,255,.2);border-radius:22px;transition:.3s;}
+.slider:before{position:absolute;content:"";height:18px;width:18px;right:2px;bottom:2px;background-color:white;border-radius:50%;transition:.3s;}
+input:checked+.slider{background:linear-gradient(135deg,#8b5cf6,#3b82f6);}
+input:checked+.slider:before{transform:translateX(-20px);}
+.gold-chart{background:rgba(0,0,0,.3);border-radius:var(--rm);padding:12px;margin:16px 0;}
+.gold-price{font-size:38px;font-weight:900;color:var(--gold);margin:10px 0;}
+.gold-change.up{color:var(--green);}
+.gold-change.dn{color:var(--red);}
+#fbSync{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(6,182,212,.9);color:#fff;padding:6px 16px;border-radius:30px;font-size:11px;font-weight:700;display:none;z-index:9999;backdrop-filter:blur(10px);}
+/* ========== AI CHAT STYLES ========== */
+.chat-area{display:flex;flex-direction:column;height:400px;background:rgba(0,0,0,.3);border-radius:var(--rm);overflow:hidden;}
+.chat-messages{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.chat-bubble{max-width:85%;padding:10px 14px;border-radius:18px;font-size:13px;line-height:1.5;word-break:break-word;}
+.chat-bubble.user{background:linear-gradient(135deg,var(--purple),var(--blue));align-self:flex-end;border-bottom-right-radius:4px;}
+.chat-bubble.ai{background:rgba(255,255,255,.1);align-self:flex-start;border-bottom-left-radius:4px;}
+.chat-input-area{display:flex;gap:8px;padding:12px;background:rgba(0,0,0,.4);}
+.chat-input-area input{flex:1;background:rgba(255,255,255,.1);border:none;border-radius:30px;padding:10px 16px;color:#fff;}
+.chat-input-area button{padding:8px 18px;}
+.ai-count{font-size:11px;color:var(--t3);margin-top:6px;text-align:center;}
+.ai-avatar-gen{display:flex;gap:8px;margin-top:12px;align-items:center;flex-wrap:wrap;}
+.ai-avatar-gen input{flex:1;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.2);border-radius:30px;padding:8px 14px;}
+.generated-avatar-preview{width:80px;height:80px;border-radius:50%;background:rgba(139,92,246,.2);display:flex;align-items:center;justify-content:center;font-size:40px;margin:8px auto;background-size:cover;background-position:center;}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div id="loadingScreen">
+  <div class="logo">🪙</div>
+  <div style="font-size:24px;font-weight:900;color:var(--purple-l);">Quinn Bot AI</div>
+  <div id="loadingBar"><div id="loadingFill"></div></div>
+  <div id="loadingMsg" style="font-size:12px;color:var(--t3);">جاري التحميل...</div>
+</div>
+<div id="netStatus"></div>
+<div id="fbSync">💾 جاري الحفظ...</div>
+<div id="notif"></div>
+
+<!-- MODALS -->
+<div id="confirmModal" class="modal"><div class="modal-box"><div class="modal-title" id="confirmTitle">تأكيد</div><div class="modal-msg" id="confirmMsg"></div><div class="modal-btns"><button class="cancel" onclick="closeConfirm()">إلغاء</button><button class="confirm" onclick="confirmAction()">تأكيد</button></div></div></div>
+<div id="referralCodeModal" class="modal"><div class="modal-box"><div class="modal-title">🎁 كود الإحالة</div><div class="modal-msg">أدخل كود الإحالة من صديقك للحصول على مكافأة فورية!</div><input class="inp" id="manualRefCode" placeholder="مثال: REF123456" style="margin-bottom:16px;text-align:center;"><div class="modal-btns"><button class="cancel" onclick="closeReferralModal()">تخطي</button><button class="confirm" onclick="applyReferralCode()">تطبيق 🎉</button></div></div></div>
+<div id="searchModal" class="modal"><div class="modal-box" style="text-align:right;"><div class="modal-title">🔍 البحث عن عضو</div><input type="text" id="searchInput" class="inp" placeholder="الاسم أو @username" style="margin-bottom:12px;" oninput="performSearch()"><div id="searchResults" style="max-height:320px;overflow-y:auto;"></div><div class="modal-btns"><button class="cancel" onclick="closeSearchModal()">إغلاق</button></div></div></div>
+<div id="sendUserModal" class="modal"><div class="modal-box"><div class="modal-title">📤 إرسال لـ <span id="sendUserName"></span></div><div class="modal-msg" id="sendUserBal"></div><input type="number" id="sendUserAmt" step="any" class="inp" placeholder="الكمية (Quinn) — مثال: 0.5" style="margin:14px 0;" oninput="updateSendUserPreview()"><div id="sendUserPreview" style="color:var(--t3);font-size:11px;margin-bottom:4px;"></div><div class="modal-btns"><button class="cancel" id="sendUserCancelBtn">إلغاء</button><button class="confirm" id="sendUserConfirmBtn">إرسال 🪙</button></div></div></div>
+<div id="starsModal" class="modal"><div class="modal-box"><div style="font-size:48px;margin-bottom:8px;">⭐</div><div class="modal-title">شراء Quinn بالنجوم</div><div class="modal-msg">الشراء بالنجوم غير متاح حالياً مباشرةً.<br>يمكنك التبادل مع المجتمع عبر:<br><a href="https://t.me/GroupQuinn" target="_blank" style="color:var(--purple-l);">👥 مجموعة Quinn</a><br><a href="https://t.me/ChannelQuinn" target="_blank" style="color:var(--gold);">📢 قناة Quinn</a></div><div id="starsPkgs"></div><div class="modal-btns"><button class="cancel" onclick="closeStarsModal()">إغلاق</button></div></div></div>
+<div id="ranksModal" class="modal"><div class="modal-box" style="text-align:right;"><div class="modal-title">🏆 قائمة الرتب والمستويات</div><div id="ranksList" style="max-height:60vh;overflow-y:auto;"></div><div class="modal-btns"><button class="cancel" onclick="closeRanksModal()">إغلاق</button></div></div></div>
+
+<div id="app">
+  <div class="header">
+    <div class="header-left"><div class="hdr-avatar" id="hdrAvatar">👤</div><div><div class="hdr-name" id="hdrName">مستخدم</div><div class="hdr-rank" id="hdrRank">🪨 الحجري</div></div></div>
+    <div class="hdr-right"><div class="hdr-bal" id="hdrBal">0 <span style="font-size:10px;opacity:.6;">Q</span></div><div class="hdr-tok" id="hdrTok">0 توكن</div></div>
+  </div>
+
+  <div class="content">
+    <!-- HOME (نفس السابق) -->
+    <div id="tab-home" class="tab-content active">
+      <div class="stat-row"><div class="stat-box"><div class="stat-val" id="sTokens">0</div><div class="stat-lbl">🪙 التوكن</div></div><div class="stat-box"><div class="stat-val" id="sQuinn">0.0000</div><div class="stat-lbl">💎 Quinn</div></div><div class="stat-box"><div class="stat-val" id="sClicks">0</div><div class="stat-lbl">👆 نقرات</div></div></div>
+      <div class="card" style="margin-bottom:14px;" onclick="showRanksModal()"><div style="display:flex;justify-content:space-between;margin-bottom:8px;"><div><span id="rankIcon" style="font-size:22px;">🪨</span> <span id="rankName" style="font-weight:800;">الحجري</span> <span style="font-size:11px;color:var(--t3);">(مستوى <span id="rankLevel">1</span>)</span></div><span id="clickMult" style="background:rgba(139,92,246,.2);padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;color:var(--purple-l);">1.00x</span></div><div class="prog-wrap"><div id="rankBar" class="prog-fill" style="width:0%"></div></div><div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--t3);"><span id="xpCurrent">0 توكن</span><span id="rankNext">→ المستوى التالي</span><span id="xpNeeded">0 توكن</span></div></div>
+      <div id="boostBanner" style="display:none;"></div>
+      <div style="text-align:center;"><button id="coin-btn" ontouchstart="handleClick(event)" onmousedown="handleClick(event)"><span class="coin-emoji">🪙</span></button></div>
+      <div class="card" style="margin-bottom:12px;cursor:default;"><div style="display:flex;justify-content:space-between;margin-bottom:8px;align-items:center;"><span style="font-weight:700;">⚡ الطاقة</span><span id="energyTxt" style="font-size:11px;color:var(--t3);">1000/1000</span></div><div class="prog-wrap"><div id="energyBar" class="prog-fill energy" style="width:100%"></div></div></div>
+      <div class="card" style="display:flex;justify-content:space-between;cursor:default;"><span style="font-weight:700;">💰 الدخل السلبي</span><span id="passiveTxt" style="font-weight:700;color:var(--green);">0 توكن/دقيقة</span></div>
+    </div>
+
+    <!-- BOOST (نفس السابق مع إضافة خيار شراء محادثات إضافية لاحقاً) -->
+    <div id="tab-boost" class="tab-content"><div class="sec-hdr">⚡ التعزيزات</div><div class="sub-tabs"><button class="sub-tab active" onclick="showBoostSub('boosts',this)">⚡ تعزيزات</button><button class="sub-tab" onclick="showBoostSub('tasks',this)">📋 مهام</button><button class="sub-tab" onclick="showBoostSub('passive',this)">💰 دخل سلبي</button></div><div id="bBoosts"></div><div id="bTasks" style="display:none;"></div><div id="bPassive" style="display:none;"><div class="card" style="margin-bottom:14px;text-align:center;cursor:default;"><div style="color:var(--t3);">دخلك السلبي الحالي</div><div id="passiveVal" style="font-size:38px;font-weight:900;color:var(--green);">0</div><div style="font-size:11px;color:var(--t3);">توكن / دقيقة (بلا حدود)</div></div><div id="passiveItems"></div></div></div>
+
+    <!-- WALLET (نفس السابق) -->
+    <div id="tab-wallet" class="tab-content"><div class="sec-hdr">💼 المحفظة</div><div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(59,130,246,.08));"><div style="color:var(--t3);font-size:12px;margin-bottom:6px;">الرصيد الكلي</div><div id="wQuinn" style="font-size:40px;font-weight:900;color:var(--purple-l);"></div><div id="wTokens" style="color:var(--t3);font-size:12px;margin-bottom:12px;"></div><div style="display:inline-block;background:rgba(255,255,255,.06);border-radius:10px;padding:6px 14px;font-size:11px;color:var(--t3);">💱 10,000 توكن = 1 Quinn</div></div><div class="sub-tabs"><button class="sub-tab active" onclick="showWalletSub('overview',this)">📊 العمليات</button><button class="sub-tab" onclick="showWalletSub('send',this)">📤 إرسال</button><button class="sub-tab" onclick="showWalletSub('receive',this)">📥 استقبال</button><button class="sub-tab" onclick="showWalletSub('shop',this)">🏪 متجر</button><button class="sub-tab" onclick="showWalletSub('stars',this)">⭐ نجوم</button></div>
+      <div id="wOverview"><div id="txList"></div></div>
+      <div id="wSend" style="display:none;"><div class="card" style="cursor:default;"><h3 style="margin-bottom:14px;">📤 إرسال Quinn</h3><input class="inp" id="sendTo" placeholder="@username أو ID" style="margin-bottom:12px;"><input class="inp" id="sendAmt" type="number" step="any" placeholder="الكمية (Quinn) — مثال: 0.5" style="margin-bottom:8px;" oninput="updateSendPrev()"><div id="sendPrev" style="color:var(--t3);font-size:11px;margin-bottom:14px;"></div><button class="btn" onclick="doTransfer()">إرسال 🪙</button></div></div>
+      <div id="wReceive" style="display:none;"><div class="card" style="text-align:center;cursor:default;"><div style="font-size:50px;margin-bottom:12px;">📱</div><div style="margin-bottom:10px;font-weight:700;">معرف الاستقبال</div><div id="recvId" style="background:rgba(139,92,246,.15);border-radius:12px;padding:12px;margin-bottom:14px;font-weight:700;color:var(--purple-l);word-break:break-all;"></div><button class="btn" onclick="copyId()">📋 نسخ المعرف</button></div></div>
+      <div id="wShop" style="display:none;"><div class="card" style="cursor:default;"><h3 style="margin-bottom:8px;">🏪 متجر Quinn</h3><p style="color:var(--t3);font-size:11px;margin-bottom:14px;">شراء Quinn بكلمة مرور المتجر</p><div id="shopStep1"><input class="inp" id="shopQty" type="number" step="any" placeholder="الكمية (Quinn)" style="margin-bottom:8px;" oninput="updateShopPrev()"><div id="shopPrev" style="color:var(--t3);margin-bottom:14px;"></div><button class="btn" onclick="shopNext()">التالي →</button></div><div id="shopStep2" style="display:none;"><div id="shopConfLbl" style="background:rgba(245,158,11,.1);padding:12px;border-radius:10px;margin-bottom:14px;text-align:center;"></div><input class="inp" id="shopPass" type="password" placeholder="كلمة المرور" style="margin-bottom:14px;"><div style="display:flex;gap:10px;"><button class="btn-sm" style="flex:1;" onclick="shopBack()">← رجوع</button><button class="btn" style="flex:2;" onclick="shopBuy()">تأكيد الشراء</button></div></div></div></div>
+      <div id="wStars" style="display:none;"><div class="card" style="text-align:center;cursor:default;margin-bottom:14px;"><div style="font-size:42px;margin-bottom:8px;">⭐</div><h3 style="margin-bottom:8px;">شراء Quinn بـ Telegram Stars</h3><p style="color:var(--t3);font-size:12px;line-height:1.6;">الشراء بالنجوم غير متاح حالياً مباشرةً.<br>تواصل عبر القنوات الرسمية:</p><div style="margin-top:12px;display:flex;flex-direction:column;gap:10px;"><a href="https://t.me/GroupQuinn" target="_blank" style="display:block;padding:12px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);border-radius:12px;color:var(--purple-l);text-decoration:none;font-weight:700;">👥 مجموعة Quinn</a><a href="https://t.me/ChannelQuinn" target="_blank" style="display:block;padding:12px;background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3);border-radius:12px;color:var(--gold);text-decoration:none;font-weight:700;">📢 قناة Quinn</a></div></div><div id="starsPackagesInline"></div></div>
+    </div>
+
+    <!-- LEADERBOARD (نفس السابق) -->
+    <div id="tab-leaderboard" class="tab-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;"><div class="sec-hdr" style="margin:0;">🏆 المتصدرون</div><div style="display:flex;gap:8px;"><button class="btn-sm" onclick="refreshLeaderboard()">🔄 تحديث</button><button class="btn-sm" onclick="openSearchModal()">🔍 بحث</button></div></div><div id="lbLastUpdate" style="font-size:10px;color:var(--t3);text-align:center;margin-bottom:12px;"></div><div id="podiumWrap"></div><div id="lbList"></div></div>
+
+    <!-- TRADE (GOLD) (نفس السابق) -->
+    <div id="tab-trade" class="tab-content"><div class="sec-hdr">📈 سوق الذهب</div><div class="glass" style="padding:20px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(139,92,246,.08));"><div style="font-size:13px;color:var(--t3);margin-bottom:4px;">سعر الذهب العالمي (للجرام)</div><div class="gold-price" id="goldPrice">$0.00</div><div id="goldChange" class="gold-change" style="font-size:13px;font-weight:700;margin-top:4px;"></div><div style="font-size:11px;color:var(--cyan);margin-top:6px;">🌐 السعر مشترك بين جميع المستخدمين</div></div><div class="gold-chart"><canvas id="goldChart" width="400" height="160"></canvas></div><div class="sub-tabs"><button class="sub-tab active" onclick="showTradeSub('buy',this)">🛒 شراء</button><button class="sub-tab" onclick="showTradeSub('sell',this)">💵 بيع</button><button class="sub-tab" onclick="showTradeSub('portfolio',this)">📊 محفظتي</button></div><div id="tBuy"><div class="card" style="cursor:default;"><h3 style="margin-bottom:12px;">🛒 شراء ذهب بالجرام</h3><div style="background:rgba(245,158,11,.08);border-radius:10px;padding:10px;margin-bottom:12px;font-size:12px;color:var(--gold);">💡 السعر: <span id="buyPriceHint">$0/جرام</span> · يُخصم من رصيد Quinn</div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:6px;">الكمية (جرام)</label><input class="inp" id="goldBuyAmt" type="number" step="any" placeholder="0.00" style="margin-bottom:8px;" oninput="updateGoldBuyPrev()"><div id="goldBuyPrev" style="margin-bottom:14px;"></div><button class="btn btn-gold" onclick="buyGold()">شراء ذهب 🥇</button></div></div><div id="tSell" style="display:none;"><div class="card" style="cursor:default;"><h3 style="margin-bottom:12px;">💵 بيع ذهب بالجرام</h3><div style="font-size:12px;color:var(--t3);margin-bottom:10px;">رصيد الذهب: <span id="myGoldDisplay" style="color:var(--gold);font-weight:700;">0</span> جرام</div><label style="font-size:11px;color:var(--t3);display:block;margin-bottom:6px;">الكمية (جرام)</label><input class="inp" id="goldSellAmt" type="number" step="any" placeholder="0.00" style="margin-bottom:8px;" oninput="updateGoldSellPrev()"><div id="goldSellPrev" style="margin-bottom:14px;"></div><button class="btn btn-green" onclick="sellGold()">بيع ذهب 💰</button></div></div><div id="tPortfolio" style="display:none;"><div class="card" style="margin-bottom:12px;cursor:default;"><h3 style="margin-bottom:14px;">📊 محفظة الذهب</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"><div style="text-align:center;background:rgba(245,158,11,.08);border-radius:12px;padding:12px;"><div style="font-size:11px;color:var(--t3);">إجمالي الذهب</div><div id="portGold" style="font-size:22px;font-weight:900;color:var(--gold);">0</div><div style="font-size:10px;color:var(--t3);">جرام</div></div><div style="text-align:center;background:rgba(16,185,129,.08);border-radius:12px;padding:12px;"><div style="font-size:11px;color:var(--t3);">القيمة الحالية</div><div id="portVal" style="font-size:22px;font-weight:900;color:var(--green);">$0</div><div style="font-size:10px;color:var(--t3);">دولار</div></div></div></div><div id="goldTxList"></div></div></div>
+
+    <!-- GAMES (نفس السابق) -->
+    <div id="tab-games" class="tab-content"><div class="sec-hdr">🎮 الألعاب</div><div id="gamesUnlockBanner" class="card" style="margin-bottom:14px;text-align:center;cursor:default;background:linear-gradient(135deg,rgba(139,92,246,.12),rgba(59,130,246,.08));"></div><div class="sub-tabs" id="gamesTabs" style="overflow-x:auto;"></div><div id="gamesContent"></div></div>
+
+    <!-- REFERRAL (نفس السابق) -->
+    <div id="tab-referral" class="tab-content"><div class="sec-hdr">👥 الإحالات</div><div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;background:linear-gradient(135deg,rgba(236,72,153,.1),rgba(139,92,246,.08));"><div style="color:var(--t3);font-size:12px;margin-bottom:8px;">كود الإحالة الخاص بك</div><div id="refCode" style="background:rgba(255,255,255,.06);border-radius:12px;padding:12px 18px;margin-bottom:12px;font-size:20px;font-weight:900;font-family:monospace;color:var(--purple-l);letter-spacing:2px;"></div><div style="color:var(--t3);font-size:11px;margin-bottom:14px;">شارك الكود للحصول على 5,000 توكن لكل إحالة ناجحة</div><div style="display:flex;gap:10px;margin-bottom:10px;"><button class="btn-sm" style="flex:1;" onclick="copyRefCode()">📋 نسخ الكود</button><button class="btn-sm" style="flex:1;" onclick="shareRefLink()">🔗 مشاركة الرابط</button></div><div id="enterRefSection"></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;"><div class="card" style="text-align:center;cursor:default;"><div style="font-size:24px;margin-bottom:6px;">👥</div><div id="refCount" style="font-size:26px;font-weight:900;color:var(--purple-l);">0</div><div style="font-size:10px;color:var(--t3);">إحالات ناجحة</div></div><div class="card" style="text-align:center;cursor:default;"><div style="font-size:24px;margin-bottom:6px;">💰</div><div id="refEarnings" style="font-size:26px;font-weight:900;color:var(--green);">0</div><div style="font-size:10px;color:var(--t3);">أرباح الإحالات</div></div></div><div class="card" style="margin-bottom:16px;cursor:default;background:linear-gradient(135deg,rgba(245,158,11,.08),rgba(139,92,246,.06));border-color:rgba(245,158,11,.2);"><div style="font-weight:800;color:var(--gold);margin-bottom:8px;">🎁 مكافآت متدرجة</div><div style="font-size:12px;color:var(--t3);line-height:2;">5 إحالات → +10K توكن<br>10 إحالات → +25K توكن<br>25 إحالة → +100K توكن<br>50 إحالة → +500K توكن</div><div id="tierRewards" style="margin-top:8px;font-weight:800;color:var(--gold);font-size:12px;"></div></div><h3 style="font-size:14px;font-weight:700;margin-bottom:12px;">📋 آخر الإحالات</h3><div id="referralsList"></div></div>
+
+    <!-- PROFILE (نفس السابق مع إضافة خيار إنشاء صورة بالذكاء الاصطناعي) -->
+    <div id="tab-profile" class="tab-content"><div class="sec-hdr">👤 ملفي الشخصي</div><div class="glass" style="padding:22px;margin-bottom:16px;text-align:center;"><div id="profAvatar" style="width:82px;height:82px;border-radius:50%;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;font-size:46px;border:3px solid var(--purple);background-size:cover;background-position:center;overflow:hidden;"></div><h3 id="profName" style="font-size:19px;font-weight:900;"></h3><div id="profTg" style="color:var(--t3);font-size:13px;margin-bottom:16px;"></div><div style="display:flex;justify-content:center;gap:24px;"><div><div id="profQuinn" style="font-size:18px;font-weight:900;color:var(--purple-l);">0</div><div style="font-size:10px;color:var(--t3);">Quinn</div></div><div style="width:1px;background:rgba(255,255,255,.1);"></div><div><div id="profClicks" style="font-size:18px;font-weight:900;color:var(--green);">0</div><div style="font-size:10px;color:var(--t3);">نقرة</div></div><div style="width:1px;background:rgba(255,255,255,.1);"></div><div><div id="profRank" style="font-size:18px;font-weight:900;color:var(--gold);">🪨</div><div style="font-size:10px;color:var(--t3);">رتبة</div></div></div></div><div class="sub-tabs"><button class="sub-tab active" onclick="showProfileSub('info',this)">ℹ️ معلومات</button><button class="sub-tab" onclick="showProfileSub('avatar',this)">🖼️ الصورة</button><button class="sub-tab" onclick="showProfileSub('telegram',this)">📸 Telegram</button><button class="sub-tab" onclick="showProfileSub('verify',this)">✅ التوثيق</button><button class="sub-tab" onclick="showProfileSub('settings',this)">⚙️ إعدادات</button><button class="sub-tab" onclick="showProfileSub('ai',this)">🤖 الذكاء الاصطناعي</button></div>
+      <div id="pInfo"><div id="profInfoList"></div></div>
+      <div id="pAvatar" style="display:none;"><p style="color:var(--t3);font-size:12px;margin-bottom:14px;text-align:center;">اختر صورة فريدة — محجوزة لك وحدك</p><div class="avatar-grid" id="avatarGrid"></div><div style="margin-top:14px;"><div class="card" style="background:rgba(139,92,246,.1);"><div style="font-weight:700;margin-bottom:8px;">✨ إنشاء صورة بالذكاء الاصطناعي</div><div class="ai-avatar-gen"><input type="text" id="aiAvatarPrompt" placeholder="صف صورتك المثالية (مثل: تنين ناري، ملك التنانين)"><button class="btn-sm" onclick="generateAIAvatar()">توليد</button></div><div id="aiAvatarResult" class="generated-avatar-preview"></div><div id="aiAvatarMsg" style="font-size:10px;color:var(--t3);margin-top:6px;"></div></div></div></div>
+      <div id="pTelegram" style="display:none;"><div style="text-align:center;margin-bottom:14px;background:linear-gradient(135deg,rgba(236,72,153,.1),rgba(139,92,246,.08));border:1px solid rgba(236,72,153,.2);border-radius:var(--rm);padding:20px;"><div class="tg-preview" id="tgPreview">📷</div><div id="tgStatus" style="font-size:12px;margin:10px 0;color:var(--t2);"></div><button id="buyTgBtn" class="btn" style="display:none;margin-top:8px;" onclick="purchaseTelegramAvatar()">شراء الصورة 💎</button></div><div class="card" style="cursor:default;background:rgba(245,158,11,.05);border-color:rgba(245,158,11,.2);"><div style="font-size:12px;font-weight:700;color:var(--gold);margin-bottom:8px;">🔗 رابط صورة يدوي</div><input id="manualPhotoUrl" class="inp" placeholder="https://..." style="margin:10px 0;"><button class="btn-sm" style="width:100%;" onclick="applyManualPhotoUrl()">تطبيق</button></div></div>
+      <div id="pVerify" style="display:none;"><div id="verifyPanel"></div></div>
+      <div id="pSettings" style="display:none;"><div class="card" style="cursor:default;"><div style="font-weight:700;margin-bottom:12px;">🔊 الصوت والتأثيرات</div><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span>🎵 صوت النقرات</span><label class="switch"><input type="checkbox" id="soundClickToggle" onchange="toggleSound('click')"><span class="slider"></span></label></div><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span>💰 صوت المكسب/الخسارة</span><label class="switch"><input type="checkbox" id="soundWinLossToggle" onchange="toggleSound('winLoss')"><span class="slider"></span></label></div><div style="display:flex;justify-content:space-between;margin-bottom:10px;"><span>🪙 تأثير سقوط العملات</span><label class="switch"><input type="checkbox" id="particlesToggle" onchange="toggleParticles()" checked><span class="slider"></span></label></div><div style="margin-top:14px;"><div style="font-weight:700;margin-bottom:10px;">👁️ الخصوصية</div><div style="display:flex;justify-content:space-between;"><span>🔒 إظهار رصيدي للعامة</span><label class="switch"><input type="checkbox" id="showBalancePublic" onchange="togglePublicBalance()" checked><span class="slider"></span></label></div></div></div></div>
+      <div id="pAi" style="display:none;">
+        <div class="card" style="margin-bottom:12px;"><div style="font-weight:700;margin-bottom:8px;">🤖 محادثة الذكاء الاصطناعي</div><div class="chat-area"><div class="chat-messages" id="chatMessages"><div class="chat-bubble ai">مرحباً! أنا مساعد Quinn الذكي. اسألني أي شيء عن اللعبة أو الحياة اليومية. لديك <span id="aiRemaining">0</span> محادثة اليوم (للحسابات الموثقة 5 محادثات).</div></div><div class="chat-input-area"><input type="text" id="chatInput" placeholder="اكتب سؤالك هنا..."><button class="btn-sm" onclick="sendAIMessage()">إرسال</button></div></div><div class="ai-count">🔄 المحادثات المتاحة: <span id="aiDailyLimit">0</span> / <span id="aiDailyMax">5</span> (تجدد يومياً)</div><div class="card" style="margin-top:12px;"><div style="font-weight:700;">✨ استخدامات الذكاء الاصطناعي:</div><div style="font-size:12px;color:var(--t3);margin-top:6px;">• محادثة ذكية حول أي موضوع<br>• إنشاء صور للملف الشخصي<br>• شرح آليات اللعبة والنصائح<br>• إجابات فورية ومفصلة</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')"><span class="nav-icon">🏠</span><span class="nav-label">الرئيسية</span></button>
+    <button class="nav-btn" onclick="showTab('boost')"><span class="nav-icon">⚡</span><span class="nav-label">تعزيزات</span></button>
+    <button class="nav-btn" onclick="showTab('wallet')"><span class="nav-icon">💼</span><span class="nav-label">المحفظة</span></button>
+    <button class="nav-btn" onclick="showTab('leaderboard')"><span class="nav-icon">🏆</span><span class="nav-label">المتصدرون</span></button>
+    <button class="nav-btn" onclick="showTab('trade')"><span class="nav-icon">📈</span><span class="nav-label">التداول</span></button>
+    <button class="nav-btn" onclick="showTab('games')"><span class="nav-icon">🎮</span><span class="nav-label">ألعاب</span></button>
+    <button class="nav-btn" onclick="showTab('referral')"><span class="nav-icon">👥</span><span class="nav-label">الإحالات</span></button>
+    <button class="nav-btn" onclick="showTab('profile')"><span class="nav-icon">👤</span><span class="nav-label">الملف</span></button>
+  </nav>
+</div>
+
+<script>
+'use strict';
+
+// ===================== MANUAL BLOCK OUTSIDE TELEGRAM =====================
+(function() {
+  const tg = window.Telegram?.WebApp;
+  if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+    const botLink = 'https://t.me/Quinnofficialbot';
+    const msg = `<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;text-align:center;background:#07091a;color:#fff;font-family:'Cairo',sans-serif;"><div style="font-size:72px;margin-bottom:16px;">⚠️</div><div style="font-size:20px;font-weight:900;margin-bottom:8px;">هذا التطبيق يعمل فقط داخل تليجرام</div><div style="font-size:14px;color:rgba(255,255,255,0.7);margin-bottom:24px;">يرجى فتح الرابط من تطبيق تليجرام الرسمي</div><a href="${botLink}" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);padding:12px 28px;border-radius:40px;color:#fff;text-decoration:none;font-weight:700;">📱 افتح البوت على تليجرام</a></div>`;
+    document.body.innerHTML = msg;
+    throw new Error('Access denied: outside Telegram WebApp');
+  }
+})();
+
+// ===================== CONSTANTS & HELPERS =====================
+const BOT_USERNAME   = 'Quinnofficialbot';
+const SHOP_PASSWORD  = 'T9@xQ#4mL!2vZ$7pR';
+const TOKENS_PER_QUINN = 10000;
+const MAX_ENERGY       = 1000;
+const VERIFY_COST      = 50;
+const SECOND_LIFE_COST = 100;
+const TELEGRAM_AVATAR_COST = 20;
+const REF_BONUS_REFERRER   = 5000;
+const REF_BONUS_NEWUSER    = 2500;
+const STARS_PACKAGES = [{stars:50,quinn:5},{stars:100,quinn:11},{stars:250,quinn:30},{stars:500,quinn:65},{stars:1000,quinn:140}];
+const MARKET_LIQUIDITY = 100000000;
+const LB_CACHE_TTL = 5 * 60 * 1000;
+const FINGERPRINT_COOLDOWN = 30000;
+const AI_API_KEY = 'AIzaSyD6OJry2vr1oxENsI4Ibkru8oDTdPMEu2Y'; // Gemini API Key
+const AI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + AI_API_KEY;
+
+// AI limits: verified users get 5 free chats per day, unverified 0 (can buy later)
+const AI_DAILY_LIMIT_VERIFIED = 5;
+const AI_DAILY_LIMIT_UNVERIFIED = 0;
+
+// ===================== RANKS, AVATARS, BOOSTS, TASKS, PASSIVE (نفس السابق) =====================
+const RANK_TIERS = [
+  {name:'الحجري',   icon:'🪨', start:1,  end:5,  baseMultiplier:1.00, increment:0.02},
+  {name:'البرونزي', icon:'🥉', start:6,  end:10, baseMultiplier:1.10, increment:0.02},
+  {name:'الفضي',    icon:'🥈', start:11, end:15, baseMultiplier:1.20, increment:0.02},
+  {name:'الذهبي',   icon:'🥇', start:16, end:20, baseMultiplier:1.30, increment:0.02},
+  {name:'الألماسي', icon:'💎', start:21, end:25, baseMultiplier:1.40, increment:0.02},
+  {name:'الملكي',   icon:'👑', start:26, end:30, baseMultiplier:1.50, increment:0.02},
+  {name:'الأسطوري', icon:'⚡', start:31, end:35, baseMultiplier:1.60, increment:0.02},
+  {name:'الكوزمي',  icon:'🌌', start:36, end:40, baseMultiplier:1.70, increment:0.02},
+  {name:'التايتان', icon:'🔱', start:41, end:45, baseMultiplier:1.80, increment:0.02},
+  {name:'الإنفينيتي',icon:'♾️',start:46, end:50, baseMultiplier:1.90, increment:0.02}
+];
+const RANKS = [];
+for(const tier of RANK_TIERS){
+  for(let lvl=tier.start; lvl<=tier.end; lvl++){
+    RANKS.push({
+      level: lvl,
+      name: tier.name,
+      icon: tier.icon,
+      minTokens: lvl===1 ? 0 : Math.floor(800*Math.pow(1.65,lvl-2)),
+      clickMultiplier: tier.baseMultiplier + (lvl-tier.start)*tier.increment
+    });
+  }
+}
+function getRankByTokens(t){ for(let i=RANKS.length-1;i>=0;i--) if(t>=RANKS[i].minTokens) return RANKS[i]; return RANKS[0]; }
+
+const AVATARS = [
+  {id:1,emoji:'🦁',name:'الأسد'},{id:2,emoji:'🐉',name:'التنين'},{id:3,emoji:'🦊',name:'الثعلب'},
+  {id:4,emoji:'🐺',name:'الذئب'},{id:5,emoji:'🦅',name:'النسر'},{id:6,emoji:'🐬',name:'الدلفين'},
+  {id:7,emoji:'🦄',name:'اليونيكورن'},{id:8,emoji:'🐸',name:'الضفدع'},{id:9,emoji:'🐙',name:'الأخطبوط'},
+  {id:10,emoji:'🦇',name:'الخفاش'},{id:11,emoji:'🐋',name:'الحوت'},{id:12,emoji:'🦚',name:'الطاووس'},
+  {id:13,emoji:'🐲',name:'التنين الشرقي'},{id:14,emoji:'🦖',name:'الديناصور'},{id:15,emoji:'🐱',name:'القط'}
+];
+function getAv(id){ return AVATARS.find(a=>a.id===id)||AVATARS[0]; }
+
+const BOOSTS = [
+  {id:'turbo',name:'توربو',icon:'⚡',desc:'×5 نقرة لمدة 30 ثانية',cost:500,duration:30000},
+  {id:'magnet',name:'مغناطيس',icon:'🧲',desc:'+3 توكن كل 0.5 ثانية',cost:1000,duration:60000},
+  {id:'shield',name:'درع',icon:'🛡️',desc:'بدون استهلاك طاقة 60 ثانية',cost:300,duration:60000}
+];
+const TASKS = [
+  {id:1,name:'انقر 100 مرة',reward:500,type:'clicks',target:100,icon:'👆'},
+  {id:2,name:'انقر 500 مرة',reward:1500,type:'clicks',target:500,icon:'🖱️'},
+  {id:3,name:'انقر 1000 مرة',reward:3000,type:'clicks',target:1000,icon:'💥'},
+  {id:4,name:'ادعُ صديقاً',reward:5000,type:'referral',icon:'👥'},
+  {id:5,name:'وثّق حسابك',reward:10000,type:'verify',icon:'✅'}
+];
+const PASSIVE_ITEMS = [
+  {id:'farm',name:'مزرعة',rate:20,cost:50000,icon:'🌱'},
+  {id:'factory',name:'مصنع',rate:40,cost:200000,icon:'🏭'},
+  {id:'complex',name:'مجمع',rate:70,cost:800000,icon:'🏗️'},
+  {id:'server',name:'خادم تعدين',rate:100,cost:5000000,icon:'🖥️'}
+];
+
+const RANK_GAMES = [
+  {tierId:1, tierName:'الحجري',    tierIcon:'🪨', minLevel:1,  maxLevel:5,  game:{id:'tap_coin',    name:'🪙 العملة المتحركة',  desc:'اضرب العملة 5 مرات في 12 ثانية!',    reward:200,   cooldown:300000,  play:'playTapCoinGame'}},
+  {tierId:2, tierName:'البرونزي',  tierIcon:'🥉', minLevel:6,  maxLevel:10, game:{id:'memory_num',  name:'🔢 الذاكرة العددية',  desc:'احفظ الرقم وأدخله في 3 ثوانٍ!',       reward:500,   cooldown:480000,  play:'playMemoryGame'}},
+  {tierId:3, tierName:'الفضي',     tierIcon:'🥈', minLevel:11, maxLevel:15, game:{id:'fast_guess',  name:'⚡ التخمين السريع',    desc:'خمّن الرقم في 3 محاولات!',             reward:1000,  cooldown:600000,  play:'playFastGuessGame'}},
+  {tierId:4, tierName:'الذهبي',    tierIcon:'🥇', minLevel:16, maxLevel:20, game:{id:'rock_break',  name:'⛏️ كسر الصخور',       desc:'اكسر 8 صخور في 12 ثانية!',            reward:2000,  cooldown:780000,  play:'playRockBreakGame'}},
+  {tierId:5, tierName:'الألماسي',  tierIcon:'💎', minLevel:21, maxLevel:25, game:{id:'diamond_rush',name:'💎 سباق الألماس',      desc:'30+ نقرة في 10 ثوانٍ!',               reward:3500,  cooldown:960000,  play:'playDiamondRushGame'}},
+  {tierId:6, tierName:'الملكي',    tierIcon:'👑', minLevel:26, maxLevel:30, game:{id:'royal_match', name:'👑 المطابقة الملكية',  desc:'أوجد كل الأزواج المتطابقة!',           reward:5000,  cooldown:1200000, play:'playRoyalMatchGame'}},
+  {tierId:7, tierName:'الأسطوري',  tierIcon:'⚡', minLevel:31, maxLevel:35, game:{id:'legend_tap',  name:'⚡ النقر الأسطوري',   desc:'40+ نقرة في 8 ثوانٍ!',                reward:8000,  cooldown:1380000, play:'playLegendTapGame'}},
+  {tierId:8, tierName:'الكوزمي',   tierIcon:'🌌', minLevel:36, maxLevel:40, game:{id:'cosmic_calc', name:'🌌 حساب الكوزمي',     desc:'حل 3 معادلات بسرعة!',                 reward:12000, cooldown:1620000, play:'playCosmicCalcGame'}},
+  {tierId:9, tierName:'التايتان',  tierIcon:'🔱', minLevel:41, maxLevel:45, game:{id:'titan_boss',  name:'🔱 مواجهة التايتان',  desc:'أسقط الوحش في 15 ثانية!',             reward:18000, cooldown:1800000, play:'playTitanBossGame'}},
+  {tierId:10,tierName:'الإنفينيتي',tierIcon:'♾️', minLevel:46, maxLevel:50, game:{id:'infinity_rush',name:'♾️ سباق الإنفينيتي',desc:'50+ نقرة في 6 ثوانٍ! (أصعب تحدي)',    reward:30000, cooldown:2100000, play:'playInfinityGame'}}
+];
+
+// ===================== STATE =====================
+let currentUser = null;
+let allUsers = {};
+let pendingConfirm = null;
+let selectedSendUser = null;
+let soundEnabled = {click:true, winLoss:true};
+let particlesEnabled = true;
+let audioCtx = null;
+let globalGoldPrice = 61.5;
+let globalMarketHistory = [];
+let goldChart = null;
+let isOnline = navigator.onLine;
+let lbCache = [];
+let lbCacheTime = 0;
+let saveTimer = null;
+if (typeof window.activeGameInterval === 'undefined') window.activeGameInterval = null;
+
+// ===================== DEVICE & SECRET =====================
+function getDeviceFingerprint() {
+  const data = [navigator.userAgent, navigator.language, screen.width+'x'+screen.height, screen.colorDepth, new Date().getTimezoneOffset(), !!window.sessionStorage, !!window.localStorage].join('|');
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) { hash = ((hash << 5) - hash) + data.charCodeAt(i); hash |= 0; }
+  return Math.abs(hash).toString(36);
+}
+function generateUserSecret() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) { const r = Math.random() * 16 | 0; const v = c === 'x' ? r : (r & 0x3 | 0x8); return v.toString(16); }) + '-' + Date.now().toString(36);
+}
+
+// ===================== HELPERS =====================
+function fmt(n){ if(n===undefined||n===null) return '0'; n = Math.floor(n); if(n>=1e9) return (n/1e9).toFixed(1)+'B'; if(n>=1e6) return (n/1e6).toFixed(1)+'M'; if(n>=1e3) return (n/1e3).toFixed(1)+'K'; return n.toString(); }
+function toQuinn(t){ return ((t||0)/TOKENS_PER_QUINN).toFixed(4); }
+function toTokens(q){ return (q||0) * TOKENS_PER_QUINN; }
+function notify(msg,dur=2800){ const e=document.getElementById('notif'); e.textContent=msg; e.style.display='block'; clearTimeout(e._t); e._t=setTimeout(()=>e.style.display='none',dur); }
+function haptic(t='light'){ try{window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(t);}catch(e){} }
+function copyToClipboard(t){ return (navigator.clipboard?.writeText(t)||Promise.reject()).then(()=>{haptic('success');notify('✅ تم النسخ');return true;}).catch(()=>false); }
+function loadP(pct){ document.getElementById('loadingFill').style.width=pct+'%'; }
+function loadMsg(m){ document.getElementById('loadingMsg').textContent=m; }
+function hideLoader(){ document.getElementById('loadingScreen').style.display='none'; }
+
+// ===================== AUDIO =====================
+function initAudio(){ if(!audioCtx&&(window.AudioContext||window.webkitAudioContext)) audioCtx=new(window.AudioContext||window.webkitAudioContext)(); }
+function playSound(type){
+  if(!audioCtx) initAudio();
+  if(type==='click'&&!soundEnabled.click) return;
+  if((type==='win'||type==='loss')&&!soundEnabled.winLoss) return;
+  if(!audioCtx) return;
+  try{
+    const now=audioCtx.currentTime, osc=audioCtx.createOscillator(), gain=audioCtx.createGain();
+    osc.connect(gain); gain.connect(audioCtx.destination); osc.type='sine';
+    if(type==='click'){osc.frequency.value=880;gain.gain.value=0.08;osc.start();osc.stop(now+0.08);}
+    else if(type==='win'){osc.frequency.value=523.25;gain.gain.value=0.12;osc.start();osc.stop(now+0.2);}
+    else if(type==='loss'){osc.frequency.value=220;gain.gain.value=0.12;osc.start();osc.stop(now+0.2);}
+    if(audioCtx.state==='suspended') audioCtx.resume();
+  }catch(e){}
+}
+function toggleSound(t){ if(t==='click') soundEnabled.click=document.getElementById('soundClickToggle').checked; if(t==='winLoss') soundEnabled.winLoss=document.getElementById('soundWinLossToggle').checked; localStorage.setItem('quinn_sound',JSON.stringify(soundEnabled)); }
+function toggleParticles(){ particlesEnabled=document.getElementById('particlesToggle').checked; localStorage.setItem('quinn_particles',particlesEnabled); }
+function togglePublicBalance(){ currentUser.showBalance=document.getElementById('showBalancePublic').checked; scheduleLocalSave(); renderLeaderboard(); renderProfile(); }
+
+// ===================== FIREBASE LAYER =====================
+function getDb(){ return window.FB_DB; }
+function showSyncIndicator(){ const e=document.getElementById('fbSync'); e.style.display='block'; clearTimeout(e._t); e._t=setTimeout(()=>e.style.display='none',1500); }
+
+function defaultUserData(uid, tgUser){
+  const userSecret = generateUserSecret();
+  return {
+    id: uid,
+    name: ((tgUser.first_name||'')+' '+(tgUser.last_name||'')).trim()||'مستخدم',
+    username: tgUser.username||'',
+    tokens: 1000,
+    clicks: 0,
+    energy: MAX_ENERGY,
+    passiveIncome: 0,
+    boostActive: null,
+    boostEnd: 0,
+    completedTasks: [],
+    transactions: [{desc:'🎁 مكافأة التسجيل',amount:1000,time:new Date().toLocaleTimeString()}],
+    avatar: 1,
+    verified: false,
+    verifyExpire: 0,
+    secondLife: false,
+    secondLifeExpire: 0,
+    referralCode: `REF${uid.slice(-6)}`,
+    referrals: [],
+    referralEarnings: 0,
+    referralTierBonus: 0,
+    referralProcessed: false,
+    ownedPassive: {},
+    telegramAvatarPurchased: false,
+    telegramAvatarUrl: tgUser.photo_url||null,
+    joinDate: Date.now(),
+    showBalance: true,
+    goldGrams: 0,
+    goldTxs: [],
+    lastSeen: Date.now(),
+    lastEnergyCharge: 0,
+    energyChargeType: null,
+    energyChargeEnd: 0,
+    userSecret: userSecret,
+    selectedAvatarType: 'emoji',
+    deviceFingerprint: getDeviceFingerprint(),
+    aiDailyChats: 0,
+    aiLastReset: Date.now()
+  };
+}
+
+async function loadUserFromFirebase(uid, tgUser){
+  const db = getDb();
+  let cached = null;
+  try{ const raw = localStorage.getItem('quinn_user_'+uid); if(raw) cached = JSON.parse(raw); }catch(e){}
+  let userData = cached;
+  if(db){
+    try{
+      const docRef = window.FB_doc(db, 'users', uid);
+      const snap = await window.FB_getDoc(docRef);
+      if(snap.exists()){
+        userData = snap.data();
+        const defaults = defaultUserData(uid, tgUser);
+        for(const k of Object.keys(defaults)) if(userData[k]===undefined) userData[k]=defaults[k];
+        if(!userData.userSecret) userData.userSecret = generateUserSecret();
+        if(!userData.aiDailyChats) userData.aiDailyChats = 0;
+        if(!userData.aiLastReset) userData.aiLastReset = Date.now();
+      } else {
+        const deviceFingerprint = getDeviceFingerprint();
+        const q = window.FB_query(window.FB_collection(db,'users'), window.FB_orderBy('joinDate','desc'), window.FB_limit(5));
+        const recentSnap = await window.FB_getDocs(q);
+        let block = false;
+        recentSnap.forEach(doc => { const u = doc.data(); if(u.deviceFingerprint === deviceFingerprint && (Date.now() - (u.joinDate||0)) < FINGERPRINT_COOLDOWN) block = true; });
+        if(block) { notify('⚠️ لا يمكن إنشاء حساب جديد من هذا الجهاز بهذه السرعة. انتظر قليلاً.'); throw new Error('Too many accounts from same device'); }
+        userData = defaultUserData(uid, tgUser);
+        userData.deviceFingerprint = deviceFingerprint;
+        await window.FB_setDoc(docRef, userData);
+        const sp = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+        if(sp?.startsWith('ref_')) setTimeout(()=>applyRefCodeManually(sp.replace('ref_',''),uid),800);
+        else setTimeout(()=>{ if(!userData.referralProcessed) openManualReferralModal(); },1500);
+      }
+    }catch(e){ console.warn('Firebase load failed, using cache:', e); if(!userData) userData = defaultUserData(uid, tgUser); }
+  } else { if(!userData) userData = defaultUserData(uid, tgUser); }
+
+  const now = Date.now();
+  const elapsed = now - (userData.lastSeen||now);
+  if(elapsed>1500 && userData.energy<MAX_ENERGY){
+    const energyRestore = Math.floor(elapsed/1500)*3;
+    userData.energy = Math.min(MAX_ENERGY, userData.energy+energyRestore);
+  }
+  if(elapsed>60000 && userData.passiveIncome>0){
+    const mins = Math.floor(elapsed/60000);
+    const gain = mins * userData.passiveIncome;
+    userData.tokens += gain;
+    userData.transactions.unshift({desc:`💰 دخل سلبي (${mins} دقيقة)`,amount:gain,time:new Date().toLocaleTimeString()});
+  }
+  userData.lastSeen = now;
+  if(userData.verified && userData.verifyExpire && now>userData.verifyExpire) userData.verified=false;
+  if(userData.secondLife && userData.secondLifeExpire && now>userData.secondLifeExpire) userData.secondLife=false;
+  if(userData.energyChargeEnd && now>userData.energyChargeEnd){ userData.energyChargeType=null; userData.energyChargeEnd=0; }
+  userData.passiveIncome = getCurrentPassiveIncome(userData);
+  // reset AI counter daily
+  if(now - (userData.aiLastReset||0) > 86400000) {
+    userData.aiDailyChats = 0;
+    userData.aiLastReset = now;
+  }
+  localStorage.setItem('quinn_user_'+uid, JSON.stringify(userData));
+  return userData;
+}
+
+function scheduleLocalSave(){ if(currentUser) localStorage.setItem('quinn_user_'+currentUser.id, JSON.stringify(currentUser)); }
+async function saveNowToFirebase(data){ if(!currentUser) return; const db = getDb(); const toSave = data || currentUser; scheduleLocalSave(); if(!db) return; try{ showSyncIndicator(); await window.FB_setDoc(window.FB_doc(db,'users',currentUser.id), toSave); }catch(e){ console.warn('saveNowToFirebase failed:', e); } }
+function startPeriodicBackup(){ if(saveTimer) clearInterval(saveTimer); saveTimer = setInterval(() => { if(currentUser && document.visibilityState !== 'hidden') saveNowToFirebase(); }, 5 * 60 * 1000); }
+async function executeFirebaseTransaction(uid, otherUid, updateFn){ const db = getDb(); if(!db){ updateFn(currentUser, otherUid?allUsers[otherUid]:null); scheduleLocalSave(); return true; } try{ await window.FB_runTransaction(db, async(tx)=>{ const myRef = window.FB_doc(db,'users',uid); const mySnap = await tx.get(myRef); if(!mySnap.exists()) throw new Error('User not found'); const myData = mySnap.data(); let otherRef=null, otherData=null; if(otherUid){ otherRef = window.FB_doc(db,'users',otherUid); const otherSnap = await tx.get(otherRef); if(!otherSnap.exists()) throw new Error('Target not found'); otherData = otherSnap.data(); } updateFn(myData, otherData); tx.set(myRef, myData); if(otherRef && otherData) tx.set(otherRef, otherData); Object.assign(currentUser, myData); if(otherUid && allUsers[otherUid]) Object.assign(allUsers[otherUid], otherData); }); scheduleLocalSave(); return true; }catch(e){ console.warn('Transaction failed:', e); return false; } }
+function saveAll(){ scheduleLocalSave(); }
+
+function getCurrentPassiveIncome(user){ let t=0; if(user.ownedPassive){ t += (user.ownedPassive.farm||0)*20; t += (user.ownedPassive.factory||0)*40; t += (user.ownedPassive.complex||0)*70; t += (user.ownedPassive.server||0)*100; } return t; }
+
+// ===================== REFERRAL =====================
+async function applyRefCodeManually(code, uid){
+  const db = getDb();
+  let refId = Object.keys(allUsers).find(id=>allUsers[id].referralCode===code);
+  if(!refId && db){
+    try{
+      const q = window.FB_query(window.FB_collection(db,'users'), window.FB_orderBy('referralCode'));
+      const snaps = await window.FB_getDocs(q);
+      snaps.forEach(d=>{ const u=d.data(); allUsers[u.id]=u; if(u.referralCode===code) refId=u.id; });
+    }catch(e){}
+  }
+  if(!refId||refId===uid){ notify('❌ كود غير صالح'); return false; }
+  const user = allUsers[uid]||currentUser;
+  if(user.referralProcessed){ notify('✅ استخدمت كوداً مسبقاً'); return false; }
+  user.referralProcessed = true;
+  const referrer = allUsers[refId];
+  if(referrer){
+    referrer.tokens += REF_BONUS_REFERRER;
+    referrer.referralEarnings = (referrer.referralEarnings||0) + REF_BONUS_REFERRER;
+    referrer.referrals = referrer.referrals||[];
+    referrer.referrals.push({name:user.name,bonus:REF_BONUS_REFERRER,date:new Date().toLocaleString()});
+    referrer.transactions = referrer.transactions||[];
+    referrer.transactions.unshift({desc:`إحالة: ${user.name}`,amount:REF_BONUS_REFERRER,time:new Date().toLocaleTimeString()});
+  }
+  user.tokens += REF_BONUS_NEWUSER;
+  user.transactions = user.transactions||[];
+  user.transactions.unshift({desc:`مكافأة إحالة`,amount:REF_BONUS_NEWUSER,time:new Date().toLocaleTimeString()});
+  const rc = referrer?.referrals?.length||0;
+  let tier=0;
+  if(rc>=5)tier+=10000; if(rc>=10)tier+=25000; if(rc>=25)tier+=100000; if(rc>=50)tier+=500000;
+  if(referrer && tier>(referrer.referralTierBonus||0)){
+    const extra=tier-(referrer.referralTierBonus||0);
+    referrer.tokens+=extra; referrer.referralEarnings+=extra; referrer.referralTierBonus=tier;
+    referrer.transactions.unshift({desc:`🎁 مكافأة متدرجة (${rc} إحالة)`,amount:extra,time:new Date().toLocaleTimeString()});
+    notify(`🎊 مكافأة متدرجة! +${fmt(extra)} توكن`);
+  }
+  saveAll(); if(referrer) saveNowToFirebase(referrer);
+  if(db) await window.FB_setDoc(window.FB_doc(db,'users',uid), user);
+  notify(`🎉 تمت الإحالة! ربحت +${fmt(REF_BONUS_NEWUSER)} توكن`);
+  refreshUI();
+  lbCacheTime = 0;
+  refreshLeaderboard();
+  if(document.getElementById('tab-referral').classList.contains('active')) renderReferral();
+  return true;
+}
+function openManualReferralModal(){ if(currentUser.referralProcessed){notify('استخدمت كوداً مسبقاً');return;} document.getElementById('manualRefCode').value=''; document.getElementById('referralCodeModal').classList.add('active'); }
+function closeReferralModal(){ document.getElementById('referralCodeModal').classList.remove('active'); }
+function applyReferralCode(){ const c=document.getElementById('manualRefCode').value.trim(); if(!c){notify('أدخل الكود');return;} closeReferralModal(); applyRefCodeManually(c,currentUser.id); renderReferral(); }
+
+// ===================== NETWORK =====================
+function updateNetStatus(online){
+  isOnline = online;
+  const el = document.getElementById('netStatus');
+  if(!online){ el.textContent='📡 لا يوجد اتصال — العمليات المالية متوقفة'; el.className=''; el.style.display='block'; }
+  else{ el.textContent='✅ عاد الاتصال'; el.className='back'; el.style.display='block'; setTimeout(()=>el.style.display='none',3000); }
+}
+function requireOnline(act){ if(!isOnline){notify(`⚠️ لا اتصال — ${act} متوقف حالياً`);haptic('error');return false;} return true; }
+async function checkConnectivity(){
+  try{ const c=new AbortController(); const t=setTimeout(()=>c.abort(),4000); await fetch('https://www.google.com/favicon.ico?_='+Date.now(),{method:'HEAD',mode:'no-cors',cache:'no-store',signal:c.signal}); clearTimeout(t); if(!isOnline) updateNetStatus(true); isOnline=true; }
+  catch(e){ if(isOnline) updateNetStatus(false); isOnline=false; }
+}
+function startNetworkMonitor(){
+  window.addEventListener('online',()=>{ isOnline=true; updateNetStatus(true); checkConnectivity(); });
+  window.addEventListener('offline',()=>{ isOnline=false; updateNetStatus(false); });
+  setInterval(checkConnectivity,30000);
+  setTimeout(checkConnectivity,2000);
+  window.addEventListener('beforeunload',()=>{ if(currentUser){ localStorage.setItem('quinn_user_'+currentUser.id,JSON.stringify(currentUser)); saveNowToFirebase(); } });
+}
+
+// ===================== GAME MECHANICS =====================
+function handleClick(e){
+  if(e.type==='mousedown'&&e.button!==0) return;
+  const rank = getRankByTokens(currentUser.tokens);
+  let mult = rank.clickMultiplier;
+  if(currentUser.boostActive==='turbo'&&Date.now()<currentUser.boostEnd) mult*=5;
+  if(currentUser.boostActive!=='shield'&&currentUser.energy<=0){ notify('⚡ لا طاقة! انتظر قليلاً'); haptic('error'); return; }
+  const gain = Math.max(1,Math.floor(mult));
+  currentUser.tokens += gain;
+  currentUser.clicks++;
+  if(currentUser.boostActive!=='shield') currentUser.energy=Math.max(0,currentUser.energy-1);
+  if(particlesEnabled){
+    const rect=document.getElementById('coin-btn').getBoundingClientRect();
+    const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+    for(let i=0;i<Math.min(gain,5);i++){
+      const p=document.createElement('div'); p.className='particle';
+      p.textContent=`+${Math.floor(gain/2)+1} 🪙`;
+      p.style.left=(cx+(Math.random()-.5)*60)+'px';
+      p.style.top=(cy+(Math.random()-.5)*60)+'px';
+      document.body.appendChild(p); setTimeout(()=>p.remove(),700);
+    }
+  }
+  playSound('click'); haptic('light'); refreshUI(); scheduleLocalSave();
+}
+
+function activateBoost(id){
+  const b=BOOSTS.find(b=>b.id===id);
+  if(!b||currentUser.tokens<b.cost){notify('رصيد غير كافٍ');return;}
+  showConfirm(`تفعيل ${b.icon} ${b.name}`,`مقابل ${fmt(b.cost)} توكن؟`,()=>{
+    currentUser.tokens-=b.cost; currentUser.boostActive=id; currentUser.boostEnd=Date.now()+b.duration;
+    currentUser.transactions.unshift({desc:`تفعيل ${b.icon} ${b.name}`,amount:-b.cost,time:new Date().toLocaleTimeString()});
+    notify(`✅ تم تفعيل ${b.name}`); playSound('win');
+    saveNowToFirebase(); refreshUI(); renderBoostTab();
+  });
+}
+function buyPassive(id){
+  const i=PASSIVE_ITEMS.find(i=>i.id===id); if(!i) return;
+  if(currentUser.tokens<i.cost){notify('رصيد غير كافٍ');return;}
+  showConfirm(`شراء ${i.icon} ${i.name}`,`مقابل ${fmt(i.cost)} توكن؟ (+${i.rate} توكن/دقيقة)`,()=>{
+    currentUser.tokens-=i.cost;
+    currentUser.ownedPassive[id]=(currentUser.ownedPassive[id]||0)+1;
+    currentUser.passiveIncome=getCurrentPassiveIncome(currentUser);
+    currentUser.transactions.unshift({desc:`شراء ${i.icon} ${i.name}`,amount:-i.cost,time:new Date().toLocaleTimeString()});
+    notify(`✅ +${i.rate} توكن/دقيقة`); playSound('win');
+    saveNowToFirebase(); refreshUI(); renderBoostTab();
+  });
+}
+function completeTask(tid){
+  const t=TASKS.find(t=>t.id===tid);
+  if(!t||currentUser.completedTasks.includes(tid)) return;
+  if(t.type==='verify'&&!currentUser.verified){notify('وثّق حسابك أولاً');return;}
+  if(t.type==='referral'&&currentUser.referrals.length===0){notify('تحتاج إحالة واحدة');return;}
+  if(t.type==='clicks'&&currentUser.clicks<t.target){notify(`تحتاج ${t.target-currentUser.clicks} نقرة`);return;}
+  currentUser.tokens+=t.reward; currentUser.completedTasks.push(tid);
+  currentUser.transactions.unshift({desc:`🏆 مهمة: ${t.name}`,amount:t.reward,time:new Date().toLocaleTimeString()});
+  notify(`🎉 +${fmt(t.reward)} توكن`); playSound('win');
+  saveNowToFirebase(); refreshUI(); renderBoostTab();
+}
+
+// ===================== ENERGY BOOSTS =====================
+const ENERGY_CHARGE_COOLDOWN = 3 * 60 * 60 * 1000;
+function renderEnergyBoosts(){
+  const bEl=document.getElementById('bBoosts'); if(!bEl) return;
+  const now=Date.now();
+  const lastCharge=currentUser.lastEnergyCharge||0;
+  const chargeLeft=Math.max(0,(lastCharge+ENERGY_CHARGE_COOLDOWN)-now);
+  const chargeMin=Math.ceil(chargeLeft/60000);
+  const canCharge=chargeLeft===0;
+  const chargeActive=currentUser.energyChargeEnd&&now<currentUser.energyChargeEnd;
+  const chargeTimeLeft=chargeActive?Math.ceil((currentUser.energyChargeEnd-now)/60000):0;
+  const chargeType=currentUser.energyChargeType||'';
+  bEl.innerHTML += `
+  <div style="margin-top:18px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);">
+    <div style="font-size:13px;font-weight:800;color:var(--cyan);margin-bottom:12px;">⚡ شحن الطاقة</div>
+    <div class="card" style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:28px;">⚡</div><div style="flex:1;"><div style="font-weight:800;">شحن 1000 طاقة فوري</div><div style="color:var(--t3);font-size:11px;">إعادة ملء الطاقة فوراً (cooldown 3 ساعات)</div><div style="color:var(--gold);font-size:12px;">💰 500 توكن</div>${!canCharge?`<div style="font-size:10px;color:var(--red);">⏳ بعد ${chargeMin} دقيقة</div>`:''}</div><button class="btn-sm" onclick="buyInstantEnergyCharge()" ${!canCharge||currentUser.tokens<500?'disabled style="opacity:.5;"':''}>${canCharge?'شحن':'⏳'}</button></div></div>
+    <div class="card" style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:28px;">⏱️</div><div style="flex:1;"><div style="font-weight:800;">شحن مستمر — دقيقة</div><div style="color:var(--t3);font-size:11px;">شحن طاقة كاملة كل دقيقة لمدة 10 دقائق</div><div style="color:var(--gold);font-size:12px;">💰 1 Quinn (10,000 توكن)</div>${chargeActive&&chargeType==='min'?`<div style="color:var(--green);font-size:10px;">✅ مفعّل — باقي ${chargeTimeLeft} دقيقة</div>`:''}</div><button class="btn-sm" onclick="buyEnergyCharge('min')" ${chargeActive?'disabled style="opacity:.5;"':''}>${chargeActive&&chargeType==='min'?'مفعّل':'شراء'}</button></div></div>
+    <div class="card" style="margin-bottom:10px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:28px;">🕐</div><div style="flex:1;"><div style="font-weight:800;">شحن مستمر — ساعة</div><div style="color:var(--t3);font-size:11px;">شحن طاقة كاملة كل ساعة لمدة 6 ساعات</div><div style="color:var(--gold);font-size:12px;">💰 50 Quinn (500,000 توكن)</div>${chargeActive&&chargeType==='hr'?`<div style="color:var(--green);font-size:10px;">✅ مفعّل — باقي ${chargeTimeLeft} دقيقة</div>`:''}</div><button class="btn-sm" onclick="buyEnergyCharge('hr')" ${chargeActive?'disabled style="opacity:.5;"':''}>${chargeActive&&chargeType==='hr'?'مفعّل':'شراء'}</button></div></div>
+  </div>`;
+}
+function buyInstantEnergyCharge(){
+  const cost=500;
+  if(currentUser.tokens<cost){notify('❌ رصيد غير كافٍ (500 توكن)');return;}
+  const now=Date.now();
+  if((now-(currentUser.lastEnergyCharge||0))<ENERGY_CHARGE_COOLDOWN){ notify(`⏳ انتظر ${Math.ceil((ENERGY_CHARGE_COOLDOWN-(now-(currentUser.lastEnergyCharge||0)))/60000)} دقيقة`); return; }
+  showConfirm('شحن 1000 طاقة','شحن 1000 نقطة طاقة مقابل 500 توكن؟',()=>{
+    currentUser.tokens-=cost; currentUser.energy=Math.min(MAX_ENERGY+1000, currentUser.energy+1000); currentUser.lastEnergyCharge=Date.now();
+    currentUser.transactions.unshift({desc:'⚡ شحن 1000 طاقة فوري',amount:-cost,time:new Date().toLocaleTimeString()});
+    notify('✅ تم شحن 1000 طاقة!'); playSound('win'); saveNowToFirebase(); refreshUI(); renderBoostTab();
+  });
+}
+function buyEnergyCharge(type){
+  const cost=type==='min'?10000:500000;
+  const dur=type==='min'?10*60*1000:6*60*60*1000;
+  const label=type==='min'?'10 دقائق':'6 ساعات';
+  if(currentUser.tokens<cost){notify('❌ رصيد غير كافٍ');return;}
+  if(currentUser.energyChargeEnd&&Date.now()<currentUser.energyChargeEnd){notify('⚠️ شحن مفعّل بالفعل');return;}
+  showConfirm('شراء شحن مستمر',`تفعيل شحن الطاقة لمدة ${label}؟`,()=>{
+    currentUser.tokens-=cost; currentUser.energyChargeType=type; currentUser.energyChargeEnd=Date.now()+dur;
+    currentUser.transactions.unshift({desc:`⚡ شحن طاقة مستمر (${label})`,amount:-cost,time:new Date().toLocaleTimeString()});
+    notify(`✅ تم تفعيل شحن الطاقة!`); playSound('win'); saveNowToFirebase(); refreshUI(); renderBoostTab();
+  });
+}
+
+// ===================== WALLET (نفس السابق) =====================
+function updateSendPrev(){ const v=parseFloat(document.getElementById('sendAmt').value)||0; document.getElementById('sendPrev').textContent=v>0?`= ${fmt(toTokens(v))} توكن`:''; }
+function updateSendUserPreview(){ const v=parseFloat(document.getElementById('sendUserAmt')?.value)||0; const el=document.getElementById('sendUserPreview'); if(el) el.textContent=v>0?`= ${fmt(toTokens(v))} توكن`:''; }
+async function doTransfer(){
+  if(!requireOnline('إرسال العملات')) return;
+  const to=(document.getElementById('sendTo').value||'').trim();
+  const amt=parseFloat(document.getElementById('sendAmt').value);
+  if(!to||isNaN(amt)||amt<=0){notify('بيانات غير صحيحة');return;}
+  const costTok=toTokens(amt);
+  if(currentUser.tokens<costTok){notify('رصيد غير كافٍ');return;}
+  let targetId=to.startsWith('@')?Object.keys(allUsers).find(uid=>allUsers[uid].username?.toLowerCase()===to.slice(1).toLowerCase()):to;
+  if(!targetId||!allUsers[targetId]){
+    const db=getDb();
+    if(db){ try{ const snap=await window.FB_getDoc(window.FB_doc(db,'users',to)); if(snap.exists()){allUsers[to]=snap.data();targetId=to;} }catch(e){} }
+  }
+  if(!targetId||!allUsers[targetId]){notify('❌ مستخدم غير موجود');return;}
+  if(targetId===currentUser.id){notify('❌ لا يمكن إرسال لنفسك');return;}
+  showConfirm('تأكيد التحويل',`إرسال ${amt} Quinn إلى ${allUsers[targetId].name}؟`,async()=>{
+    const ok=await executeFirebaseTransaction(currentUser.id,targetId,(myData,otherData)=>{
+      const cost=toTokens(amt);
+      myData.tokens-=cost; otherData.tokens+=cost;
+      myData.transactions=myData.transactions||[];
+      otherData.transactions=otherData.transactions||[];
+      myData.transactions.unshift({desc:`📤 إرسال ${amt} Q → ${otherData.name}`,amount:-cost,time:new Date().toLocaleTimeString()});
+      otherData.transactions.unshift({desc:`📥 استلام ${amt} Q من ${myData.name}`,amount:cost,time:new Date().toLocaleTimeString()});
+    });
+    if(ok){ notify('✅ تم التحويل بنجاح'); playSound('win'); refreshUI(); renderWallet(); document.getElementById('sendTo').value=''; document.getElementById('sendAmt').value=''; document.getElementById('sendPrev').textContent=''; }
+    else notify('❌ فشل التحويل، حاول مرة أخرى');
+  });
+}
+function copyId(){ copyToClipboard(currentUser.username?`@${currentUser.username}`:currentUser.id); }
+function updateShopPrev(){ const v=parseFloat(document.getElementById('shopQty').value)||0; document.getElementById('shopPrev').textContent=v>0?`ستحصل على ${fmt(toTokens(v))} توكن`:''; }
+function shopNext(){ const q=parseFloat(document.getElementById('shopQty').value); if(!q||q<=0){notify('أدخل كمية صحيحة');return;} document.getElementById('shopConfLbl').textContent=`شراء ${q} Quinn = ${fmt(toTokens(q))} توكن`; document.getElementById('shopStep1').style.display='none'; document.getElementById('shopStep2').style.display='block'; }
+function shopBack(){ document.getElementById('shopStep1').style.display='block'; document.getElementById('shopStep2').style.display='none'; document.getElementById('shopPass').value=''; }
+function shopBuy(){
+  if(!requireOnline('شراء Quinn')) return;
+  const pass=document.getElementById('shopPass').value;
+  const qty=parseFloat(document.getElementById('shopQty').value);
+  if(pass!==SHOP_PASSWORD){notify('❌ كلمة المرور خاطئة');return;}
+  const gain=toTokens(qty);
+  currentUser.tokens+=gain;
+  currentUser.transactions.unshift({desc:`🏪 شراء ${qty} Quinn`,amount:gain,time:new Date().toLocaleTimeString()});
+  notify(`✅ تمت إضافة ${qty} Quinn`); playSound('win');
+  refreshUI(); renderWallet(); shopBack();
+  saveNowToFirebase();
+}
+function renderStarsPackages(cid){ const html=STARS_PACKAGES.map(p=>`<div class="star-pkg" onclick="openStarsModal()"><div style="font-size:28px;">⭐</div><div style="flex:1;"><div style="font-weight:800;">${p.stars} نجمة → ${p.quinn} Quinn</div><div style="font-size:11px;color:var(--t3);">= ${fmt(toTokens(p.quinn))} توكن</div></div><button class="btn-sm btn-gold">تفاصيل</button></div>`).join(''); const el=document.getElementById(cid); if(el) el.innerHTML=html; }
+function openStarsModal(){ renderStarsPackages('starsPkgs'); document.getElementById('starsModal').classList.add('active'); }
+function closeStarsModal(){ document.getElementById('starsModal').classList.remove('active'); }
+
+// ===================== SEND USER MODAL =====================
+function closeSendUserModal(){ document.getElementById('sendUserModal').classList.remove('active'); selectedSendUser=null; }
+function openSendUserModal(uid){
+  const u=allUsers[uid]; if(!u){notify('مستخدم غير موجود');return;} if(uid===currentUser.id){notify('لا يمكن إرسال لنفسك');return;}
+  selectedSendUser=uid;
+  document.getElementById('sendUserName').textContent=u.name;
+  document.getElementById('sendUserBal').textContent=`الرصيد: ${u.showBalance!==false?toQuinn(u.tokens)+' Quinn':'🔒 مخفي'}`;
+  document.getElementById('sendUserAmt').value='';
+  document.getElementById('sendUserPreview').textContent='';
+  closeSearchModal();
+  document.getElementById('sendUserModal').classList.add('active');
+}
+async function requestSendConfirmation(){
+  if(!requireOnline('إرسال العملات')) return;
+  const amt = parseFloat(document.getElementById('sendUserAmt').value);
+  if(!selectedSendUser || isNaN(amt) || amt <= 0){ notify('❌ أدخل كمية صحيحة أكبر من 0'); return; }
+  const u = allUsers[selectedSendUser];
+  if(!u){ notify('❌ مستخدم غير موجود'); return; }
+  const cost = toTokens(amt);
+  if(currentUser.tokens < cost){ notify('❌ رصيد غير كافٍ'); return; }
+  const ok = await executeFirebaseTransaction(currentUser.id, selectedSendUser, (myData, otherData) => {
+    myData.tokens -= cost; otherData.tokens += cost;
+    myData.transactions = myData.transactions || [];
+    otherData.transactions = otherData.transactions || [];
+    myData.transactions.unshift({ desc: `📤 إرسال ${amt} Q → ${otherData.name}`, amount: -cost, time: new Date().toLocaleTimeString() });
+    otherData.transactions.unshift({ desc: `📥 استلام ${amt} Q من ${myData.name}`, amount: cost, time: new Date().toLocaleTimeString() });
+  });
+  if(ok){ notify('✅ تم الإرسال بنجاح'); playSound('win'); refreshUI(); closeSendUserModal(); }
+  else notify('❌ فشل الإرسال، حاول مرة أخرى');
+}
+
+// ===================== GOLD MARKET =====================
+function updateGoldPrice(){
+  const change=(Math.random()-.5)*.8;
+  globalGoldPrice=Math.max(55,Math.min(80,globalGoldPrice+change));
+  const el=document.getElementById('goldPrice');
+  const chEl=document.getElementById('goldChange');
+  const hint=document.getElementById('buyPriceHint');
+  if(el) el.textContent=`$${globalGoldPrice.toFixed(2)}`;
+  if(hint) hint.textContent=`$${globalGoldPrice.toFixed(2)}/جرام`;
+  if(chEl){
+    const pct=((change/globalGoldPrice)*100).toFixed(2);
+    chEl.textContent=`${change>=0?'▲':'▼'} ${Math.abs(pct)}%`;
+    chEl.className=`gold-change ${change>=0?'up':'dn'}`;
+  }
+  globalMarketHistory.push({price:globalGoldPrice,time:Date.now()});
+  if(globalMarketHistory.length>20) globalMarketHistory.shift();
+  localStorage.setItem('quinn_gold_market',JSON.stringify({price:globalGoldPrice,history:globalMarketHistory}));
+  if(goldChart) goldChart.destroy();
+  const ctx=document.getElementById('goldChart')?.getContext('2d');
+  if(ctx){
+    goldChart=new Chart(ctx,{type:'line',data:{labels:globalMarketHistory.map((_,i)=>i+1),datasets:[{label:'سعر GOLD (USD/جرام)',data:globalMarketHistory.map(h=>h.price),borderColor:'#f59e0b',backgroundColor:'rgba(245,158,11,.1)',fill:true,tension:.3,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:true,plugins:{legend:{labels:{color:'white',font:{size:11}}}},scales:{y:{grid:{color:'rgba(255,255,255,.1)'},ticks:{color:'white',font:{size:10}}},x:{ticks:{color:'white',font:{size:10}}}}}});
+  }
+}
+function loadGoldMarket(){
+  const saved=localStorage.getItem('quinn_gold_market');
+  if(saved) try{const d=JSON.parse(saved);globalGoldPrice=d.price;globalMarketHistory=d.history||[];}catch(e){}
+  if(!globalMarketHistory.length) for(let i=0;i<20;i++) globalMarketHistory.push({price:61.5,time:Date.now()});
+  updateGoldPrice();
+}
+function calculatePriceImpact(amtUSD,isSell){
+  const pct=amtUSD/MARKET_LIQUIDITY;
+  const impact=isSell?-Math.min(.85,pct*3):Math.min(2.5,pct*2.5);
+  return globalGoldPrice*(1+impact);
+}
+function updateGoldBuyPrev(){
+  const g=parseFloat(document.getElementById('goldBuyAmt').value)||0;
+  const cost=g*globalGoldPrice;
+  const costTok=cost*TOKENS_PER_QUINN;
+  const el=document.getElementById('goldBuyPrev');
+  if(el) el.innerHTML=g>0?`<div style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:10px;font-size:12px;"><div>${g} جرام × <span style="color:var(--gold);">$${globalGoldPrice.toFixed(2)}/جرام</span></div><div style="margin-top:4px;">= <span style="color:var(--gold);font-weight:800;">${cost.toFixed(2)} Quinn</span> (${fmt(costTok)} توكن)</div></div>`:'';
+}
+function updateGoldSellPrev(){
+  const g=parseFloat(document.getElementById('goldSellAmt').value)||0;
+  const earn=g*globalGoldPrice;
+  const earnTok=earn*TOKENS_PER_QUINN;
+  const el=document.getElementById('goldSellPrev');
+  if(el) el.innerHTML=g>0?`<div style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:10px;padding:10px;font-size:12px;"><div>${g} جرام × <span style="color:var(--gold);">$${globalGoldPrice.toFixed(2)}/جرام</span></div><div style="margin-top:4px;">= <span style="color:var(--green);font-weight:800;">${earn.toFixed(2)} Quinn</span> (${fmt(earnTok)} توكن)</div></div>`:'';
+}
+async function buyGold(){
+  if(!requireOnline('شراء الذهب')) return;
+  const g=parseFloat(document.getElementById('goldBuyAmt').value);
+  if(!g||g<=0){notify('❌ أدخل الكمية');return;}
+  const costUSD=g*globalGoldPrice;
+  const costTokens=costUSD*TOKENS_PER_QUINN;
+  if(currentUser.tokens<costTokens){notify('❌ رصيد غير كافٍ');return;}
+  showConfirm('شراء ذهب',`شراء ${g} جرام ذهب مقابل ${costUSD.toFixed(2)} Quinn؟`,async()=>{
+    const ok=await executeFirebaseTransaction(currentUser.id,null,(myData)=>{
+      myData.tokens-=costTokens; myData.goldGrams=(myData.goldGrams||0)+g;
+      myData.goldTxs=myData.goldTxs||[];
+      myData.goldTxs.unshift({desc:`🥇 شراء ${g} جرام @ $${globalGoldPrice.toFixed(2)}`,amount:-costUSD,time:new Date().toLocaleTimeString(),type:'buy'});
+      myData.transactions=myData.transactions||[];
+      myData.transactions.unshift({desc:`🥇 شراء ${g} جرام ذهب`,amount:-costTokens,time:new Date().toLocaleTimeString()});
+    });
+    if(ok){
+      const newPrice=calculatePriceImpact(costUSD,false);
+      globalGoldPrice=Math.max(55,Math.min(80,newPrice));
+      updateGoldPrice();
+      notify(`✅ تم شراء ${g} جرام ذهب`); playSound('win'); refreshUI(); renderTradePortfolio();
+      document.getElementById('goldBuyAmt').value=''; document.getElementById('goldBuyPrev').textContent='';
+    } else notify('❌ فشلت عملية الشراء');
+  });
+}
+async function sellGold(){
+  if(!requireOnline('بيع الذهب')) return;
+  const g=parseFloat(document.getElementById('goldSellAmt').value);
+  if(!g||g<=0){notify('❌ أدخل الكمية');return;}
+  if((currentUser.goldGrams||0)<g){notify('❌ ذهب غير كافٍ');return;}
+  const earnUSD=g*globalGoldPrice;
+  const earnTokens=earnUSD*TOKENS_PER_QUINN;
+  showConfirm('بيع ذهب',`بيع ${g} جرام ذهب مقابل ${earnUSD.toFixed(2)} Quinn؟`,async()=>{
+    const ok=await executeFirebaseTransaction(currentUser.id,null,(myData)=>{
+      myData.tokens+=earnTokens; myData.goldGrams-=g;
+      myData.goldTxs=myData.goldTxs||[];
+      myData.goldTxs.unshift({desc:`💵 بيع ${g} جرام @ $${globalGoldPrice.toFixed(2)}`,amount:earnUSD,time:new Date().toLocaleTimeString(),type:'sell'});
+      myData.transactions=myData.transactions||[];
+      myData.transactions.unshift({desc:`💵 بيع ${g} جرام ذهب`,amount:earnTokens,time:new Date().toLocaleTimeString()});
+    });
+    if(ok){
+      const newPrice=calculatePriceImpact(earnUSD,true);
+      globalGoldPrice=Math.max(55,Math.min(80,newPrice));
+      updateGoldPrice();
+      notify(`✅ تم بيع ${g} جرام ذهب`); playSound('win'); refreshUI(); renderTradePortfolio();
+      document.getElementById('goldSellAmt').value=''; document.getElementById('goldSellPrev').textContent='';
+    } else notify('❌ فشلت عملية البيع');
+  });
+}
+function renderTradePortfolio(){
+  const g=currentUser.goldGrams||0;
+  const val=(g*globalGoldPrice).toFixed(2);
+  const myG=document.getElementById('myGoldDisplay'); if(myG) myG.textContent=g.toFixed(4);
+  const pG=document.getElementById('portGold'); if(pG) pG.textContent=g.toFixed(4);
+  const pV=document.getElementById('portVal'); if(pV) pV.textContent=`$${val}`;
+  const txs=currentUser.goldTxs||[];
+  const el=document.getElementById('goldTxList');
+  if(el) el.innerHTML=txs.length?txs.slice(0,10).map(tx=>`<div class="tx-item"><div><div class="tx-desc">${tx.desc}</div><div class="tx-time">${tx.time}</div></div><div class="tx-amount ${tx.amount>0?'pos':'neg'}">${tx.amount>0?'+':''}${Math.abs(tx.amount).toFixed(2)} USD</div></div>`).join(''):'<div class="card" style="text-align:center;color:var(--t3);">لا توجد صفقات</div>';
+}
+
+// ===================== VERIFY =====================
+function requestVerify(){
+  const cost=toTokens(VERIFY_COST);
+  if(currentUser.tokens<cost){notify('رصيد غير كافٍ');return;}
+  showConfirm('توثيق الحساب',`توثيق حسابك مقابل ${VERIFY_COST} Quinn لمدة 30 يوم؟`,()=>{
+    currentUser.tokens-=cost; currentUser.verified=true; currentUser.verifyExpire=Date.now()+30*86400000;
+    currentUser.transactions.unshift({desc:'✅ توثيق الحساب',amount:-cost,time:new Date().toLocaleTimeString()});
+    notify('✅ تم التوثيق'); playSound('win');
+    saveNowToFirebase(); refreshUI(); renderVerifyPanel();
+    if(!currentUser.completedTasks.includes(5)) completeTask(5);
+  });
+}
+function renewVerify(){
+  const cost=toTokens(VERIFY_COST);
+  if(currentUser.tokens<cost){notify('رصيد غير كافٍ');return;}
+  showConfirm('تجديد التوثيق',`تجديد التوثيق مقابل ${VERIFY_COST} Quinn؟`,()=>{
+    currentUser.tokens-=cost; currentUser.verifyExpire=Date.now()+30*86400000;
+    currentUser.transactions.unshift({desc:'🔄 تجديد التوثيق',amount:-cost,time:new Date().toLocaleTimeString()});
+    notify('✅ تم التجديد'); playSound('win');
+    saveNowToFirebase(); refreshUI(); renderVerifyPanel();
+  });
+}
+function activateSecondLife(){
+  if(currentUser.secondLife&&currentUser.secondLifeExpire>Date.now()){notify('الحياة الثانية مفعلة');return;}
+  const cost=toTokens(SECOND_LIFE_COST);
+  if(currentUser.tokens<cost){notify('رصيد غير كافٍ');return;}
+  showConfirm('الحياة الثانية',`تفعيل الإطار الذهبي لمدة شهر مقابل ${SECOND_LIFE_COST} Quinn؟`,()=>{
+    currentUser.tokens-=cost; currentUser.secondLife=true; currentUser.secondLifeExpire=Date.now()+30*86400000;
+    currentUser.transactions.unshift({desc:'💫 تفعيل الحياة الثانية',amount:-cost,time:new Date().toLocaleTimeString()});
+    notify('✅ تم التفعيل - إطار ذهبي!'); playSound('win');
+    saveNowToFirebase(); refreshUI(); renderVerifyPanel();
+  });
+}
+
+// ===================== TELEGRAM AVATAR =====================
+function renderTelegramAvatarPanel(){
+  const preview=document.getElementById('tgPreview'),status=document.getElementById('tgStatus'),btn=document.getElementById('buyTgBtn'),url=currentUser.telegramAvatarUrl;
+  const mi=document.getElementById('manualPhotoUrl'); if(mi&&url) mi.value=url;
+  function loadImg(u){ const img=new Image(); img.onload=()=>{preview.style.backgroundImage=`url(${u})`;preview.style.backgroundSize='cover';preview.textContent='';};img.onerror=()=>{preview.textContent='📷';preview.style.backgroundImage='none';};img.src=u; }
+  if(currentUser.telegramAvatarPurchased&&url){ loadImg(url); status.innerHTML='<span style="color:var(--green);">✅ صورتك مفعلة</span>'; if(btn) btn.style.display='none'; }
+  else if(url){ loadImg(url); status.textContent=`📸 جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`; if(btn) btn.style.display='block'; }
+  else{ preview.textContent='📷'; preview.style.backgroundImage='none'; status.textContent='لا توجد صورة تلقائية. أدخل الرابط يدوياً.'; if(btn) btn.style.display='none'; }
+}
+function purchaseTelegramAvatar(){
+  if(!currentUser.telegramAvatarUrl){notify('لا توجد صورة');return;}
+  const cost=toTokens(TELEGRAM_AVATAR_COST);
+  if(currentUser.tokens<cost){notify(`تحتاج ${TELEGRAM_AVATAR_COST} Quinn`);return;}
+  showConfirm('شراء صورة Telegram',`شراء صورتك مقابل ${TELEGRAM_AVATAR_COST} Quinn؟`,()=>{
+    currentUser.tokens-=cost; currentUser.telegramAvatarPurchased=true;
+    currentUser.transactions.unshift({desc:'📸 شراء صورة Telegram',amount:-cost,time:new Date().toLocaleTimeString()});
+    notify('✅ تم شراء الصورة'); playSound('win');
+    saveNowToFirebase(); renderProfile(); refreshUI();
+  });
+}
+function applyManualPhotoUrl(){
+  const url=(document.getElementById('manualPhotoUrl').value||'').trim();
+  if(!url){notify('أدخل الرابط');return;} if(!url.startsWith('http')){notify('رابط غير صحيح');return;}
+  const img=new Image(); img.onload=()=>{ currentUser.telegramAvatarUrl=url; saveAll(); renderTelegramAvatarPanel(); renderProfile(); notify('✅ تم تحديث الصورة'); }; img.onerror=()=>notify('❌ تعذّر تحميل الصورة'); img.src=url;
+}
+
+// ===================== AVATAR SWITCH & AI AVATAR GENERATION =====================
+function setAvatarType(type){
+  if(type === 'telegram' && !currentUser.telegramAvatarPurchased){ notify('❌ لم تشترِ صورة Telegram بعد!'); return; }
+  currentUser.selectedAvatarType = type;
+  saveNowToFirebase();
+  renderProfile();
+  refreshUI();
+  notify(`✅ تم التبديل إلى ${type === 'emoji' ? 'الصورة الافتراضية' : 'صورة Telegram'}`);
+}
+async function generateAIAvatar(){
+  const prompt = document.getElementById('aiAvatarPrompt').value.trim();
+  if(!prompt){ notify('❌ أدخل وصفاً للصورة'); return; }
+  const msgDiv = document.getElementById('aiAvatarMsg');
+  msgDiv.textContent = '⏳ جاري إنشاء الصورة...';
+  try{
+    const response = await fetch(AI_API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{ parts: [{ text: `Generate a high-quality profile picture for a gaming bot named Quinn. The user requests: ${prompt}. Return ONLY a valid data URL of a generated image.` }] }] })
+    });
+    const data = await response.json();
+    if(data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text){
+      let text = data.candidates[0].content.parts[0].text;
+      // extract data URL if present
+      const dataUrlMatch = text.match(/data:image\/[^;]+;base64,[A-Za-z0-9+/=]+/);
+      if(dataUrlMatch){
+        const imgUrl = dataUrlMatch[0];
+        const preview = document.getElementById('aiAvatarResult');
+        preview.style.backgroundImage = `url(${imgUrl})`;
+        preview.style.backgroundSize = 'cover';
+        preview.textContent = '';
+        msgDiv.textContent = '✅ تم إنشاء الصورة! اضغط عليها لتعيينها كصورتك الشخصية.';
+        preview.onclick = () => {
+          currentUser.telegramAvatarUrl = imgUrl;
+          currentUser.telegramAvatarPurchased = false; // not purchased, but can be used manually
+          currentUser.selectedAvatarType = 'telegram';
+          saveNowToFirebase();
+          renderProfile();
+          refreshUI();
+          notify('✅ تم تعيين الصورة المولدة كصورة ملفك الشخصي');
+        };
+      } else {
+        msgDiv.textContent = '⚠️ لم نتمكن من إنشاء الصورة. حاول وصفاً مختلفاً.';
+      }
+    } else { msgDiv.textContent = '⚠️ خطأ في الاستجابة من الذكاء الاصطناعي'; }
+  } catch(e){ console.error(e); msgDiv.textContent = '❌ فشل الاتصال بالذكاء الاصطناعي'; }
+}
+
+// ===================== AI CHAT =====================
+async function sendAIMessage(){
+  const input = document.getElementById('chatInput');
+  const msg = input.value.trim();
+  if(!msg) return;
+  const maxAllowed = currentUser.verified ? AI_DAILY_LIMIT_VERIFIED : AI_DAILY_LIMIT_UNVERIFIED;
+  if(currentUser.aiDailyChats >= maxAllowed){
+    notify(`⚠️ لقد استنفدت محادثاتك اليومية (${maxAllowed})! قم بالتوثيق لتحصل على 5 محادثات يومياً.`);
+    return;
+  }
+  const chatDiv = document.getElementById('chatMessages');
+  const userBubble = document.createElement('div');
+  userBubble.className = 'chat-bubble user';
+  userBubble.textContent = msg;
+  chatDiv.appendChild(userBubble);
+  input.value = '';
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+  const aiBubble = document.createElement('div');
+  aiBubble.className = 'chat-bubble ai';
+  aiBubble.textContent = '🤖 جاري التفكير...';
+  chatDiv.appendChild(aiBubble);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+  try{
+    const response = await fetch(AI_API_URL, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ contents: [{ parts: [{ text: `أنت مساعد ذكي في بوت Quinn. أجب بطريقة ودية ومفيدة. السؤال: ${msg}` }] }] })
+    });
+    const data = await response.json();
+    let reply = 'عذراً، حدث خطأ.';
+    if(data.candidates && data.candidates[0] && data.candidates[0].content && data.candidates[0].content.parts[0].text){
+      reply = data.candidates[0].content.parts[0].text;
+    }
+    aiBubble.textContent = reply;
+    currentUser.aiDailyChats = (currentUser.aiDailyChats || 0) + 1;
+    saveNowToFirebase();
+    document.getElementById('aiRemaining').textContent = (maxAllowed - currentUser.aiDailyChats);
+    document.getElementById('aiDailyLimit').textContent = currentUser.aiDailyChats;
+  } catch(e){ aiBubble.textContent = '❌ فشل الاتصال بالذكاء الاصطناعي'; }
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
+// ===================== RENDER FUNCTIONS =====================
+function refreshUI(){
+  if(!currentUser) return;
+  const rank=getRankByTokens(currentUser.tokens);
+  const nextRank=RANKS.find(r=>r.level===rank.level+1);
+  const pct=nextRank?((currentUser.tokens-rank.minTokens)/(nextRank.minTokens-rank.minTokens))*100:100;
+  document.getElementById('sTokens').textContent=fmt(currentUser.tokens);
+  document.getElementById('sQuinn').textContent=toQuinn(currentUser.tokens);
+  document.getElementById('sClicks').textContent=fmt(currentUser.clicks);
+  document.getElementById('rankIcon').textContent=rank.icon;
+  document.getElementById('rankName').textContent=rank.name;
+  document.getElementById('rankLevel').textContent=rank.level;
+  document.getElementById('rankBar').style.width=Math.min(pct,100)+'%';
+  document.getElementById('clickMult').textContent=rank.clickMultiplier.toFixed(2)+'x';
+  document.getElementById('xpCurrent').textContent=fmt(currentUser.tokens-rank.minTokens)+' XP';
+  if(nextRank){
+    document.getElementById('rankNext').textContent=`→ ${nextRank.name} (${nextRank.level})`;
+    document.getElementById('xpNeeded').textContent=fmt(nextRank.minTokens-rank.minTokens)+' XP';
+  } else {
+    document.getElementById('rankNext').textContent='🏆 أعلى مستوى';
+    document.getElementById('xpNeeded').textContent='MAX';
+  }
+  document.getElementById('passiveTxt').textContent=currentUser.passiveIncome+' توكن/دقيقة';
+  const ep=(currentUser.energy/MAX_ENERGY)*100;
+  const eb=document.getElementById('energyBar');
+  eb.style.width=ep+'%'; eb.classList.remove('mid','low');
+  if(ep<30) eb.classList.add('low'); else if(ep<70) eb.classList.add('mid');
+  document.getElementById('energyTxt').textContent=`${currentUser.energy}/${MAX_ENERGY}`;
+  document.getElementById('hdrName').textContent=currentUser.name.split(' ')[0];
+  document.getElementById('hdrRank').innerHTML=`${rank.icon} ${rank.name} (${rank.level})`;
+  document.getElementById('hdrBal').innerHTML=`${toQuinn(currentUser.tokens)} <span style="font-size:10px;opacity:.6;">Q</span>`;
+  document.getElementById('hdrTok').textContent=fmt(currentUser.tokens)+' توكن';
+  const hdrAv=document.getElementById('hdrAvatar');
+  const isGold=currentUser.secondLife&&currentUser.secondLifeExpire>Date.now();
+  const useTelegram = (currentUser.selectedAvatarType === 'telegram' && currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl);
+  if(useTelegram){
+    hdrAv.style.backgroundImage=`url(${currentUser.telegramAvatarUrl})`;
+    hdrAv.style.backgroundSize='cover';
+    hdrAv.textContent='';
+  } else {
+    hdrAv.style.backgroundImage='none';
+    hdrAv.textContent=getAv(currentUser.avatar).emoji;
+  }
+  if(isGold) hdrAv.classList.add('golden-glow'); else hdrAv.classList.remove('golden-glow');
+  const banner=document.getElementById('boostBanner');
+  if(currentUser.boostActive&&Date.now()<currentUser.boostEnd){
+    const b=BOOSTS.find(b=>b.id===currentUser.boostActive);
+    const left=Math.ceil((currentUser.boostEnd-Date.now())/1000);
+    banner.style.display='block'; banner.textContent=`${b?.icon||'⚡'} ${b?.name||''} مفعّل (${left}ث)`;
+    document.getElementById('coin-btn').classList.add('turbo-active');
+  } else {
+    banner.style.display='none'; document.getElementById('coin-btn').classList.remove('turbo-active');
+    if(currentUser.boostActive&&Date.now()>currentUser.boostEnd){ currentUser.boostActive=null; scheduleLocalSave(); }
+  }
+}
+
+function renderBoostTab(){
+  document.getElementById('bBoosts').innerHTML=BOOSTS.map(b=>{
+    const active=currentUser.boostActive===b.id&&Date.now()<currentUser.boostEnd;
+    const remaining=active?Math.ceil((currentUser.boostEnd-Date.now())/1000):0;
+    return `<div class="card" style="margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:32px;">${b.icon}</div><div style="flex:1;"><div style="font-weight:800;">${b.name}</div><div style="color:var(--t3);font-size:11px;">${b.desc}</div><div style="color:var(--gold);font-size:12px;">💰 ${fmt(b.cost)} توكن</div>${active?`<div style="font-size:10px;margin-top:2px;color:var(--gold);">⏱️ متبقي ${remaining} ث</div>`:''}</div><button class="btn-sm" onclick="activateBoost('${b.id}')" ${active?'disabled style="opacity:.5;"':''}>${active?'✅ مفعّل':'تفعيل'}</button></div></div>`;
+  }).join('');
+  document.getElementById('bTasks').innerHTML=TASKS.map(t=>{
+    const done=currentUser.completedTasks.includes(t.id);
+    const prog=t.target?Math.min(currentUser.clicks/t.target,1)*100:0;
+    return `<div class="card" style="margin-bottom:12px;opacity:${done?.5:1};"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:28px;">${t.icon}</div><div style="flex:1;"><div style="font-weight:700;">${t.name}</div><div style="color:var(--green);font-size:12px;">+${fmt(t.reward)} توكن</div>${t.target&&!done?`<div class="prog-wrap"><div class="prog-fill" style="width:${prog}%"></div></div><div style="font-size:10px;color:var(--t3);margin-top:2px;">${Math.min(currentUser.clicks,t.target)}/${t.target}</div>`:''}</div><button class="btn-sm" onclick="completeTask(${t.id})" ${done?'disabled':''} style="${done?'opacity:.4;':''}"> ${done?'✓ تم':'إنجاز'}</button></div></div>`;
+  }).join('');
+  document.getElementById('passiveVal').textContent=currentUser.passiveIncome;
+  document.getElementById('passiveItems').innerHTML=PASSIVE_ITEMS.map(i=>{
+    const owned=currentUser.ownedPassive[i.id]||0;
+    const canBuy=currentUser.tokens>=i.cost;
+    return `<div class="card" style="margin-bottom:12px;"><div style="display:flex;align-items:center;gap:12px;"><div style="font-size:28px;">${i.icon}</div><div style="flex:1;"><div style="font-weight:700;">${i.name}</div><div style="color:var(--green);font-size:12px;">+${i.rate} توكن/دقيقة</div><div style="color:var(--gold);font-size:12px;">💰 ${fmt(i.cost)} توكن</div>${owned?`<div style="font-size:10px;color:var(--purple-l);">✓ تمتلكه (×${owned})</div>`:''}</div><button class="btn-sm" onclick="buyPassive('${i.id}')" ${!canBuy?'disabled style="opacity:.4;"':''}>شراء</button></div></div>`;
+  }).join('');
+  renderEnergyBoosts();
+}
+
+function renderWallet(){
+  document.getElementById('wQuinn').textContent=toQuinn(currentUser.tokens)+' Quinn';
+  document.getElementById('wTokens').textContent=`≈ ${fmt(currentUser.tokens)} توكن`;
+  document.getElementById('recvId').textContent=currentUser.username?`@${currentUser.username}`:currentUser.id;
+  const txs=currentUser.transactions.slice(0,15);
+  document.getElementById('txList').innerHTML=txs.length?txs.map(tx=>`<div class="tx-item"><div><div class="tx-desc">${tx.desc}</div><div class="tx-time">${tx.time}</div></div><div class="tx-amount ${tx.amount>0?'pos':'neg'}">${tx.amount>0?'+':''}${fmt(Math.abs(tx.amount))}</div></div>`).join(''):'<div class="card" style="text-align:center;color:var(--t3);">لا توجد معاملات</div>';
+  renderStarsPackages('starsPackagesInline');
+}
+
+async function fetchLeaderboardFromFirebase(){
+  const db = getDb();
+  if(!db) return Object.values(allUsers);
+  try{
+    const q = window.FB_query(window.FB_collection(db,'users'), window.FB_orderBy('tokens','desc'), window.FB_limit(100));
+    const snaps = await window.FB_getDocs(q);
+    const users = [];
+    snaps.forEach(d=>{ const u = d.data(); if(u.id) { allUsers[u.id] = u; users.push(u); } });
+    lbCache = users; lbCacheTime = Date.now();
+    localStorage.setItem('quinn_lb_cache', JSON.stringify({data:lbCache,time:lbCacheTime}));
+    return users;
+  }catch(e){ console.warn('Leaderboard fetch failed:', e); return lbCache.length ? lbCache : Object.values(allUsers); }
+}
+async function renderLeaderboard(){
+  const lbLast = document.getElementById('lbLastUpdate');
+  if(lbLast) lbLast.textContent = lbCacheTime ? `آخر تحديث: ${new Date(lbCacheTime).toLocaleTimeString('ar-EG')}` : '';
+  if(!lbCacheTime || (Date.now() - lbCacheTime) > 60000) await fetchLeaderboardFromFirebase();
+  const users = lbCache.map(u => ({...u, isMe: u.id === currentUser.id, rank: getRankByTokens(u.tokens), showBal: u.showBalance !== false})).sort((a,b) => b.tokens - a.tokens
