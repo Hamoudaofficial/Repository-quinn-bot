@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>Quinn 2026 • الجيل الجديد</title>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, runTransaction, collection, query, orderBy, limit, getDocs, enableIndexedDbPersistence, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  import { getDatabase, ref, set, push, remove, onValue, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYyxW9P-_DlOEqK6FCQqqBWo5UFxGnshY",
+    authDomain: "quinnbot-9f797.firebaseapp.com",
+    databaseURL: "https://quinnbot-9f797-default-rtdb.firebaseio.com",
+    projectId: "quinnbot-9f797",
+    storageBucket: "quinnbot-9f797.firebasestorage.app",
+    messagingSenderId: "592205334333",
+    appId: "1:592205334333:web:9f8a3b6ec7e7fee81fa754",
+    measurementId: "G-W5HRWB45GX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const rtdb = getDatabase(app);
+  
+  try { await enableIndexedDbPersistence(db); } catch(e) {}
+
+  window.FB_DB = db;
+  window.FB_RTDB = rtdb;
+  window.FB_doc = doc;
+  window.FB_getDoc = getDoc;
+  window.FB_setDoc = setDoc;
+  window.FB_updateDoc = updateDoc;
+  window.FB_runTransaction = runTransaction;
+  window.FB_collection = collection;
+  window.FB_query = query;
+  window.FB_orderBy = orderBy;
+  window.FB_limit = limit;
+  window.FB_getDocs = getDocs;
+  window.FB_onSnapshot = onSnapshot;
+  window.FB_READY = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* نفس التنسيقات السابقة مع تحسينات بسيطة */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+:root{
+  --bg:#050814; --bg2:#0b1024; --purple:#a78bfa; --purple-d:#7c3aed; --purple-l:#c4b5fd;
+  --blue:#3b82f6; --cyan:#22d3ee; --green:#10b981; --gold:#fbbf24; --red:#f87171;
+  --glass:rgba(255,255,255,0.05); --glass-border:rgba(255,255,255,0.1);
+  --t1:#fff; --t2:rgba(255,255,255,0.75); --t3:rgba(255,255,255,0.4);
+  --r:28px; --rm:18px; --rs:12px;
+}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Cairo',sans-serif;color:var(--t1);direction:rtl;}
+#app{position:relative;z-index:2;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 20% 30%,rgba(167,139,250,0.18) 0%,transparent 55%),radial-gradient(ellipse at 80% 70%,rgba(34,211,238,0.12) 0%,transparent 55%),radial-gradient(ellipse at 40% 80%,rgba(244,114,182,0.1) 0%,transparent 70%);}
+.header{padding:14px 18px;background:rgba(5,8,20,0.7);backdrop-filter:blur(40px);border-bottom:1px solid rgba(167,139,250,0.25);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.header-left{display:flex;align-items:center;gap:12px;}
+.hdr-avatar{width:50px;height:50px;border-radius:30% 70% 70% 30% / 30% 30% 70% 70%;border:2px solid rgba(167,139,250,0.7);background:linear-gradient(145deg, #2e1a5e, #0f1535);display:flex;align-items:center;justify-content:center;font-size:24px;background-size:cover;}
+.hdr-name{font-size:16px;font-weight:800;}
+.hdr-bal-box{background:rgba(255,255,255,0.05);padding:8px 14px;border-radius:60px;border:1px solid rgba(167,139,250,0.3);}
+.settings-btn{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:40px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;}
+.ai-badge{background:linear-gradient(135deg,#a78bfa,#3b82f6);border-radius:30px;padding:6px 12px;font-size:12px;font-weight:800;cursor:pointer;}
+.content{flex:1;overflow-y:auto;padding:18px 16px 100px;}
+.card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:var(--rm);padding:16px;backdrop-filter:blur(15px);margin-bottom:14px;cursor:pointer;}
+.btn{width:100%;padding:16px;background:linear-gradient(145deg, #a78bfa, #3b82f6);border:none;border-radius:60px;color:#fff;font-weight:800;font-size:15px;cursor:pointer;}
+#coin-btn{width:200px;height:200px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #c4b5fd, #7c3aed 50%, #1e3a8a);border:none;box-shadow:0 0 0 5px rgba(167,139,250,0.4),0 30px 40px -10px #000;cursor:pointer;margin:20px auto;}
+.coin-emoji{font-size:90px;}
+.bottom-nav{position:fixed;bottom:10px;left:20px;right:20px;background:rgba(5,8,20,0.8);backdrop-filter:blur(40px);border:1px solid rgba(167,139,250,0.2);border-radius:60px;display:flex;justify-content:space-around;padding:6px 8px;z-index:100;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;background:none;border:none;color:var(--t3);}
+.nav-btn.active{color:var(--purple-l);}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(10px);z-index:10000;align-items:center;justify-content:center;}
+.modal.active{display:flex;}
+.modal-box{background:rgba(10,18,35,0.9);backdrop-filter:blur(50px);border:1px solid rgba(167,139,250,0.4);border-radius:36px;padding:28px;width:90%;max-width:380px;}
+.inp{width:100%;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:var(--rs);color:#fff;margin-bottom:12px;}
+</style>
+</head>
+<body>
+<div class="bg-mesh"></div>
+<div id="loadingScreen" style="position:fixed;inset:0;background:#050814;z-index:20000;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+  <div style="font-size:70px;">🪙</div>
+  <div style="font-size:28px;font-weight:900;background:linear-gradient(135deg,#c4b5fd,#22d3ee);-webkit-background-clip:text;background-clip:text;color:transparent;">Quinn 2026</div>
+  <div id="loadingBar" style="width:220px;height:6px;background:rgba(255,255,255,0.1);border-radius:10px;margin-top:20px;"><div id="loadingFill" style="height:100%;background:linear-gradient(90deg,#a78bfa,#3b82f6);border-radius:10px;width:0;"></div></div>
+</div>
+<div id="netStatus"></div>
+<div id="fbSync" style="position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:#22d3ee;color:#000;padding:6px 18px;border-radius:40px;font-weight:800;display:none;z-index:999;">💾 مزامنة...</div>
+<div id="notif" style="position:fixed;top:80px;left:50%;transform:translateX(-50%);background:#0f1a2f;border:1px solid #a78bfa;padding:8px 20px;border-radius:40px;z-index:10001;display:none;"></div>
+
+<!-- Modals -->
+<div id="confirmModal" class="modal"><div class="modal-box"><div class="modal-title" id="confirmTitle"></div><div class="modal-msg" id="confirmMsg"></div><div class="modal-btns"><button class="cancel" onclick="closeConfirm()">إلغاء</button><button class="confirm" onclick="confirmAction()">تأكيد</button></div></div></div>
+<div id="referralCodeModal" class="modal"><div class="modal-box"><div class="modal-title">🎁 كود الإحالة</div><input id="manualRefCode" class="inp" placeholder="REF..."><div class="modal-btns"><button class="cancel" onclick="closeReferralModal()">تخطي</button><button class="confirm" onclick="applyReferralCode()">تطبيق</button></div></div></div>
+<div id="searchModal" class="modal"><div class="modal-box"><div class="modal-title">🔍 بحث</div><input id="searchInput" class="inp" placeholder="اسم أو @"><div id="searchResults"></div><button class="cancel" onclick="closeSearchModal()">إغلاق</button></div></div>
+<div id="sendUserModal" class="modal"><div class="modal-box"><div class="modal-title">📤 إرسال</div><div id="sendUserBal"></div><input id="sendUserAmt" class="inp" placeholder="Quinn"><div id="sendUserPreview"></div><div class="modal-btns"><button class="cancel" onclick="closeSendUserModal()">إلغاء</button><button class="confirm" onclick="requestSendConfirmation()">إرسال</button></div></div></div>
+<div id="starsModal" class="modal"><div class="modal-box"><div class="modal-title">⭐ نجوم</div><div id="starsPkgs"></div><button class="cancel" onclick="closeStarsModal()">إغلاق</button></div></div>
+<div id="ranksModal" class="modal"><div class="modal-box"><div class="modal-title">🏆 الرتب</div><div id="ranksList"></div><button class="cancel" onclick="closeRanksModal()">إغلاق</button></div></div>
+<div id="aiChatModal" class="modal"><div class="modal-box"><div class="modal-title">🤖 Quinn AI</div><div id="aiChatHistory" style="max-height:250px;overflow-y:auto;margin-bottom:12px;text-align:right;"></div><input id="aiPrompt" class="inp" placeholder="اسأل الذكاء الاصطناعي..."><div class="modal-btns"><button class="cancel" onclick="closeAIModal()">إغلاق</button><button class="confirm" id="aiSendBtn">إرسال</button></div><div id="aiRemaining" style="font-size:11px;margin-top:8px;"></div></div></div>
+
+<div id="app">
+  <div class="header">
+    <div class="header-left">
+      <div class="hdr-avatar" id="hdrAvatar">👤</div>
+      <div><div class="hdr-name" id="hdrName">Quinn</div><div class="hdr-rank" id="hdrRank">🪨 الحجري 1</div></div>
+      <div class="ai-badge" onclick="openAIChat()">✨ AI</div>
+    </div>
+    <div class="header-right">
+      <div class="hdr-bal-box"><span class="hdr-bal" id="hdrBal">0.00</span> Q</div>
+      <div class="settings-btn" onclick="showTab('profile'); setTimeout(()=>showProfileSub('settings', document.querySelector('[onclick*=\"settings\"]')),100);">⚙️</div>
+    </div>
+  </div>
+
+  <div class="content">
+    <!-- HOME -->
+    <div id="tab-home" class="tab-content active">
+      <div style="display:flex;gap:12px;margin-bottom:18px;">
+        <div class="card" style="flex:1;"><div id="sTokens">0</div><div>🪙 توكن</div></div>
+        <div class="card" style="flex:1;"><div id="sQuinn">0</div><div>💎 Quinn</div></div>
+        <div class="card" style="flex:1;"><div id="sClicks">0</div><div>👆 نقرات</div></div>
+      </div>
+      <div class="card" onclick="showRanksModal()">
+        <div><span id="rankIcon">🪨</span> <span id="rankName">الحجري</span> <span id="rankLevel">1</span> <span id="clickMult">1.00x</span></div>
+        <div class="prog-wrap"><div id="rankBar" class="prog-fill" style="width:0%"></div></div>
+        <div><span id="xpCurrent">0</span> <span id="rankNext"></span> <span id="xpNeeded"></span></div>
+      </div>
+      <div style="text-align:center;"><button id="coin-btn" onclick="handleClick()"><span class="coin-emoji">🪙</span></button></div>
+      <div class="card"><div>⚡ الطاقة <span id="energyTxt">1000/1000</span></div><div class="prog-wrap"><div id="energyBar" class="prog-fill energy" style="width:100%"></div></div></div>
+      <div class="card">💰 الدخل السلبي: <span id="passiveTxt">0</span> توكن/دقيقة</div>
+    </div>
+    <!-- WALLET -->
+    <div id="tab-wallet" class="tab-content">
+      <div class="card" style="background:linear-gradient(145deg,#0f1a2f,#050a18);">
+        <div style="font-size:32px;" id="wQuinn">0.00 Q</div>
+        <div>≈ <span id="wTokens">0</span> توكن</div>
+        <div id="qrCodeContainer" style="margin:10px 0;"></div>
+        <div id="recvId"></div>
+        <button onclick="copyId()">نسخ المعرف</button>
+      </div>
+      <div class="sub-tabs"><button class="sub-tab active" onclick="showWalletSub('overview',this)">📊 العمليات</button><button class="sub-tab" onclick="showWalletSub('send',this)">📤 إرسال</button><button class="sub-tab" onclick="showWalletSub('shop',this)">🏪 متجر</button><button class="sub-tab" onclick="showWalletSub('stars',this)">⭐ نجوم</button></div>
+      <div id="wOverview"><div id="txList"></div></div>
+      <div id="wSend" style="display:none;"><input id="sendTo" class="inp" placeholder="@username"><input id="sendAmt" class="inp" placeholder="Quinn"><button class="btn" onclick="doTransfer()">إرسال</button></div>
+      <div id="wShop" style="display:none;"><input id="shopQty" class="inp" placeholder="Quinn"><button onclick="shopNext()">التالي</button><div id="shopStep2" style="display:none;"><input id="shopPass" type="password" class="inp"><button onclick="shopBuy()">شراء</button></div></div>
+      <div id="wStars" style="display:none;"><div id="starsPackagesInline"></div></div>
+    </div>
+    <!-- GAMES (مبسط) -->
+    <div id="tab-games" class="tab-content"><div class="sec-hdr">🎮 الألعاب</div><div id="gamesContent"></div></div>
+    <!-- باقي التبويبات اختصاراً -->
+  </div>
+
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')">🏠</button>
+    <button class="nav-btn" onclick="showTab('wallet')">💼</button>
+    <button class="nav-btn" onclick="showTab('games')">🎮</button>
+    <button class="nav-btn" onclick="showTab('profile')">👤</button>
+  </nav>
+</div>
+
+<script>
+'use strict';
+// التأكد من العمل داخل تيليجرام
+(function() {
+  if (!window.Telegram?.WebApp?.initDataUnsafe?.user) {
+    document.body.innerHTML = '<div style="color:white;text-align:center;padding:50px;">يرجى فتح البوت عبر تيليجرام</div>';
+    throw new Error('Outside Telegram');
+  }
+})();
+
+// متغيرات عامة
+const TOKENS_PER_QUINN = 10000;
+const MAX_ENERGY = 1000;
+let currentUser = null;
+let allUsers = {};
+let pendingConfirm = null;
+
+// دوال مساعدة
+function fmt(n){ return n?.toLocaleString()||'0'; }
+function toQuinn(t){ return (t/TOKENS_PER_QUINN).toFixed(4); }
+function notify(msg){ const el=document.getElementById('notif'); el.textContent=msg; el.style.display='block'; setTimeout(()=>el.style.display='none',2500); }
+
+// تحميل المستخدم
+async function loadUser(uid, tgUser){
+  const db = window.FB_DB;
+  const docRef = window.FB_doc(db, 'users', uid);
+  let userData = null;
+  try{
+    const snap = await window.FB_getDoc(docRef);
+    if(snap.exists()) userData = snap.data();
+    else {
+      userData = {
+        id: uid, name: tgUser.first_name||'مستخدم', tokens: 1000, clicks: 0, energy: MAX_ENERGY,
+        passiveIncome:0, avatar:1, verified:false, referralCode: 'REF'+uid.slice(-6),
+        referrals:[], goldGrams:0, transactions:[], showBalance:true
+      };
+      await window.FB_setDoc(docRef, userData);
+    }
+    // تحديث الطاقة
+    if(userData.energy < MAX_ENERGY) userData.energy = Math.min(MAX_ENERGY, userData.energy + 3);
+    localStorage.setItem('quinn_user_'+uid, JSON.stringify(userData));
+    return userData;
+  }catch(e){ notify('خطأ في تحميل البيانات'); return null; }
+}
+
+// تحديث الواجهة
+function refreshUI(){
+  if(!currentUser) return;
+  document.getElementById('sTokens').innerText = fmt(currentUser.tokens);
+  document.getElementById('sQuinn').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('hdrBal').innerText = toQuinn(currentUser.tokens);
+  document.getElementById('energyTxt').innerText = currentUser.energy+'/'+MAX_ENERGY;
+  document.getElementById('energyBar').style.width = (currentUser.energy/MAX_ENERGY*100)+'%';
+  // رتبة
+  const rank = getRankByTokens(currentUser.tokens);
+  document.getElementById('rankIcon').innerText = rank.icon;
+  document.getElementById('rankName').innerText = rank.name;
+  document.getElementById('rankLevel').innerText = rank.level;
+  document.getElementById('clickMult').innerText = rank.clickMultiplier.toFixed(2)+'x';
+}
+
+// الرتب
+const RANKS = [
+  {level:1, name:'الحجري', icon:'🪨', minTokens:0, clickMultiplier:1.0},
+  {level:2, name:'البرونزي', icon:'🥉', minTokens:10000, clickMultiplier:1.1},
+  {level:3, name:'الفضي', icon:'🥈', minTokens:50000, clickMultiplier:1.2},
+];
+function getRankByTokens(t){ for(let i=RANKS.length-1;i>=0;i--) if(t>=RANKS[i].minTokens) return RANKS[i]; return RANKS[0]; }
+
+// النقر
+function handleClick(){
+  if(currentUser.energy <=0) { notify('لا طاقة'); return; }
+  const mult = getRankByTokens(currentUser.tokens).clickMultiplier;
+  const gain = Math.floor(mult);
+  currentUser.tokens += gain;
+  currentUser.clicks++;
+  currentUser.energy--;
+  refreshUI();
+  scheduleSave();
+}
+function scheduleSave(){ setTimeout(()=>{ if(currentUser) window.FB_setDoc(window.FB_doc(window.FB_DB,'users',currentUser.id), currentUser); }, 2000); }
+
+// تبويبات
+function showTab(tab){
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+}
+// التهيئة
+async function init(){
+  await new Promise(r=>{ if(window.FB_READY) r(); else window.addEventListener('firebase-ready', r); });
+  const tg = Telegram.WebApp; tg.ready(); tg.expand();
+  const tgUser = tg.initDataUnsafe.user;
+  currentUser = await loadUser(tgUser.id, tgUser);
+  allUsers[currentUser.id] = currentUser;
+  refreshUI();
+  document.getElementById('loadingScreen').style.display='none';
+  showTab('home');
+  notify('أهلاً بك في Quinn 2026');
+}
+window.onload = init;
+
+// تعريف دوال المودال والمحفظة والألعاب اختصاراً
+function closeConfirm(){ document.getElementById('confirmModal').classList.remove('active'); }
+function confirmAction(){ if(pendingConfirm) pendingConfirm(); closeConfirm(); }
+function showRanksModal(){ document.getElementById('ranksModal').classList.add('active'); }
+function closeRanksModal(){ document.getElementById('ranksModal').classList.remove('active'); }
+function copyId(){ navigator.clipboard?.writeText(currentUser.id); notify('تم نسخ المعرف'); }
+function doTransfer(){ notify('ميزة الإرسال قيد التطوير'); }
+function shopNext(){}
+function shopBuy(){}
+function openAIChat(){ notify('خاصية AI للموثقين فقط'); }
+// ... (باقي الدوال تملأ لاحقاً حسب الحاجة)
+</script>
+</body>
+</html>
