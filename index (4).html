@@ -1,0 +1,3751 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Quinn Bot 2026 - النسخة النهائية المتطورة</title>
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, doc, getDoc, setDoc, updateDoc, runTransaction, collection, query, orderBy, limit, getDocs, enableIndexedDbPersistence, writeBatch } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDYyxW9P-_DlOEqK6FCQqqBWo5UFxGnshY",
+    authDomain: "quinnbot-9f797.firebaseapp.com",
+    databaseURL: "https://quinnbot-9f797-default-rtdb.firebaseio.com",
+    projectId: "quinnbot-9f797",
+    storageBucket: "quinnbot-9f797.firebasestorage.app",
+    messagingSenderId: "592205334333",
+    appId: "1:592205334333:web:9f8a3b6ec7e7fee81fa754",
+    measurementId: "G-W5HRWB45GX"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  try { await enableIndexedDbPersistence(db); } catch(e) { console.log('Persistence:', e.code); }
+
+  window.FB_DB = db;
+  window.FB_doc = doc;
+  window.FB_getDoc = getDoc;
+  window.FB_setDoc = setDoc;
+  window.FB_updateDoc = updateDoc;
+  window.FB_runTransaction = runTransaction;
+  window.FB_collection = collection;
+  window.FB_query = query;
+  window.FB_orderBy = orderBy;
+  window.FB_limit = limit;
+  window.FB_getDocs = getDocs;
+  window.FB_writeBatch = writeBatch;
+  window.FB_READY = true;
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+/* ===================== 2026 MODERN DESIGN SYSTEM ===================== */
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none;}
+:root{
+  --bg:#050714;
+  --bg2:#0a0e24;
+  --bg3:#0f1530;
+  --purple:#a855f7;
+  --purple-d:#7c3aed;
+  --purple-l:#c084fc;
+  --blue:#3b82f6;
+  --cyan:#06b6d4;
+  --green:#22c55e;
+  --gold:#fbbf24;
+  --red:#ef4444;
+  --pink:#ec4899;
+  --orange:#f97316;
+  --glass:rgba(255,255,255,0.03);
+  --glass-strong:rgba(255,255,255,0.08);
+  --border:rgba(255,255,255,0.06);
+  --border-strong:rgba(255,255,255,0.12);
+  --t1:#fff;
+  --t2:rgba(255,255,255,0.85);
+  --t3:rgba(255,255,255,0.5);
+  --r:28px;
+  --rm:20px;
+  --rs:14px;
+  --shadow:0 8px 32px rgba(0,0,0,0.4);
+  --shadow-glow:0 0 40px rgba(168,85,247,0.3);
+}
+html,body{width:100%;height:100%;overflow:hidden;}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--t1);direction:rtl;}
+
+/* Animated Background */
+.bg-mesh{position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse at 20% 20%,rgba(168,85,247,0.15) 0%,transparent 50%),
+    radial-gradient(ellipse at 80% 80%,rgba(59,130,246,0.1) 0%,transparent 50%),
+    radial-gradient(ellipse at 50% 50%,rgba(236,72,153,0.05) 0%,transparent 60%),
+    linear-gradient(180deg,var(--bg) 0%,var(--bg2) 50%,var(--bg3) 100%);
+}
+.bg-mesh::before{content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  opacity:0.5;
+}
+
+/* Floating Orbs */
+.orb{position:fixed;border-radius:50%;filter:blur(80px);pointer-events:none;z-index:0;animation:floatOrb 20s ease-in-out infinite;}
+.orb-1{width:300px;height:300px;background:rgba(168,85,247,0.2);top:10%;left:10%;animation-delay:0s;}
+.orb-2{width:250px;height:250px;background:rgba(59,130,246,0.15);top:60%;right:5%;animation-delay:-7s;}
+.orb-3{width:200px;height:200px;background:rgba(236,72,153,0.12);bottom:20%;left:30%;animation-delay:-14s;}
+@keyframes floatOrb{0%,100%{transform:translate(0,0) scale(1);}25%{transform:translate(30px,-30px) scale(1.1);}50%{transform:translate(-20px,20px) scale(0.95);}75%{transform:translate(20px,10px) scale(1.05);}}
+
+#app{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* ===================== GLASSMORPHISM HEADER ===================== */
+.header{padding:14px 18px;background:linear-gradient(180deg,rgba(10,14,36,0.95) 0%,rgba(10,14,36,0.8) 100%);
+  backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);
+  border-bottom:1px solid var(--border-strong);display:flex;align-items:center;justify-content:space-between;
+  flex-shrink:0;box-shadow:var(--shadow);position:relative;}
+.header::before{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--purple-l),transparent);opacity:0.5;}
+
+.header-left{display:flex;align-items:center;gap:12px;}
+.hdr-avatar{width:52px;height:52px;border-radius:50%;border:2px solid rgba(168,85,247,0.4);
+  background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(59,130,246,0.15));
+  display:flex;align-items:center;justify-content:center;font-size:24px;
+  background-size:cover;background-position:center;flex-shrink:0;overflow:hidden;
+  transition:all 0.3s ease;box-shadow:0 4px 20px rgba(168,85,247,0.2);}
+.hdr-avatar:hover{transform:scale(1.05);box-shadow:0 6px 30px rgba(168,85,247,0.4);}
+.golden-glow{box-shadow:0 0 0 3px rgba(251,191,36,0.6),0 0 25px rgba(251,191,36,0.4)!important;
+  border-color:var(--gold)!important;animation:pulse-gold 2s infinite;}
+@keyframes pulse-gold{0%{box-shadow:0 0 0 0 rgba(251,191,36,0.4);}70%{box-shadow:0 0 0 8px rgba(251,191,36,0);}100%{box-shadow:0 0 0 0 rgba(251,191,36,0);}}
+
+.hdr-info{display:flex;flex-direction:column;}
+.hdr-name{font-size:16px;font-weight:800;line-height:1.2;background:linear-gradient(135deg,var(--t1),var(--purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hdr-rank{font-size:11px;color:var(--t3);margin-top:3px;display:flex;align-items:center;gap:4px;}
+
+.header-right{display:flex;align-items:center;gap:14px;}
+.hdr-bal-wrap{text-align:left;background:var(--glass);padding:8px 14px;border-radius:var(--rs);border:1px solid var(--border);}
+.hdr-bal{font-size:18px;font-weight:900;color:var(--purple-l);line-height:1;}
+.hdr-tok{font-size:10px;color:var(--t3);margin-top:2px;}
+
+/* Settings Button */
+.settings-btn{width:42px;height:42px;border-radius:50%;background:var(--glass);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:20px;cursor:pointer;
+  transition:all 0.3s ease;backdrop-filter:blur(10px);}
+.settings-btn:hover{background:var(--glass-strong);border-color:var(--purple-l);transform:rotate(30deg);}
+
+/* ===================== CONTENT AREA ===================== */
+.content{flex:1;overflow-y:auto;overflow-x:hidden;padding:18px;padding-bottom:110px;-webkit-overflow-scrolling:touch;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--purple),var(--blue));border-radius:4px;}
+
+/* Glass Card */
+.glass{background:var(--glass);backdrop-filter:blur(20px) saturate(150%);-webkit-backdrop-filter:blur(20px) saturate(150%);
+  border:1px solid var(--border);border-radius:var(--rm);transition:all 0.3s ease;}
+.glass:hover{border-color:var(--border-strong);transform:translateY(-2px);box-shadow:var(--shadow);}
+
+.card{background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+  border:1px solid var(--border);border-radius:var(--rm);padding:16px;transition:all 0.25s ease;cursor:pointer;
+  backdrop-filter:blur(10px);}
+.card:hover{border-color:var(--border-strong);box-shadow:0 8px 25px rgba(0,0,0,0.3);}
+.card:active{transform:scale(0.98);}
+
+/* 3D Button Effects */
+.btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--purple) 0%,var(--purple-d) 100%);
+  border:none;border-radius:var(--rs);color:#fff;font-weight:800;font-size:15px;font-family:'Cairo',sans-serif;
+  cursor:pointer;transition:all 0.3s ease;box-shadow:0 8px 25px rgba(168,85,247,0.4),inset 0 1px 0 rgba(255,255,255,0.2);
+  position:relative;overflow:hidden;}
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.2),transparent);transition:0.5s;}
+.btn:hover::before{left:100%;}
+.btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(168,85,247,0.5);}
+.btn:active{transform:scale(0.96) translateY(0);}
+
+.btn-sm{padding:10px 18px;background:var(--glass);border:1px solid var(--border);border-radius:30px;
+  color:var(--t1);font-weight:700;font-size:12px;font-family:'Cairo',sans-serif;cursor:pointer;
+  transition:all 0.2s ease;backdrop-filter:blur(10px);}
+.btn-sm:hover{background:var(--glass-strong);border-color:var(--purple-l);}
+.btn-sm:active{transform:scale(0.93);}
+
+.btn-gold{background:linear-gradient(135deg,var(--gold) 0%,#d97706 100%);box-shadow:0 8px 25px rgba(251,191,36,0.4);}
+.btn-gold:hover{box-shadow:0 12px 35px rgba(251,191,36,0.5);}
+
+.btn-green{background:linear-gradient(135deg,var(--green) 0%,#16a34a 100%);box-shadow:0 8px 25px rgba(34,197,94,0.4);}
+.btn-green:hover{box-shadow:0 12px 35px rgba(34,197,94,0.5);}
+
+.btn-red{background:linear-gradient(135deg,var(--red) 0%,#dc2626 100%);box-shadow:0 8px 25px rgba(239,68,68,0.4);}
+
+.btn-outline{background:transparent;border:1px solid var(--purple-l);color:var(--purple-l);box-shadow:none;}
+.btn-outline:hover{background:rgba(168,85,247,0.1);}
+
+.inp{width:100%;padding:14px 18px;background:var(--glass);border:1px solid var(--border);border-radius:var(--rs);
+  color:#fff;font-size:14px;font-family:'Cairo',sans-serif;outline:none;transition:all 0.3s ease;
+  backdrop-filter:blur(10px);}
+.inp:focus{border-color:var(--purple-l);background:rgba(168,85,247,0.1);box-shadow:0 0 20px rgba(168,85,247,0.2);}
+.inp::placeholder{color:var(--t3);}
+
+/* 3D Coin Button */
+#coin-btn{width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle at 35% 35%,#c084fc,var(--purple-d) 50%,#1e3a8a);
+  border:none;box-shadow:0 0 0 5px rgba(168,85,247,0.2),0 0 80px rgba(168,85,247,0.4),
+    0 20px 60px rgba(0,0,0,0.5),inset 0 4px 0 rgba(255,255,255,0.25);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;margin:20px auto;
+  transition:all 0.1s ease;position:relative;overflow:hidden;}
+#coin-btn::before{content:'';position:absolute;width:55%;height:25%;top:12%;left:22%;
+  background:rgba(255,255,255,0.15);border-radius:50%;transform:rotate(-15deg);}
+#coin-btn::after{content:'';position:absolute;inset:0;border-radius:50%;
+  background:linear-gradient(135deg,transparent 40%,rgba(255,255,255,0.1) 50%,transparent 60%);}
+#coin-btn:active{transform:scale(0.88) translateY(5px);box-shadow:0 0 0 5px rgba(168,85,247,0.2),0 0 40px rgba(168,85,247,0.3),0 10px 30px rgba(0,0,0,0.4);}
+#coin-btn.turbo-active{animation:turboGlow 0.5s infinite alternate;}
+@keyframes turboGlow{0%{box-shadow:0 0 40px var(--gold),0 0 0 5px rgba(251,191,36,0.4);}100%{box-shadow:0 0 80px var(--gold),0 0 0 10px rgba(251,191,36,0.2);}}
+.coin-emoji{font-size:90px;pointer-events:none;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));}
+
+/* Stats Row */
+.stat-row{display:flex;gap:14px;margin-bottom:18px;}
+.stat-box{flex:1;background:linear-gradient(145deg,rgba(255,255,255,0.04),rgba(255,255,255,0.01));
+  border:1px solid var(--border);border-radius:var(--rm);padding:14px 10px;text-align:center;
+  backdrop-filter:blur(10px);transition:all 0.3s ease;}
+.stat-box:hover{border-color:var(--border-strong);transform:translateY(-3px);}
+.stat-val{font-size:22px;font-weight:900;color:var(--purple-l);text-shadow:0 0 20px rgba(168,85,247,0.3);}
+.stat-lbl{font-size:10px;color:var(--t3);margin-top:6px;font-weight:600;}
+
+/* Progress Bars */
+.prog-wrap{height:8px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden;margin-top:10px;}
+.prog-fill{height:100%;border-radius:8px;transition:all 0.4s ease;
+  background:linear-gradient(90deg,var(--purple),var(--blue));box-shadow:0 0 10px rgba(168,85,247,0.3);}
+.prog-fill.energy{background:linear-gradient(90deg,var(--green),#4ade80);}
+.prog-fill.energy.mid{background:linear-gradient(90deg,var(--gold),#fcd34d);}
+.prog-fill.energy.low{background:linear-gradient(90deg,var(--red),#f87171);}
+
+/* Tab Content */
+.tab-content{display:none;animation:fadeInUp 0.4s ease;}
+.tab-content.active{display:block;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* Sub Tabs */
+.sub-tabs{display:flex;gap:10px;margin-bottom:18px;overflow-x:auto;padding-bottom:4px;}
+.sub-tabs::-webkit-scrollbar{height:3px;}
+.sub-tabs::-webkit-scrollbar-thumb{background:var(--purple);border-radius:3px;}
+.sub-tab{white-space:nowrap;padding:10px 18px;border-radius:30px;background:var(--glass);border:1px solid var(--border);
+  color:var(--t3);font-weight:700;font-size:12px;font-family:'Cairo',sans-serif;cursor:pointer;
+  transition:all 0.3s ease;backdrop-filter:blur(10px);}
+.sub-tab:hover{border-color:var(--border-strong);color:var(--t2);}
+.sub-tab.active{border-color:var(--purple-l);background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(168,85,247,0.1));color:var(--purple-l);box-shadow:0 4px 15px rgba(168,85,247,0.2);}
+
+/* ===================== MODERN BOTTOM NAV ===================== */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(10,14,36,0.98) 0%,rgba(5,7,20,0.99) 100%);
+  backdrop-filter:blur(40px) saturate(180%);border-top:1px solid var(--border-strong);
+  display:flex;justify-content:space-around;padding:8px 4px 22px;z-index:100;}
+.bottom-nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--purple-l),transparent);opacity:0.3;}
+
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:none;
+  cursor:pointer;padding:6px 2px;border-radius:16px;transition:all 0.3s ease;font-family:'Cairo',sans-serif;position:relative;}
+.nav-btn::before{content:'';position:absolute;inset:0;border-radius:16px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(59,130,246,0.1));opacity:0;transition:0.3s;}
+.nav-btn:hover::before{opacity:1;}
+.nav-btn:active{transform:scale(0.92);}
+.nav-icon{font-size:22px;transition:all 0.3s ease;filter:grayscale(0.3);}
+.nav-label{font-size:9px;font-weight:700;color:var(--t3);transition:all 0.3s ease;}
+.nav-btn.active .nav-icon{filter:drop-shadow(0 0 12px var(--purple-l)) grayscale(0);transform:scale(1.2) translateY(-2px);}
+.nav-btn.active .nav-label{color:var(--purple-l);font-weight:800;}
+.nav-btn.active::before{opacity:1;}
+
+/* Transaction Items */
+.tx-item{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;
+  background:var(--glass);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:10px;
+  backdrop-filter:blur(10px);transition:all 0.2s ease;}
+.tx-item:hover{border-color:var(--border-strong);}
+.tx-desc{font-size:13px;font-weight:700;}
+.tx-time{font-size:10px;color:var(--t3);margin-top:3px;}
+.tx-amount{font-weight:900;font-size:14px;}
+.tx-amount.pos{color:var(--green);text-shadow:0 0 10px rgba(34,197,94,0.3);}
+.tx-amount.neg{color:var(--red);}
+
+/* Badges */
+.vbadge{display:inline-flex;align-items:center;background:rgba(59,130,246,0.2);border:1px solid rgba(59,130,246,0.4);
+  border-radius:10px;padding:3px 10px;font-size:9px;color:var(--blue);font-weight:800;margin-right:6px;}
+
+/* ===================== MODALS ===================== */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.85);backdrop-filter:blur(15px);z-index:10000;
+  align-items:center;justify-content:center;padding:20px;}
+.modal.active{display:flex;animation:modalFadeIn 0.3s ease;}
+@keyframes modalFadeIn{from{opacity:0;}to{opacity:1;}}
+.modal-box{background:linear-gradient(145deg,var(--bg2),var(--bg));border:1px solid var(--border-strong);
+  border-radius:var(--r);padding:28px;width:100%;max-width:400px;max-height:90vh;overflow-y:auto;
+  box-shadow:var(--shadow-glow),0 25px 50px rgba(0,0,0,0.5);position:relative;}
+.modal-box::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--purple-l),transparent);}
+.modal-title{font-size:22px;font-weight:900;margin-bottom:14px;color:var(--purple-l);text-align:center;}
+.modal-msg{font-size:14px;color:var(--t2);margin-bottom:20px;line-height:1.7;text-align:center;}
+.modal-btns{display:flex;gap:12px;margin-top:20px;}
+.modal-btns button{flex:1;padding:14px;border-radius:var(--rs);border:none;font-weight:800;font-size:14px;
+  font-family:'Cairo',sans-serif;cursor:pointer;transition:all 0.3s ease;}
+.modal-btns .cancel{background:var(--glass);border:1px solid var(--border);color:var(--t1);}
+.modal-btns .cancel:hover{background:var(--glass-strong);}
+.modal-btns .confirm{background:linear-gradient(135deg,var(--purple),var(--blue));color:#fff;box-shadow:0 8px 25px rgba(168,85,247,0.4);}
+.modal-btns .confirm:hover{box-shadow:0 12px 35px rgba(168,85,247,0.5);transform:translateY(-2px);}
+
+/* Notifications */
+#notif{position:fixed;top:85px;left:50%;transform:translateX(-50%);background:linear-gradient(145deg,rgba(20,24,50,0.98),rgba(15,18,40,0.95));
+  border:1px solid var(--border-strong);border-radius:50px;padding:12px 28px;color:#fff;font-weight:800;
+  display:none;z-index:10001;white-space:nowrap;backdrop-filter:blur(20px);font-size:13px;
+  box-shadow:var(--shadow-glow),0 10px 40px rgba(0,0,0,0.4);}
+#netStatus{position:fixed;top:0;left:0;right:0;background:rgba(239,68,68,0.95);color:#fff;text-align:center;
+  padding:10px;font-size:12px;font-weight:800;z-index:10002;display:none;backdrop-filter:blur(10px);}
+#netStatus.back{background:rgba(34,197,94,0.95);}
+#fbSync{position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--cyan),var(--blue));
+  color:#fff;padding:8px 20px;border-radius:30px;font-size:11px;font-weight:800;display:none;z-index:9999;
+  backdrop-filter:blur(10px);box-shadow:0 8px 25px rgba(6,182,212,0.4);}
+
+/* Loading Screen */
+#loadingScreen{position:fixed;inset:0;background:var(--bg);z-index:20000;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:18px;}
+#loadingScreen .logo{font-size:72px;animation:pulseScale 1.5s ease-in-out infinite;filter:drop-shadow(0 0 30px var(--purple-l));}
+@keyframes pulseScale{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+#loadingBar{width:220px;height:5px;background:rgba(255,255,255,0.08);border-radius:5px;overflow:hidden;}
+#loadingFill{height:100%;background:linear-gradient(90deg,var(--purple),var(--blue),var(--cyan));border-radius:5px;width:0;transition:width 0.3s ease;}
+
+/* Particles */
+.particle{position:fixed;pointer-events:none;font-size:24px;font-weight:900;color:var(--gold);
+  text-shadow:0 0 15px rgba(0,0,0,0.8);z-index:9999;animation:floatUp 0.8s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1);}100%{opacity:0;transform:translateY(-100px) scale(1.8);}}
+
+/* Avatar Grid */
+.avatar-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;}
+.av-item{border-radius:var(--rm);padding:12px;text-align:center;cursor:pointer;
+  background:var(--glass);border:1px solid var(--border);transition:all 0.3s ease;backdrop-filter:blur(10px);}
+.av-item:hover{border-color:var(--purple-l);transform:translateY(-3px);}
+.av-item.selected{border-color:var(--purple-l);background:linear-gradient(135deg,rgba(168,85,247,0.3),rgba(168,85,247,0.1));box-shadow:0 8px 25px rgba(168,85,247,0.3);}
+.av-item.taken{opacity:0.4;cursor:not-allowed;}
+.av-emoji{font-size:38px;margin-bottom:6px;}
+.av-name{font-size:11px;color:var(--t3);font-weight:700;}
+
+/* Search */
+.srch-item{display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:10px;cursor:pointer;
+  border-radius:var(--rs);transition:all 0.2s ease;background:var(--glass);border:1px solid var(--border);}
+.srch-item:hover{background:var(--glass-strong);border-color:var(--purple-l);}
+
+/* Podium */
+.podium{display:flex;align-items:flex-end;justify-content:center;gap:18px;margin-bottom:32px;}
+.pod-item{flex:1;text-align:center;}
+.pod-av{border-radius:50%;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;
+  background-size:cover;background-position:center;border:3px solid rgba(255,255,255,0.15);overflow:hidden;
+  box-shadow:0 8px 30px rgba(0,0,0,0.3);transition:all 0.3s ease;}
+.pod-av:hover{transform:scale(1.05);}
+.pod-name{font-size:12px;font-weight:800;margin-bottom:6px;}
+.pod-stand{background:linear-gradient(180deg,rgba(255,255,255,0.08),rgba(255,255,255,0.02));border-radius:16px 16px 0 0;padding:10px;font-weight:900;font-size:14px;}
+
+/* Telegram Preview */
+.tg-preview{width:110px;height:110px;border-radius:50%;margin:12px auto;display:flex;align-items:center;justify-content:center;
+  font-size:55px;border:3px solid var(--purple);background:var(--glass);overflow:hidden;background-size:cover;background-position:center;
+  box-shadow:0 8px 30px rgba(168,85,247,0.3);}
+
+/* Section Headers */
+.sec-hdr{font-size:24px;font-weight:900;margin-bottom:18px;display:flex;align-items:center;gap:10px;
+  background:linear-gradient(135deg,var(--t1),var(--purple-l));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+/* Star Packages */
+.star-pkg{border:1px solid rgba(251,191,36,0.3);border-radius:var(--rm);padding:16px;margin-bottom:12px;
+  display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.02));
+  cursor:pointer;transition:all 0.3s ease;}
+.star-pkg:hover{border-color:var(--gold);transform:translateY(-3px);box-shadow:0 8px 25px rgba(251,191,36,0.2);}
+.star-pkg:active{transform:scale(0.97);}
+
+/* Toggle Switch */
+.switch{position:relative;display:inline-block;width:50px;height:26px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:rgba(255,255,255,0.15);border-radius:26px;transition:0.3s;}
+.slider:before{position:absolute;content:"";height:22px;width:22px;right:2px;bottom:2px;background:linear-gradient(135deg,#fff,#e0e0e0);border-radius:50%;transition:0.3s;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
+input:checked+.slider{background:linear-gradient(135deg,var(--purple),var(--blue));}
+input:checked+.slider:before{transform:translateX(-24px);}
+
+/* Gold Market */
+.gold-chart{background:var(--glass);border-radius:var(--rm);padding:16px;margin:18px 0;border:1px solid var(--border);}
+.gold-price{font-size:42px;font-weight:900;color:var(--gold);margin:12px 0;text-shadow:0 0 20px rgba(251,191,36,0.3);}
+.gold-change.up{color:var(--green);}
+.gold-change.dn{color:var(--red);}
+
+/* Wallet QR & Barcode */
+.wallet-code-section{text-align:center;padding:20px;background:var(--glass);border-radius:var(--rm);border:1px solid var(--border);margin-bottom:16px;}
+#qrcode{display:flex;justify-content:center;margin:16px 0;}
+#qrcode canvas{border-radius:12px;padding:12px;background:#fff;}
+.barcode-container{background:#fff;padding:16px;border-radius:12px;margin-top:16px;}
+.barcode-line{height:60px;background:linear-gradient(90deg,#000 2px,transparent 2px);background-size:4px 100%;}
+.wallet-address{font-family:monospace;font-size:13px;color:var(--t2);background:rgba(168,85,247,0.1);padding:12px;border-radius:var(--rs);margin-top:12px;word-break:break-all;border:1px solid rgba(168,85,247,0.2);}
+
+/* Game Area */
+.game-area{min-height:200px;display:flex;align-items:center;justify-content:center;background:var(--glass);border-radius:var(--rm);border:1px solid var(--border);margin:16px 0;}
+
+/* Dice Game */
+.dice-container{display:flex;gap:30px;justify-content:center;align-items:center;padding:30px;}
+.dice{width:80px;height:80px;background:linear-gradient(145deg,#fff,#e0e0e0);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:40px;box-shadow:0 10px 30px rgba(0,0,0,0.3);animation:diceRoll 0.5s ease;}
+@keyframes diceRoll{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+.dice-dot{width:14px;height:14px;background:#333;border-radius:50%;}
+
+/* AI Chat */
+.ai-chat-container{background:var(--glass);border-radius:var(--rm);border:1px solid var(--border);padding:16px;margin-bottom:16px;max-height:300px;overflow-y:auto;}
+.ai-message{display:flex;gap:12px;margin-bottom:14px;align-items:flex-start;}
+.ai-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.ai-bubble{background:var(--glass-strong);padding:12px 16px;border-radius:18px;border:1px solid var(--border);font-size:13px;line-height:1.6;max-width:80%;}
+.ai-bubble.user{background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(59,130,246,0.1));border-color:var(--purple-l);margin-left:auto;}
+.ai-input-container{display:flex;gap:10px;margin-top:12px;}
+.ai-input-container .inp{flex:1;}
+.ai-attempts{font-size:11px;color:var(--t3);text-align:center;margin-top:8px;}
+
+/* Rank Badge */
+.rank-badge{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(59,130,246,0.1));
+  padding:6px 14px;border-radius:20px;font-size:11px;font-weight:700;border:1px solid rgba(168,85,247,0.3);}
+
+/* Settings Panel */
+.settings-panel{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.9);backdrop-filter:blur(20px);z-index:10005;
+  display:none;flex-direction:column;padding:20px;}
+.settings-panel.active{display:flex;animation:slideIn 0.3s ease;}
+@keyframes slideIn{from{transform:translateX(100%);}to{transform:translateX(0);}}
+.settings-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;padding-bottom:16px;border-bottom:1px solid var(--border);}
+.settings-title{font-size:22px;font-weight:900;color:var(--purple-l);}
+.settings-close{width:44px;height:44px;border-radius:50%;background:var(--glass);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:all 0.3s ease;}
+.settings-close:hover{background:var(--red);border-color:var(--red);}
+.settings-item{display:flex;justify-content:space-between;align-items:center;padding:18px;background:var(--glass);
+  border:1px solid var(--border);border-radius:var(--rm);margin-bottom:14px;transition:all 0.3s ease;}
+.settings-item:hover{border-color:var(--border-strong);}
+.settings-item-label{font-weight:700;font-size:14px;}
+.settings-item-desc{font-size:11px;color:var(--t3);margin-top:4px;}
+
+/* Responsive */
+@media(max-width:380px){
+  .nav-icon{font-size:18px;}
+  .nav-label{font-size:8px;}
+  .hdr-avatar{width:44px;height:44px;}
+  #coin-btn{width:170px;height:170px;}
+}
+</style>
+</head>
+<body>
+<!-- Background Effects -->
+<div class="bg-mesh"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+
+<!-- Loading Screen -->
+<div id="loadingScreen">
+  <div class="logo">🪙</div>
+  <div style="font-size:28px;font-weight:900;background:linear-gradient(135deg,var(--purple-l),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">Quinn Bot 2026</div>
+  <div id="loadingBar"><div id="loadingFill"></div></div>
+  <div id="loadingMsg" style="font-size:13px;color:var(--t3);">جاري التحميل...</div>
+</div>
+
+<!-- Network Status -->
+<div id="netStatus"></div>
+<div id="fbSync">💾 جاري الحفظ...</div>
+<div id="notif"></div>
+
+<!-- Settings Panel -->
+<div id="settingsPanel" class="settings-panel">
+  <div class="settings-header">
+    <div class="settings-title">⚙️ الإعدادات</div>
+    <div class="settings-close" onclick="closeSettings()">✕</div>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div class="settings-item-label">🔊 صوت النقرات</div>
+      <div class="settings-item-desc">تشغيل/إيقاف صوت النقرات</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="settingsSoundClick" onchange="toggleSound('click')" checked><span class="slider"></span></label>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div class="settings-item-label">💰 صوت المكاسب</div>
+      <div class="settings-item-desc">تشغيل/إيقاف صوت الفوز والخسارة</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="settingsSoundWin" onchange="toggleSound('winLoss')" checked><span class="slider"></span></label>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div class="settings-item-label">✨ تأثير الجسيمات</div>
+      <div class="settings-item-desc">عرض تأثير سقوط العملات</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="settingsParticles" onchange="toggleParticles()" checked><span class="slider"></span></label>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div class="settings-item-label">🔒 إظهار الرصيد</div>
+      <div class="settings-item-desc">إظهار رصيدك للمستخدمين الآخرين</div>
+    </div>
+    <label class="switch"><input type="checkbox" id="settingsPublicBalance" onchange="togglePublicBalance()" checked><span class="slider"></span></label>
+  </div>
+  <div class="settings-item">
+    <div>
+      <div class="settings-item-label">🌙 الوضع الليلي</div>
+      <div class="settings-item-desc">الوضع الداكن دائماً</div>
+    </div>
+    <label class="switch"><input type="checkbox" checked disabled><span class="slider"></span></label>
+  </div>
+  <div style="margin-top:auto;padding-top:20px;border-top:1px solid var(--border);text-align:center;">
+    <div style="font-size:12px;color:var(--t3);">Quinn Bot 2026 v3.0</div>
+    <div style="font-size:10px;color:var(--t3);margin-top:4px;">Powered by Firebase & Gemini AI</div>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div id="confirmModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title" id="confirmTitle">تأكيد</div>
+    <div class="modal-msg" id="confirmMsg"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeConfirm()">إلغاء</button>
+      <button class="confirm" onclick="confirmAction()">تأكيد</button>
+    </div>
+  </div>
+</div>
+
+<div id="referralCodeModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title">🎁 كود الإحالة</div>
+    <div class="modal-msg">أدخل كود الإحالة من صديقك للحصول على مكافأة فورية!</div>
+    <input class="inp" id="manualRefCode" placeholder="مثال: REF123456" style="margin-bottom:18px;text-align:center;">
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeReferralModal()">تخطي</button>
+      <button class="confirm" onclick="applyReferralCode()">تطبيق 🎉</button>
+    </div>
+  </div>
+</div>
+
+<div id="searchModal" class="modal">
+  <div class="modal-box" style="text-align:right;">
+    <div class="modal-title">🔍 البحث عن عضو</div>
+    <input type="text" id="searchInput" class="inp" placeholder="الاسم أو @username" style="margin-bottom:14px;" oninput="performSearch()">
+    <div id="searchResults" style="max-height:320px;overflow-y:auto;"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeSearchModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div id="sendUserModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title">📤 إرسال لـ <span id="sendUserName"></span></div>
+    <div class="modal-msg" id="sendUserBal"></div>
+    <input type="number" id="sendUserAmt" step="any" class="inp" placeholder="الكمية (Quinn) — مثال: 0.5" style="margin:16px 0;" oninput="updateSendUserPreview()">
+    <div id="sendUserPreview" style="color:var(--t3);font-size:12px;margin-bottom:6px;"></div>
+    <div class="modal-btns">
+      <button class="cancel" id="sendUserCancelBtn">إلغاء</button>
+      <button class="confirm" id="sendUserConfirmBtn">إرسال 🪙</button>
+    </div>
+  </div>
+</div>
+
+<div id="starsModal" class="modal">
+  <div class="modal-box">
+    <div style="font-size:52px;margin-bottom:10px;">⭐</div>
+    <div class="modal-title">شراء Quinn بالنجوم</div>
+    <div class="modal-msg">الشراء بالنجوم غير متاح حالياً مباشرةً.<br>يمكنك التبادل مع المجتمع عبر:<br><a href="https://t.me/GroupQuinn" target="_blank" style="color:var(--purple-l);">👥 مجموعة Quinn</a><br><a href="https://t.me/ChannelQuinn" target="_blank" style="color:var(--gold);">📢 قناة Quinn</a></div>
+    <div id="starsPkgs"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeStarsModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div id="ranksModal" class="modal">
+  <div class="modal-box" style="text-align:right;">
+    <div class="modal-title">🏆 قائمة الرتب والمستويات</div>
+    <div id="ranksList" style="max-height:60vh;overflow-y:auto;"></div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeRanksModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<div id="diceGameModal" class="modal">
+  <div class="modal-box">
+    <div class="modal-title">🎲 لعبة القمار (سيجا)</div>
+    <div class="modal-msg">العب ضد بوت عشوائي! ضع رهانك وارمِ النرد</div>
+    <div style="background:var(--glass);padding:16px;border-radius:var(--rm);margin-bottom:16px;">
+      <div style="font-size:12px;color:var(--t3);margin-bottom:8px;">الرهان (توكن)</div>
+      <input type="number" id="diceBetAmount" class="inp" placeholder="مثال: 1000" style="margin-bottom:12px;">
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+        <button class="btn-sm" onclick="setDiceBet(500)">500</button>
+        <button class="btn-sm" onclick="setDiceBet(1000)">1000</button>
+        <button class="btn-sm" onclick="setDiceBet(5000)">5000</button>
+        <button class="btn-sm" onclick="setDiceBet(10000)">10K</button>
+      </div>
+    </div>
+    <div id="diceGameArea" style="display:none;">
+      <div class="dice-container">
+        <div><div style="font-size:11px;color:var(--t3);margin-bottom:8px;">أنت</div><div id="playerDice" class="dice">🎲</div></div>
+        <div style="font-size:24px;font-weight:900;color:var(--gold);">VS</div>
+        <div><div style="font-size:11px;color:var(--t3);margin-bottom:8px;">البوت</div><div id="botDice" class="dice">🎲</div></div>
+      </div>
+      <div id="diceResult" style="text-align:center;margin:16px 0;font-size:16px;font-weight:800;"></div>
+    </div>
+    <div class="modal-btns">
+      <button class="cancel" onclick="closeDiceGameModal()">إغلاق</button>
+      <button class="confirm btn-gold" id="dicePlayBtn" onclick="playDiceGame()">🎲 العب الآن</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="hdr-avatar" id="hdrAvatar">👤</div>
+      <div class="hdr-info">
+        <div class="hdr-name" id="hdrName">مستخدم</div>
+        <div class="hdr-rank" id="hdrRank">🪨 الحجري</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="hdr-bal-wrap">
+        <div class="hdr-bal" id="hdrBal">0 <span style="font-size:11px;opacity:.6;">Q</span></div>
+        <div class="hdr-tok" id="hdrTok">0 توكن</div>
+      </div>
+      <div class="settings-btn" onclick="openSettings()">⚙️</div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <!-- HOME -->
+    <div id="tab-home" class="tab-content active">
+      <div class="stat-row">
+        <div class="stat-box">
+          <div class="stat-val" id="sTokens">0</div>
+          <div class="stat-lbl">🪙 التوكن</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="sQuinn">0.0000</div>
+          <div class="stat-lbl">💎 Quinn</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val" id="sClicks">0</div>
+          <div class="stat-lbl">👆 نقرات</div>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-bottom:16px;" onclick="showRanksModal()">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center;">
+          <div>
+            <span id="rankIcon" style="font-size:24px;">🪨</span>
+            <span id="rankName" style="font-weight:800;">الحجري</span>
+            <span style="font-size:12px;color:var(--t3);">(مستوى <span id="rankLevel">1</span>)</span>
+          </div>
+          <span id="clickMult" class="rank-badge">1.00x</span>
+        </div>
+        <div class="prog-wrap"><div id="rankBar" class="prog-fill" style="width:0%"></div></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;font-size:11px;color:var(--t3);">
+          <span id="xpCurrent">0 توكن</span>
+          <span id="rankNext">→ المستوى التالي</span>
+          <span id="xpNeeded">0 توكن</span>
+        </div>
+      </div>
+      
+      <div id="boostBanner" style="display:none;"></div>
+      
+      <div style="text-align:center;">
+        <button id="coin-btn" ontouchstart="handleClick(event)" onmousedown="handleClick(event)">
+          <span class="coin-emoji">🪙</span>
+        </button>
+      </div>
+      
+      <div class="card" style="margin-bottom:14px;cursor:default;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:10px;align-items:center;">
+          <span style="font-weight:800;">⚡ الطاقة</span>
+          <span id="energyTxt" style="font-size:12px;color:var(--t3);">1000/1000</span>
+        </div>
+        <div class="prog-wrap"><div id="energyBar" class="prog-fill energy" style="width:100%"></div></div>
+      </div>
+      
+      <div class="card" style="display:flex;justify-content:space-between;cursor:default;">
+        <span style="font-weight:800;">💰 الدخل السلبي</span>
+        <span id="passiveTxt" style="font-weight:800;color:var(--green);">0 توكن/دقيقة</span>
+      </div>
+    </div>
+
+    <!-- BOOST -->
+    <div id="tab-boost" class="tab-content">
+      <div class="sec-hdr">⚡ التعزيزات</div>
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="showBoostSub('boosts',this)">⚡ تعزيزات</button>
+        <button class="sub-tab" onclick="showBoostSub('tasks',this)">📋 مهام</button>
+        <button class="sub-tab" onclick="showBoostSub('passive',this)">💰 دخل سلبي</button>
+      </div>
+      <div id="bBoosts"></div>
+      <div id="bTasks" style="display:none;"></div>
+      <div id="bPassive" style="display:none;">
+        <div class="card" style="margin-bottom:16px;text-align:center;cursor:default;">
+          <div style="color:var(--t3);">دخلك السلبي الحالي</div>
+          <div id="passiveVal" style="font-size:42px;font-weight:900;color:var(--green);text-shadow:0 0 20px rgba(34,197,94,0.3);">0</div>
+          <div style="font-size:12px;color:var(--t3);">توكن / دقيقة (بلا حدود)</div>
+        </div>
+        <div id="passiveItems"></div>
+      </div>
+    </div>
+
+    <!-- WALLET -->
+    <div id="tab-wallet" class="tab-content">
+      <div class="sec-hdr">💼 المحفظة الرقمية</div>
+      
+      <!-- Wallet Balance Card -->
+      <div class="glass" style="padding:24px;margin-bottom:18px;text-align:center;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(59,130,246,0.08));position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(168,85,247,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="color:var(--t3);font-size:13px;margin-bottom:8px;">الرصيد الكلي</div>
+        <div id="wQuinn" style="font-size:44px;font-weight:900;color:var(--purple-l);text-shadow:0 0 30px rgba(168,85,247,0.4);"></div>
+        <div id="wTokens" style="color:var(--t3);font-size:13px;margin-bottom:16px;"></div>
+        <div style="display:inline-block;background:var(--glass);border-radius:12px;padding:8px 18px;font-size:12px;color:var(--t3);border:1px solid var(--border);">💱 10,000 توكن = 1 Quinn</div>
+      </div>
+      
+      <!-- QR & Barcode Section -->
+      <div class="wallet-code-section">
+        <div style="font-weight:800;margin-bottom:12px;">📱 كود المحفظة</div>
+        <div id="qrcode"></div>
+        <div class="barcode-container">
+          <svg id="barcode"></svg>
+        </div>
+        <div class="wallet-address" id="walletAddress"></div>
+        <button class="btn-sm" style="margin-top:12px;width:100%;" onclick="copyWalletAddress()">📋 نسخ العنوان</button>
+      </div>
+      
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="showWalletSub('overview',this)">📊 العمليات</button>
+        <button class="sub-tab" onclick="showWalletSub('send',this)">📤 إرسال</button>
+        <button class="sub-tab" onclick="showWalletSub('receive',this)">📥 استقبال</button>
+        <button class="sub-tab" onclick="showWalletSub('shop',this)">🏪 متجر</button>
+        <button class="sub-tab" onclick="showWalletSub('stars',this)">⭐ نجوم</button>
+      </div>
+      
+      <div id="wOverview"><div id="txList"></div></div>
+      
+      <div id="wSend" style="display:none;">
+        <div class="card" style="cursor:default;">
+          <h3 style="margin-bottom:16px;font-size:18px;">📤 إرسال Quinn</h3>
+          <input class="inp" id="sendTo" placeholder="@username أو ID" style="margin-bottom:14px;">
+          <input class="inp" id="sendAmt" type="number" step="any" placeholder="الكمية (Quinn) — مثال: 0.5" style="margin-bottom:10px;" oninput="updateSendPrev()">
+          <div id="sendPrev" style="color:var(--t3);font-size:12px;margin-bottom:16px;"></div>
+          <button class="btn" onclick="doTransfer()">إرسال 🪙</button>
+        </div>
+      </div>
+      
+      <div id="wReceive" style="display:none;">
+        <div class="card" style="text-align:center;cursor:default;">
+          <div style="font-size:55px;margin-bottom:14px;">📱</div>
+          <div style="margin-bottom:12px;font-weight:800;font-size:16px;">معرف الاستقبال</div>
+          <div id="recvId" style="background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(168,85,247,0.1));border-radius:14px;padding:14px;margin-bottom:16px;font-weight:800;color:var(--purple-l);word-break:break-all;border:1px solid rgba(168,85,247,0.3);"></div>
+          <button class="btn" onclick="copyId()">📋 نسخ المعرف</button>
+        </div>
+      </div>
+      
+      <div id="wShop" style="display:none;">
+        <div class="card" style="cursor:default;">
+          <h3 style="margin-bottom:10px;font-size:18px;">🏪 متجر Quinn</h3>
+          <p style="color:var(--t3);font-size:12px;margin-bottom:16px;">شراء Quinn بكلمة مرور المتجر</p>
+          <div id="shopStep1">
+            <input class="inp" id="shopQty" type="number" step="any" placeholder="الكمية (Quinn)" style="margin-bottom:10px;" oninput="updateShopPrev()">
+            <div id="shopPrev" style="color:var(--t3);margin-bottom:16px;"></div>
+            <button class="btn" onclick="shopNext()">التالي →</button>
+          </div>
+          <div id="shopStep2" style="display:none;">
+            <div id="shopConfLbl" style="background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,191,36,0.05));padding:14px;border-radius:12px;margin-bottom:16px;text-align:center;border:1px solid rgba(251,191,36,0.3);"></div>
+            <input class="inp" id="shopPass" type="password" placeholder="كلمة المرور" style="margin-bottom:16px;">
+            <div style="display:flex;gap:12px;">
+              <button class="btn-sm" style="flex:1;" onclick="shopBack()">← رجوع</button>
+              <button class="btn" style="flex:2;" onclick="shopBuy()">تأكيد الشراء</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div id="wStars" style="display:none;">
+        <div class="card" style="text-align:center;cursor:default;margin-bottom:16px;">
+          <div style="font-size:48px;margin-bottom:10px;">⭐</div>
+          <h3 style="margin-bottom:10px;font-size:18px;">شراء Quinn بـ Telegram Stars</h3>
+          <p style="color:var(--t3);font-size:13px;line-height:1.7;">الشراء بالنجوم غير متاح حالياً مباشرةً.<br>تواصل عبر القنوات الرسمية:</p>
+          <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px;">
+            <a href="https://t.me/GroupQuinn" target="_blank" style="display:block;padding:14px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(168,85,247,0.1));border:1px solid rgba(168,85,247,0.3);border-radius:14px;color:var(--purple-l);text-decoration:none;font-weight:800;">👥 مجموعة Quinn</a>
+            <a href="https://t.me/ChannelQuinn" target="_blank" style="display:block;padding:14px;background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(251,191,36,0.05));border:1px solid rgba(251,191,36,0.3);border-radius:14px;color:var(--gold);text-decoration:none;font-weight:800;">📢 قناة Quinn</a>
+          </div>
+        </div>
+        <div id="starsPackagesInline"></div>
+      </div>
+    </div>
+
+    <!-- LEADERBOARD -->
+    <div id="tab-leaderboard" class="tab-content">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+        <div class="sec-hdr" style="margin:0;">🏆 المتصدرون</div>
+        <div style="display:flex;gap:10px;">
+          <button class="btn-sm" onclick="refreshLeaderboard()">🔄 تحديث</button>
+          <button class="btn-sm" onclick="openSearchModal()">🔍 بحث</button>
+        </div>
+      </div>
+      <div id="lbLastUpdate" style="font-size:11px;color:var(--t3);text-align:center;margin-bottom:14px;"></div>
+      <div id="podiumWrap"></div>
+      <div id="lbList"></div>
+    </div>
+
+    <!-- TRADE (GOLD) -->
+    <div id="tab-trade" class="tab-content">
+      <div class="sec-hdr">📈 سوق الذهب</div>
+      
+      <div class="glass" style="padding:22px;margin-bottom:18px;text-align:center;background:linear-gradient(135deg,rgba(251,191,36,0.15),rgba(168,85,247,0.08));position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(251,191,36,0.1) 0%,transparent 70%);pointer-events:none;"></div>
+        <div style="font-size:14px;color:var(--t3);margin-bottom:6px;">سعر الذهب العالمي (للجرام)</div>
+        <div class="gold-price" id="goldPrice">$0.00</div>
+        <div id="goldChange" class="gold-change" style="font-size:14px;font-weight:800;margin-top:6px;"></div>
+        <div style="font-size:12px;color:var(--cyan);margin-top:8px;">🌐 السعر مشترك بين جميع المستخدمين</div>
+        <div id="marketTrend" style="font-size:11px;color:var(--t3);margin-top:8px;"></div>
+      </div>
+      
+      <div class="gold-chart"><canvas id="goldChart" width="400" height="160"></canvas></div>
+      
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="showTradeSub('buy',this)">🛒 شراء</button>
+        <button class="sub-tab" onclick="showTradeSub('sell',this)">💵 بيع</button>
+        <button class="sub-tab" onclick="showTradeSub('portfolio',this)">📊 محفظتي</button>
+      </div>
+      
+      <div id="tBuy">
+        <div class="card" style="cursor:default;">
+          <h3 style="margin-bottom:14px;font-size:18px;">🛒 شراء ذهب بالجرام</h3>
+          <div style="background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(251,191,36,0.03));border-radius:12px;padding:12px;margin-bottom:14px;font-size:13px;color:var(--gold);border:1px solid rgba(251,191,36,0.2);">
+            💡 السعر: <span id="buyPriceHint">$0/جرام</span> · يُخصم من رصيد Quinn
+          </div>
+          <label style="font-size:12px;color:var(--t3);display:block;margin-bottom:8px;">الكمية (جرام)</label>
+          <input class="inp" id="goldBuyAmt" type="number" step="any" placeholder="0.00" style="margin-bottom:10px;" oninput="updateGoldBuyPrev()">
+          <div id="goldBuyPrev" style="margin-bottom:16px;"></div>
+          <button class="btn btn-gold" onclick="buyGold()">شراء ذهب 🥇</button>
+        </div>
+      </div>
+      
+      <div id="tSell" style="display:none;">
+        <div class="card" style="cursor:default;">
+          <h3 style="margin-bottom:14px;font-size:18px;">💵 بيع ذهب بالجرام</h3>
+          <div style="font-size:13px;color:var(--t3);margin-bottom:12px;">رصيد الذهب: <span id="myGoldDisplay" style="color:var(--gold);font-weight:800;">0</span> جرام</div>
+          <label style="font-size:12px;color:var(--t3);display:block;margin-bottom:8px;">الكمية (جرام)</label>
+          <input class="inp" id="goldSellAmt" type="number" step="any" placeholder="0.00" style="margin-bottom:10px;" oninput="updateGoldSellPrev()">
+          <div id="goldSellPrev" style="margin-bottom:16px;"></div>
+          <button class="btn btn-green" onclick="sellGold()">بيع ذهب 💵</button>
+        </div>
+      </div>
+      
+      <div id="tPortfolio" style="display:none;">
+        <div class="card" style="cursor:default;margin-bottom:14px;">
+          <h3 style="margin-bottom:14px;font-size:18px;">📊 ملخص المحفظة</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <div style="background:var(--glass);padding:14px;border-radius:var(--rs);text-align:center;">
+              <div style="font-size:11px;color:var(--t3);">الذهب</div>
+              <div id="portGold" style="font-size:24px;font-weight:900;color:var(--gold);">0</div>
+              <div style="font-size:10px;color:var(--t3);">جرام</div>
+            </div>
+            <div style="background:var(--glass);padding:14px;border-radius:var(--rs);text-align:center;">
+              <div style="font-size:11px;color:var(--t3);">القيمة</div>
+              <div id="portVal" style="font-size:24px;font-weight:900;color:var(--green);">$0</div>
+            </div>
+          </div>
+        </div>
+        <div id="goldTxList"></div>
+      </div>
+    </div>
+
+    <!-- GAMES -->
+    <div id="tab-games" class="tab-content">
+      <div class="sec-hdr">🎮 الألعاب</div>
+      
+      <!-- Dice Game Card (Always Available) -->
+      <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(239,68,68,0.05));border-color:rgba(251,191,36,0.3);" onclick="openDiceGameModal()">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:42px;">🎲</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;font-size:16px;color:var(--gold);">لعبة القمار (سيجا)</div>
+            <div style="font-size:12px;color:var(--t3);margin-top:4px;">العب ضد بوت عشوائي - من يفوز يأخذ كل شيء!</div>
+            <div style="font-size:11px;color:var(--red);margin-top:6px;">⚠️ خطر عالي - لا جائزة للخاسر</div>
+          </div>
+          <div style="font-size:24px;">→</div>
+        </div>
+      </div>
+      
+      <div id="gamesUnlockBanner" class="card" style="margin-bottom:16px;text-align:center;cursor:default;background:linear-gradient(135deg,rgba(168,85,247,0.15),rgba(59,130,246,0.08));"></div>
+      
+      <div class="sub-tabs" id="gamesTabs" style="overflow-x:auto;"></div>
+      <div id="gamesContent"></div>
+    </div>
+
+    <!-- AI ASSISTANT -->
+    <div id="tab-ai" class="tab-content">
+      <div class="sec-hdr">🤖 المساعد الذكي</div>
+      
+      <div id="aiLockedMessage" style="display:none;">
+        <div class="card" style="text-align:center;padding:40px;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.03));border-color:rgba(239,68,68,0.3);">
+          <div style="font-size:56px;margin-bottom:16px;">🔒</div>
+          <div style="font-weight:800;font-size:18px;color:var(--red);margin-bottom:10px;">الذكاء الاصطناعي مقفل</div>
+          <div style="font-size:13px;color:var(--t3);line-height:1.7;">قم بتوثيق حسابك أولاً للوصول إلى المساعد الذكي<br>5 محاولات يومياً للمستخدمين الموثقين</div>
+          <button class="btn" style="margin-top:20px;" onclick="showTab('profile');showProfileSub('verify',document.querySelector('[onclick*=pVerify]'));">✅ توثيق الحساب</button>
+        </div>
+      </div>
+      
+      <div id="aiContent">
+        <div class="card" style="margin-bottom:16px;background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(59,130,246,0.05));border-color:rgba(168,85,247,0.3);">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+            <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--blue));display:flex;align-items:center;justify-content:center;font-size:22px;">🤖</div>
+            <div>
+              <div style="font-weight:800;">Quinn AI</div>
+              <div style="font-size:11px;color:var(--t3);">مساعدك الذكي الشخصي</div>
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--t2);line-height:1.7;">
+            🤖 مرحباً! أنا Quinn AI، مساعدك الذكي. يمكنني مساعدتك في:<br>
+            • 📊 تحليل استثماراتك في الذهب<br>
+            • 💡 نصائح لزيادة أرباحك<br>
+            • 🎮 استراتيجيات الألعاب<br>
+            • 📈 توقعات السوق
+          </div>
+        </div>
+        
+        <div class="ai-attempts" id="aiAttemptsRemaining">المحاولات المتبقية اليوم: 5/5</div>
+        
+        <div class="ai-chat-container" id="aiChatContainer">
+          <div class="ai-message">
+            <div class="ai-avatar">🤖</div>
+            <div class="ai-bubble">مرحباً! كيف يمكنني مساعدتك اليوم؟</div>
+          </div>
+        </div>
+        
+        <div class="ai-input-container">
+          <input type="text" id="aiInput" class="inp" placeholder="اكتب سؤالك هنا..." onkeypress="if(event.key==='Enter')sendAIMessage()">
+          <button class="btn" style="width:auto;padding:14px 20px;" onclick="sendAIMessage()">إرسال</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- REFERRAL -->
+    <div id="tab-referral" class="tab-content">
+      <div class="sec-hdr">👥 الإحالات</div>
+      
+      <div class="glass" style="padding:24px;margin-bottom:18px;text-align:center;background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(168,85,247,0.08));">
+        <div style="color:var(--t3);font-size:13px;margin-bottom:10px;">كود الإحالة الخاص بك</div>
+        <div id="refCode" style="background:var(--glass);border-radius:14px;padding:14px 22px;margin-bottom:14px;font-size:22px;font-weight:900;font-family:monospace;color:var(--purple-l);letter-spacing:3px;border:1px solid var(--border);"></div>
+        <div style="color:var(--t3);font-size:12px;margin-bottom:16px;">شارك الكود للحصول على 5,000 توكن لكل إحالة ناجحة</div>
+        <div style="display:flex;gap:12px;margin-bottom:12px;">
+          <button class="btn-sm" style="flex:1;" onclick="copyRefCode()">📋 نسخ الكود</button>
+          <button class="btn-sm" style="flex:1;" onclick="shareRefLink()">🔗 مشاركة</button>
+        </div>
+        <div id="enterRefSection"></div>
+      </div>
+      
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+        <div class="card" style="text-align:center;cursor:default;">
+          <div style="font-size:28px;margin-bottom:8px;">👥</div>
+          <div id="refCount" style="font-size:28px;font-weight:900;color:var(--purple-l);">0</div>
+          <div style="font-size:11px;color:var(--t3);">إحالات ناجحة</div>
+        </div>
+        <div class="card" style="text-align:center;cursor:default;">
+          <div style="font-size:28px;margin-bottom:8px;">💰</div>
+          <div id="refEarnings" style="font-size:28px;font-weight:900;color:var(--green);">0</div>
+          <div style="font-size:11px;color:var(--t3);">أرباح الإحالات</div>
+        </div>
+      </div>
+      
+      <div class="card" style="margin-bottom:18px;cursor:default;background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(168,85,247,0.05));border-color:rgba(251,191,36,0.25);">
+        <div style="font-weight:800;color:var(--gold);margin-bottom:10px;font-size:16px;">🎁 مكافآت متدرجة</div>
+        <div style="font-size:13px;color:var(--t2);line-height:2.2;">
+          <div style="display:flex;justify-content:space-between;"><span>5 إحالات</span><span style="color:var(--green);font-weight:800;">+10K توكن</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>10 إحالات</span><span style="color:var(--green);font-weight:800;">+25K توكن</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>25 إحالة</span><span style="color:var(--green);font-weight:800;">+100K توكن</span></div>
+          <div style="display:flex;justify-content:space-between;"><span>50 إحالة</span><span style="color:var(--green);font-weight:800;">+500K توكن</span></div>
+        </div>
+        <div id="tierRewards" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);text-align:center;font-weight:800;color:var(--purple-l);"></div>
+      </div>
+      
+      <div id="referralsList"></div>
+    </div>
+
+    <!-- PROFILE -->
+    <div id="tab-profile" class="tab-content">
+      <div class="sec-hdr">👤 ملفي الشخصي</div>
+      
+      <div class="glass" style="padding:24px;margin-bottom:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(168,85,247,0.08) 0%,transparent 70%);pointer-events:none;"></div>
+        <div id="profAvatar" style="width:90px;height:90px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;font-size:50px;border:3px solid var(--purple);background-size:cover;background-position:center;overflow:hidden;box-shadow:0 8px 30px rgba(168,85,247,0.3);"></div>
+        <h3 id="profName" style="font-size:20px;font-weight:900;"></h3>
+        <div id="profTg" style="color:var(--t3);font-size:14px;margin-bottom:18px;"></div>
+        <div style="display:flex;justify-content:center;gap:28px;">
+          <div>
+            <div id="profQuinn" style="font-size:20px;font-weight:900;color:var(--purple-l);">0</div>
+            <div style="font-size:11px;color:var(--t3);">Quinn</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+          <div>
+            <div id="profClicks" style="font-size:20px;font-weight:900;color:var(--green);">0</div>
+            <div style="font-size:11px;color:var(--t3);">نقرة</div>
+          </div>
+          <div style="width:1px;background:rgba(255,255,255,0.1);"></div>
+          <div>
+            <div id="profRank" style="font-size:20px;font-weight:900;color:var(--gold);">🪨</div>
+            <div style="font-size:11px;color:var(--t3);">رتبة</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="sub-tabs">
+        <button class="sub-tab active" onclick="showProfileSub('info',this)">ℹ️ معلومات</button>
+        <button class="sub-tab" onclick="showProfileSub('avatar',this)">🖼️ الصورة</button>
+        <button class="sub-tab" onclick="showProfileSub('telegram',this)">📸 Telegram</button>
+        <button class="sub-tab" onclick="showProfileSub('verify',this)">✅ التوثيق</button>
+      </div>
+      
+      <div id="pInfo"><div id="profInfoList"></div></div>
+      
+      <div id="pAvatar" style="display:none;">
+        <p style="color:var(--t3);font-size:13px;margin-bottom:16px;text-align:center;">اختر صورة فريدة — محجوزة لك وحدك</p>
+        <div class="avatar-grid" id="avatarGrid"></div>
+      </div>
+      
+      <div id="pTelegram" style="display:none;">
+        <div style="text-align:center;margin-bottom:16px;background:linear-gradient(135deg,rgba(236,72,153,0.12),rgba(168,85,247,0.08));border:1px solid rgba(236,72,153,0.25);border-radius:var(--rm);padding:22px;">
+          <div class="tg-preview" id="tgPreview">📷</div>
+          <div id="tgStatus" style="font-size:13px;margin:12px 0;color:var(--t2);"></div>
+          <button id="buyTgBtn" class="btn" style="display:none;margin-top:10px;" onclick="purchaseTelegramAvatar()">شراء الصورة 💎</button>
+        </div>
+        <div class="card" style="cursor:default;background:linear-gradient(135deg,rgba(251,191,36,0.08),rgba(251,191,36,0.02));border-color:rgba(251,191,36,0.2);">
+          <div style="font-size:13px;font-weight:800;color:var(--gold);margin-bottom:10px;">🔗 رابط صورة يدوي</div>
+          <input id="manualPhotoUrl" class="inp" placeholder="https://..." style="margin:12px 0;">
+          <button class="btn-sm" style="width:100%;" onclick="applyManualPhotoUrl()">تطبيق</button>
+        </div>
+      </div>
+      
+      <div id="pVerify" style="display:none;"><div id="verifyPanel"></div></div>
+    </div>
+  </div>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button class="nav-btn active" onclick="showTab('home')">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">الرئيسية</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('boost')">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">تعزيزات</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('wallet')">
+      <span class="nav-icon">💼</span>
+      <span class="nav-label">المحفظة</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('leaderboard')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">المتصدرون</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('trade')">
+      <span class="nav-icon">📈</span>
+      <span class="nav-label">الذهب</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('games')">
+      <span class="nav-icon">🎮</span>
+      <span class="nav-label">ألعاب</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('ai')">
+      <span class="nav-icon">🤖</span>
+      <span class="nav-label">الذكاء</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('referral')">
+      <span class="nav-icon">👥</span>
+      <span class="nav-label">الإحالات</span>
+    </button>
+    <button class="nav-btn" onclick="showTab('profile')">
+      <span class="nav-icon">👤</span>
+      <span class="nav-label">الملف</span>
+    </button>
+  </nav>
+</div>
+</body>
+</html>
+
+<script>
+'use strict';
+
+// ===================== TELEGRAM ONLY CHECK =====================
+(function() {
+  const tg = window.Telegram?.WebApp;
+  if (!tg || !tg.initDataUnsafe || !tg.initDataUnsafe.user) {
+    const botLink = 'https://t.me/Quinnofficialbot';
+    const msg = `
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:24px;text-align:center;background:linear-gradient(180deg,#050714 0%,#0a0e24 100%);color:#fff;font-family:'Cairo',sans-serif;">
+        <div style="font-size:80px;margin-bottom:20px;animation:pulse 2s infinite;">⚠️</div>
+        <div style="font-size:22px;font-weight:900;margin-bottom:12px;background:linear-gradient(135deg,#a855f7,#3b82f6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">هذا التطبيق يعمل فقط داخل تليجرام</div>
+        <div style="font-size:15px;color:rgba(255,255,255,0.7);margin-bottom:28px;max-width:300px;line-height:1.7;">يرجى فتح الرابط من تطبيق تليجرام الرسمي للحصول على أفضل تجربة</div>
+        <a href="${botLink}" style="background:linear-gradient(135deg,#a855f7,#3b82f6);padding:16px 36px;border-radius:50px;color:#fff;text-decoration:none;font-weight:800;box-shadow:0 10px 30px rgba(168,85,247,0.4);transition:all 0.3s;">📱 افتح البوت على تليجرام</a>
+        <style>@keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.1);}}</style>
+      </div>
+    `;
+    document.body.innerHTML = msg;
+    throw new Error('Access denied: outside Telegram WebApp');
+  }
+})();
+
+// ===================== GEMINI AI API KEY =====================
+const GEMINI_API_KEY = 'AIzaSyD6OJry2vr1oxENsI4Ibkru8oDTdPMEu2Y';
+
+// ===================== DEVICE FINGERPRINT =====================
+function getDeviceFingerprint() {
+  const data = [
+    navigator.userAgent, navigator.language, screen.width + 'x' + screen.height,
+    screen.colorDepth, new Date().getTimezoneOffset(), !!window.sessionStorage, !!window.localStorage
+  ].join('|');
+  let hash = 0;
+  for (let i = 0; i < data.length; i++) {
+    hash = ((hash << 5) - hash) + data.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash).toString(36);
+}
+
+function generateUserSecret() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    const r = Math.random() * 16 | 0;
+    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+    return v.toString(16);
+  }) + '-' + Date.now().toString(36);
+}
+
+// ===================== CONSTANTS =====================
+const BOT_USERNAME = 'Quinnofficialbot';
+const SHOP_PASSWORD = 'T9@xQ#4mL!2vZ$7pR';
+const TOKENS_PER_QUINN = 10000;
+const MAX_ENERGY = 1000;
+const VERIFY_COST = 50;
+const SECOND_LIFE_COST = 100;
+const TELEGRAM_AVATAR_COST = 20;
+const REF_BONUS_REFERRER = 5000;
+const REF_BONUS_NEWUSER = 2500;
+const STARS_PACKAGES = [
+  {stars: 50, quinn: 5}, {stars: 100, quinn: 11}, {stars: 250, quinn: 30},
+  {stars: 500, quinn: 65}, {stars: 1000, quinn: 140}
+];
+const MARKET_LIQUIDITY = 100000000;
+const LB_CACHE_TTL = 3 * 60 * 1000;
+const FINGERPRINT_COOLDOWN = 30000;
+const AI_DAILY_LIMIT = 5;
+
+// ===================== RANKS (10 tiers × 5 levels = 50) =====================
+const RANK_TIERS = [
+  {name: 'الحجري', icon: '🪨', start: 1, end: 5, baseMultiplier: 1.00, increment: 0.02},
+  {name: 'البرونزي', icon: '🥉', start: 6, end: 10, baseMultiplier: 1.10, increment: 0.02},
+  {name: 'الفضي', icon: '🥈', start: 11, end: 15, baseMultiplier: 1.20, increment: 0.02},
+  {name: 'الذهبي', icon: '🥇', start: 16, end: 20, baseMultiplier: 1.30, increment: 0.02},
+  {name: 'الألماسي', icon: '💎', start: 21, end: 25, baseMultiplier: 1.40, increment: 0.02},
+  {name: 'الملكي', icon: '👑', start: 26, end: 30, baseMultiplier: 1.50, increment: 0.02},
+  {name: 'الأسطوري', icon: '⚡', start: 31, end: 35, baseMultiplier: 1.60, increment: 0.02},
+  {name: 'الكوزمي', icon: '🌌', start: 36, end: 40, baseMultiplier: 1.70, increment: 0.02},
+  {name: 'التايتان', icon: '🔱', start: 41, end: 45, baseMultiplier: 1.80, increment: 0.02},
+  {name: 'الإنفينيتي', icon: '♾️', start: 46, end: 50, baseMultiplier: 1.90, increment: 0.02}
+];
+const RANKS = [];
+for (const tier of RANK_TIERS) {
+  for (let lvl = tier.start; lvl <= tier.end; lvl++) {
+    RANKS.push({
+      level: lvl, name: tier.name, icon: tier.icon,
+      minTokens: lvl === 1 ? 0 : Math.floor(800 * Math.pow(1.65, lvl - 2)),
+      clickMultiplier: tier.baseMultiplier + (lvl - tier.start) * tier.increment
+    });
+  }
+}
+function getRankByTokens(t) { for (let i = RANKS.length - 1; i >= 0; i--) if (t >= RANKS[i].minTokens) return RANKS[i]; return RANKS[0]; }
+
+// ===================== STATIC DATA =====================
+const AVATARS = [
+  {id: 1, emoji: '🦁', name: 'الأسد'}, {id: 2, emoji: '🐉', name: 'التنين'},
+  {id: 3, emoji: '🦊', name: 'الثعلب'}, {id: 4, emoji: '🐺', name: 'الذئب'},
+  {id: 5, emoji: '🦅', name: 'النسر'}, {id: 6, emoji: '🐬', name: 'الدلفين'},
+  {id: 7, emoji: '🦄', name: 'اليونيكورن'}, {id: 8, emoji: '🐸', name: 'الضفدع'},
+  {id: 9, emoji: '🐙', name: 'الأخطبوط'}, {id: 10, emoji: '🦇', name: 'الخفاش'},
+  {id: 11, emoji: '🐋', name: 'الحوت'}, {id: 12, emoji: '🦚', name: 'الطاووس'},
+  {id: 13, emoji: '🐲', name: 'التنين الشرقي'}, {id: 14, emoji: '🦖', name: 'الديناصور'},
+  {id: 15, emoji: '🐱', name: 'القط'}
+];
+function getAv(id) { return AVATARS.find(a => a.id === id) || AVATARS[0]; }
+
+const BOOSTS = [
+  {id: 'turbo', name: 'توربو', icon: '⚡', desc: '×5 نقرة لمدة 30 ثانية', cost: 500, duration: 30000},
+  {id: 'magnet', name: 'مغناطيس', icon: '🧲', desc: '+3 توكن كل 0.5 ثانية', cost: 1000, duration: 60000},
+  {id: 'shield', name: 'درع', icon: '🛡️', desc: 'بدون استهلاك طاقة 60 ثانية', cost: 300, duration: 60000}
+];
+
+const TASKS = [
+  {id: 1, name: 'انقر 100 مرة', reward: 500, type: 'clicks', target: 100, icon: '👆'},
+  {id: 2, name: 'انقر 500 مرة', reward: 1500, type: 'clicks', target: 500, icon: '🖱️'},
+  {id: 3, name: 'انقر 1000 مرة', reward: 3000, type: 'clicks', target: 1000, icon: '💥'},
+  {id: 4, name: 'ادعُ صديقاً', reward: 5000, type: 'referral', icon: '👥'},
+  {id: 5, name: 'وثّق حسابك', reward: 10000, type: 'verify', icon: '✅'}
+];
+
+const PASSIVE_ITEMS = [
+  {id: 'farm', name: 'مزرعة', rate: 20, cost: 50000, icon: '🌱'},
+  {id: 'factory', name: 'مصنع', rate: 40, cost: 200000, icon: '🏭'},
+  {id: 'complex', name: 'مجمع', rate: 70, cost: 800000, icon: '🏗️'},
+  {id: 'server', name: 'خادم تعدين', rate: 100, cost: 5000000, icon: '🖥️'}
+];
+
+// ===================== HARDER MINI-GAMES =====================
+const RANK_GAMES = [
+  {tierId: 1, tierName: 'الحجري', tierIcon: '🪨', minLevel: 1, maxLevel: 5, game: {id: 'tap_coin', name: '🪙 العملة المتحركة', desc: 'اضرب العملة 8 مرات في 10 ثوانٍ! (صعب)', reward: 200, cooldown: 300000, play: 'playTapCoinGame'}},
+  {tierId: 2, tierName: 'البرونزي', tierIcon: '🥉', minLevel: 6, maxLevel: 10, game: {id: 'memory_num', name: '🔢 الذاكرة العددية', desc: 'احفظ الرقم وأدخله في 2 ثانية فقط!', reward: 500, cooldown: 480000, play: 'playMemoryGame'}},
+  {tierId: 3, tierName: 'الفضي', tierIcon: '🥈', minLevel: 11, maxLevel: 15, game: {id: 'fast_guess', name: '⚡ التخمين السريع', desc: 'خمّن الرقم في محاولتين فقط!', reward: 1000, cooldown: 600000, play: 'playFastGuessGame'}},
+  {tierId: 4, tierName: 'الذهبي', tierIcon: '🥇', minLevel: 16, maxLevel: 20, game: {id: 'rock_break', name: '⛏️ كسر الصخور', desc: 'اكسر 12 صخرة في 10 ثوانٍ! (صعب جداً)', reward: 2000, cooldown: 780000, play: 'playRockBreakGame'}},
+  {tierId: 5, tierName: 'الألماسي', tierIcon: '💎', minLevel: 21, maxLevel: 25, game: {id: 'diamond_rush', name: '💎 سباق الألماس', desc: '40+ نقرة في 8 ثوانٍ! (تحدي)', reward: 3500, cooldown: 960000, play: 'playDiamondRushGame'}},
+  {tierId: 6, tierName: 'الملكي', tierIcon: '👑', minLevel: 26, maxLevel: 30, game: {id: 'royal_match', name: '👑 المطابقة الملكية', desc: 'أوجد كل الأزواج في 15 ثانية!', reward: 5000, cooldown: 1200000, play: 'playRoyalMatchGame'}},
+  {tierId: 7, tierName: 'الأسطوري', tierIcon: '⚡', minLevel: 31, maxLevel: 35, game: {id: 'legend_tap', name: '⚡ النقر الأسطوري', desc: '50+ نقرة في 6 ثوانٍ! (أسطوري)', reward: 8000, cooldown: 1380000, play: 'playLegendTapGame'}},
+  {tierId: 8, tierName: 'الكوزمي', tierIcon: '🌌', minLevel: 36, maxLevel: 40, game: {id: 'cosmic_calc', name: '🌌 حساب الكوزمي', desc: 'حل 5 معادلات في 20 ثانية!', reward: 12000, cooldown: 1620000, play: 'playCosmicCalcGame'}},
+  {tierId: 9, tierName: 'التايتان', tierIcon: '🔱', minLevel: 41, maxLevel: 45, game: {id: 'titan_boss', name: '🔱 مواجهة التايتان', desc: 'أسقط الوحش في 12 ثانية! (صعب جداً)', reward: 18000, cooldown: 1800000, play: 'playTitanBossGame'}},
+  {tierId: 10, tierName: 'الإنفينيتي', tierIcon: '♾️', minLevel: 46, maxLevel: 50, game: {id: 'infinity_rush', name: '♾️ سباق الإنفينيتي', desc: '60+ نقرة في 5 ثوانٍ! (أصعب تحدي)', reward: 30000, cooldown: 2100000, play: 'playInfinityGame'}}
+];
+
+// ===================== STATE =====================
+let currentUser = null;
+let allUsers = {};
+let pendingConfirm = null;
+let selectedSendUser = null;
+let soundEnabled = {click: true, winLoss: true};
+let particlesEnabled = true;
+let audioCtx = null;
+let globalGoldPrice = 61.5;
+let globalMarketHistory = [];
+let goldChart = null;
+let isOnline = navigator.onLine;
+let lbCache = [];
+let lbCacheTime = 0;
+let saveTimer = null;
+let pendingSaves = [];
+let lastFirebaseSync = 0;
+let aiAttemptsToday = 0;
+let lastAIDate = null;
+
+// ===================== HELPERS =====================
+function fmt(n) {
+  if (n === undefined || n === null) return '0';
+  n = Math.floor(n);
+  if (n >= 1e9) return (n / 1e9).toFixed(1) + 'B';
+  if (n >= 1e6) return (n / 1e6).toFixed(1) + 'M';
+  if (n >= 1e3) return (n / 1e3).toFixed(1) + 'K';
+  return n.toString();
+}
+
+function toQuinn(t) { return ((t || 0) / TOKENS_PER_QUINN).toFixed(4); }
+function toTokens(q) { return (q || 0) * TOKENS_PER_QUINN; }
+
+function notify(msg, dur = 3000) {
+  const e = document.getElementById('notif');
+  e.textContent = msg;
+  e.style.display = 'block';
+  clearTimeout(e._t);
+  e._t = setTimeout(() => e.style.display = 'none', dur);
+}
+
+function haptic(t = 'light') {
+  try { window.Telegram?.WebApp?.HapticFeedback?.impactOccurred(t); } catch (e) {}
+}
+
+function copyToClipboard(t) {
+  return (navigator.clipboard?.writeText(t) || Promise.reject()).then(() => {
+    haptic('success');
+    notify('✅ تم النسخ');
+    return true;
+  }).catch(() => false);
+}
+
+function loadP(pct) { document.getElementById('loadingFill').style.width = pct + '%'; }
+function loadMsg(m) { document.getElementById('loadingMsg').textContent = m; }
+function hideLoader() { document.getElementById('loadingScreen').style.display = 'none'; }
+
+// ===================== AUDIO =====================
+function initAudio() {
+  if (!audioCtx && (window.AudioContext || window.webkitAudioContext))
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+
+function playSound(type) {
+  if (!audioCtx) initAudio();
+  if (type === 'click' && !soundEnabled.click) return;
+  if ((type === 'win' || type === 'loss') && !soundEnabled.winLoss) return;
+  if (!audioCtx) return;
+  try {
+    const now = audioCtx.currentTime, osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.type = 'sine';
+    if (type === 'click') { osc.frequency.value = 880; gain.gain.value = 0.1; osc.start(); osc.stop(now + 0.1); }
+    else if (type === 'win') {
+      osc.frequency.setValueAtTime(523.25, now);
+      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.1);
+      osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.2);
+      gain.gain.value = 0.15;
+      osc.start();
+      osc.stop(now + 0.3);
+    }
+    else if (type === 'loss') {
+      osc.frequency.setValueAtTime(220, now);
+      osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+      gain.gain.value = 0.15;
+      osc.start();
+      osc.stop(now + 0.3);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+  } catch (e) {}
+}
+
+function toggleSound(t) {
+  if (t === 'click') soundEnabled.click = document.getElementById('settingsSoundClick')?.checked ?? document.getElementById('soundClickToggle')?.checked ?? true;
+  if (t === 'winLoss') soundEnabled.winLoss = document.getElementById('settingsSoundWin')?.checked ?? document.getElementById('soundWinLossToggle')?.checked ?? true;
+  localStorage.setItem('quinn_sound', JSON.stringify(soundEnabled));
+}
+
+function toggleParticles() {
+  particlesEnabled = document.getElementById('settingsParticles')?.checked ?? document.getElementById('particlesToggle')?.checked ?? true;
+  localStorage.setItem('quinn_particles', particlesEnabled);
+}
+
+function togglePublicBalance() {
+  currentUser.showBalance = document.getElementById('settingsPublicBalance')?.checked ?? document.getElementById('showBalancePublic')?.checked ?? true;
+  scheduleLocalSave();
+  renderLeaderboard();
+  renderProfile();
+}
+
+// ===================== SETTINGS PANEL =====================
+function openSettings() {
+  document.getElementById('settingsPanel').classList.add('active');
+  document.getElementById('settingsSoundClick').checked = soundEnabled.click;
+  document.getElementById('settingsSoundWin').checked = soundEnabled.winLoss;
+  document.getElementById('settingsParticles').checked = particlesEnabled;
+  document.getElementById('settingsPublicBalance').checked = currentUser?.showBalance !== false;
+}
+
+function closeSettings() {
+  document.getElementById('settingsPanel').classList.remove('active');
+}
+
+// ===================== FIREBASE OPTIMIZED LAYER =====================
+function getDb() { return window.FB_DB; }
+
+function showSyncIndicator() {
+  const e = document.getElementById('fbSync');
+  e.style.display = 'block';
+  clearTimeout(e._t);
+  e._t = setTimeout(() => e.style.display = 'none', 1500);
+}
+
+// Batch save queue for reducing Firebase writes
+const saveQueue = new Map();
+const SAVE_DEBOUNCE = 3000;
+
+function queueFirebaseSave(userId, data) {
+  saveQueue.set(userId, { data, timestamp: Date.now() });
+  scheduleBatchSave();
+}
+
+let batchSaveTimer = null;
+function scheduleBatchSave() {
+  if (batchSaveTimer) clearTimeout(batchSaveTimer);
+  batchSaveTimer = setTimeout(executeBatchSave, SAVE_DEBOUNCE);
+}
+
+async function executeBatchSave() {
+  const db = getDb();
+  if (!db || saveQueue.size === 0) return;
+  
+  const batch = window.FB_writeBatch(db);
+  const entries = Array.from(saveQueue.entries());
+  saveQueue.clear();
+  
+  for (const [userId, { data }] of entries) {
+    const ref = window.FB_doc(db, 'users', userId);
+    batch.set(ref, data);
+  }
+  
+  try {
+    showSyncIndicator();
+    await batch.commit();
+    lastFirebaseSync = Date.now();
+    console.log(`Batch saved ${entries.length} users`);
+  } catch (e) {
+    console.warn('Batch save failed:', e);
+    // Re-queue failed saves
+    for (const [userId, { data }] of entries) {
+      saveQueue.set(userId, { data, timestamp: Date.now() });
+    }
+  }
+}
+
+function defaultUserData(uid, tgUser) {
+  const userSecret = generateUserSecret();
+  return {
+    id: uid,
+    name: ((tgUser.first_name || '') + ' ' + (tgUser.last_name || '')).trim() || 'مستخدم',
+    username: tgUser.username || '',
+    tokens: 1000,
+    clicks: 0,
+    energy: MAX_ENERGY,
+    passiveIncome: 0,
+    boostActive: null,
+    boostEnd: 0,
+    completedTasks: [],
+    transactions: [{desc: '🎁 مكافأة التسجيل', amount: 1000, time: new Date().toLocaleTimeString()}],
+    avatar: 1,
+    verified: false,
+    verifyExpire: 0,
+    secondLife: false,
+    secondLifeExpire: 0,
+    referralCode: `REF${uid.slice(-6)}`,
+    referrals: [],
+    referralEarnings: 0,
+    referralTierBonus: 0,
+    referralProcessed: false,
+    ownedPassive: {},
+    telegramAvatarPurchased: false,
+    telegramAvatarUrl: tgUser.photo_url || null,
+    joinDate: Date.now(),
+    showBalance: true,
+    goldGrams: 0,
+    goldTxs: [],
+    lastSeen: Date.now(),
+    lastEnergyCharge: 0,
+    energyChargeType: null,
+    energyChargeEnd: 0,
+    userSecret: userSecret,
+    selectedAvatarType: 'emoji',
+    deviceFingerprint: getDeviceFingerprint(),
+    aiAttemptsDate: new Date().toDateString(),
+    aiAttemptsCount: 0
+  };
+}
+
+async function loadUserFromFirebase(uid, tgUser) {
+  const db = getDb();
+  let cached = null;
+  try {
+    const raw = localStorage.getItem('quinn_user_' + uid);
+    if (raw) cached = JSON.parse(raw);
+  } catch (e) {}
+  
+  let userData = cached;
+  
+  if (db) {
+    try {
+      const docRef = window.FB_doc(db, 'users', uid);
+      const snap = await window.FB_getDoc(docRef);
+      if (snap.exists()) {
+        userData = snap.data();
+        const defaults = defaultUserData(uid, tgUser);
+        for (const k of Object.keys(defaults)) {
+          if (userData[k] === undefined) userData[k] = defaults[k];
+        }
+        if (!userData.userSecret) userData.userSecret = generateUserSecret();
+        // Reset AI attempts if new day
+        const today = new Date().toDateString();
+        if (userData.aiAttemptsDate !== today) {
+          userData.aiAttemptsDate = today;
+          userData.aiAttemptsCount = 0;
+        }
+      } else {
+        // Anti-cloning check
+        const deviceFingerprint = getDeviceFingerprint();
+        const q = window.FB_query(window.FB_collection(db, 'users'), window.FB_orderBy('joinDate', 'desc'), window.FB_limit(5));
+        const recentSnap = await window.FB_getDocs(q);
+        let block = false;
+        recentSnap.forEach(doc => {
+          const u = doc.data();
+          if (u.deviceFingerprint === deviceFingerprint && (Date.now() - (u.joinDate || 0)) < FINGERPRINT_COOLDOWN) {
+            block = true;
+          }
+        });
+        if (block) {
+          notify('⚠️ لا يمكن إنشاء حساب جديد من هذا الجهاز بهذه السرعة');
+          throw new Error('Too many accounts from same device');
+        }
+        userData = defaultUserData(uid, tgUser);
+        userData.deviceFingerprint = deviceFingerprint;
+        await window.FB_setDoc(docRef, userData);
+        const sp = window.Telegram?.WebApp?.initDataUnsafe?.start_param;
+        if (sp?.startsWith('ref_')) setTimeout(() => applyRefCodeManually(sp.replace('ref_', ''), uid), 800);
+        else setTimeout(() => { if (!userData.referralProcessed) openManualReferralModal(); }, 1500);
+      }
+    } catch (e) {
+      console.warn('Firebase load failed, using cache:', e);
+      if (!userData) userData = defaultUserData(uid, tgUser);
+    }
+  } else {
+    if (!userData) userData = defaultUserData(uid, tgUser);
+  }
+  
+  // Restore offline passive income
+  const now = Date.now();
+  const elapsed = now - (userData.lastSeen || now);
+  if (elapsed > 1500 && userData.energy < MAX_ENERGY) {
+    const energyRestore = Math.floor(elapsed / 1500) * 3;
+    userData.energy = Math.min(MAX_ENERGY, userData.energy + energyRestore);
+  }
+  if (elapsed > 60000 && userData.passiveIncome > 0) {
+    const mins = Math.floor(elapsed / 60000);
+    const gain = mins * userData.passiveIncome;
+    userData.tokens += gain;
+    userData.transactions.unshift({desc: `💰 دخل سلبي (${mins} دقيقة)`, amount: gain, time: new Date().toLocaleTimeString()});
+  }
+  
+  userData.lastSeen = now;
+  if (userData.verified && userData.verifyExpire && now > userData.verifyExpire) userData.verified = false;
+  if (userData.secondLife && userData.secondLifeExpire && now > userData.secondLifeExpire) userData.secondLife = false;
+  if (userData.energyChargeEnd && now > userData.energyChargeEnd) {
+    userData.energyChargeType = null;
+    userData.energyChargeEnd = 0;
+  }
+  userData.passiveIncome = getCurrentPassiveIncome(userData);
+  
+  // Update AI state
+  aiAttemptsToday = userData.aiAttemptsCount || 0;
+  lastAIDate = userData.aiAttemptsDate;
+  
+  localStorage.setItem('quinn_user_' + uid, JSON.stringify(userData));
+  return userData;
+}
+
+function scheduleLocalSave() {
+  if (currentUser) {
+    localStorage.setItem('quinn_user_' + currentUser.id, JSON.stringify(currentUser));
+    queueFirebaseSave(currentUser.id, currentUser);
+  }
+}
+
+async function saveNowToFirebase(data) {
+  if (!currentUser) return;
+  const db = getDb();
+  const toSave = data || currentUser;
+  scheduleLocalSave();
+  if (!db) return;
+  try {
+    showSyncIndicator();
+    await window.FB_setDoc(window.FB_doc(db, 'users', currentUser.id), toSave);
+    lastFirebaseSync = Date.now();
+  } catch (e) {
+    console.warn('saveNowToFirebase failed:', e);
+    queueFirebaseSave(currentUser.id, toSave);
+  }
+}
+
+function startPeriodicBackup() {
+  if (saveTimer) clearInterval(saveTimer);
+  saveTimer = setInterval(() => {
+    if (currentUser && document.visibilityState !== 'hidden') {
+      scheduleLocalSave();
+      executeBatchSave();
+    }
+  }, 2 * 60 * 1000); // Every 2 minutes
+}
+
+async function executeFirebaseTransaction(uid, otherUid, updateFn) {
+  const db = getDb();
+  if (!db) {
+    updateFn(currentUser, otherUid ? allUsers[otherUid] : null);
+    scheduleLocalSave();
+    return true;
+  }
+  try {
+    await window.FB_runTransaction(db, async (tx) => {
+      const myRef = window.FB_doc(db, 'users', uid);
+      const mySnap = await tx.get(myRef);
+      if (!mySnap.exists()) throw new Error('User not found');
+      const myData = mySnap.data();
+      let otherRef = null, otherData = null;
+      if (otherUid) {
+        otherRef = window.FB_doc(db, 'users', otherUid);
+        const otherSnap = await tx.get(otherRef);
+        if (!otherSnap.exists()) throw new Error('Target not found');
+        otherData = otherSnap.data();
+      }
+      updateFn(myData, otherData);
+      tx.set(myRef, myData);
+      if (otherRef && otherData) tx.set(otherRef, otherData);
+      Object.assign(currentUser, myData);
+      if (otherUid && allUsers[otherUid]) Object.assign(allUsers[otherUid], otherData);
+    });
+    scheduleLocalSave();
+    return true;
+  } catch (e) {
+    console.warn('Transaction failed:', e);
+    return false;
+  }
+}
+
+function saveAll() { scheduleLocalSave(); }
+
+// ===================== PASSIVE INCOME =====================
+function getCurrentPassiveIncome(user) {
+  let t = 0;
+  if (user.ownedPassive) {
+    t += (user.ownedPassive.farm || 0) * 20;
+    t += (user.ownedPassive.factory || 0) * 40;
+    t += (user.ownedPassive.complex || 0) * 70;
+    t += (user.ownedPassive.server || 0) * 100;
+  }
+  return t;
+}
+
+// ===================== REFERRAL =====================
+async function applyRefCodeManually(code, uid) {
+  const db = getDb();
+  let refId = Object.keys(allUsers).find(id => allUsers[id].referralCode === code);
+  if (!refId && db) {
+    try {
+      const q = window.FB_query(window.FB_collection(db, 'users'), window.FB_orderBy('referralCode'));
+      const snaps = await window.FB_getDocs(q);
+      snaps.forEach(d => {
+        const u = d.data();
+        allUsers[u.id] = u;
+        if (u.referralCode === code) refId = u.id;
+      });
+    } catch (e) {}
+  }
+  if (!refId || refId === uid) { notify('❌ كود غير صالح'); return false; }
+  const user = allUsers[uid] || currentUser;
+  if (user.referralProcessed) { notify('✅ استخدمت كوداً مسبقاً'); return false; }
+  
+  user.referralProcessed = true;
+  const referrer = allUsers[refId];
+  if (referrer) {
+    referrer.tokens += REF_BONUS_REFERRER;
+    referrer.referralEarnings = (referrer.referralEarnings || 0) + REF_BONUS_REFERRER;
+    referrer.referrals = referrer.referrals || [];
+    referrer.referrals.push({name: user.name, bonus: REF_BONUS_REFERRER, date: new Date().toLocaleString()});
+    referrer.transactions = referrer.transactions || [];
+    referrer.transactions.unshift({desc: `إحالة: ${user.name}`, amount: REF_BONUS_REFERRER, time: new Date().toLocaleTimeString()});
+  }
+  user.tokens += REF_BONUS_NEWUSER;
+  user.transactions = user.transactions || [];
+  user.transactions.unshift({desc: `مكافأة إحالة`, amount: REF_BONUS_NEWUSER, time: new Date().toLocaleTimeString()});
+  
+  const rc = referrer?.referrals?.length || 0;
+  let tier = 0;
+  if (rc >= 5) tier += 10000;
+  if (rc >= 10) tier += 25000;
+  if (rc >= 25) tier += 100000;
+  if (rc >= 50) tier += 500000;
+  if (referrer && tier > (referrer.referralTierBonus || 0)) {
+    const extra = tier - (referrer.referralTierBonus || 0);
+    referrer.tokens += extra;
+    referrer.referralEarnings += extra;
+    referrer.referralTierBonus = tier;
+    referrer.transactions.unshift({desc: `🎁 مكافأة متدرجة (${rc} إحالة)`, amount: extra, time: new Date().toLocaleTimeString()});
+    notify(`🎊 مكافأة متدرجة! +${fmt(extra)} توكن`);
+  }
+  saveAll();
+  if (referrer) saveNowToFirebase(referrer);
+  if (db) await window.FB_setDoc(window.FB_doc(db, 'users', uid), user);
+  else localStorage.setItem('quinn_user_' + uid, JSON.stringify(user));
+  notify(`🎉 تمت الإحالة! ربحت +${fmt(REF_BONUS_NEWUSER)} توكن`);
+  refreshUI();
+  lbCacheTime = 0;
+  refreshLeaderboard();
+  if (document.getElementById('tab-referral').classList.contains('active')) renderReferral();
+  return true;
+}
+
+function openManualReferralModal() {
+  if (currentUser.referralProcessed) { notify('استخدمت كوداً مسبقاً'); return; }
+  document.getElementById('manualRefCode').value = '';
+  document.getElementById('referralCodeModal').classList.add('active');
+}
+
+function closeReferralModal() { document.getElementById('referralCodeModal').classList.remove('active'); }
+
+function applyReferralCode() {
+  const c = document.getElementById('manualRefCode').value.trim();
+  if (!c) { notify('أدخل الكود'); return; }
+  closeReferralModal();
+  applyRefCodeManually(c, currentUser.id);
+  renderReferral();
+}
+
+// ===================== NETWORK =====================
+function updateNetStatus(online) {
+  isOnline = online;
+  const el = document.getElementById('netStatus');
+  if (!online) {
+    el.textContent = '📡 لا يوجد اتصال — العمليات المالية متوقفة';
+    el.className = '';
+    el.style.display = 'block';
+  } else {
+    el.textContent = '✅ عاد الاتصال';
+    el.className = 'back';
+    el.style.display = 'block';
+    setTimeout(() => el.style.display = 'none', 3000);
+  }
+}
+
+function requireOnline(act) {
+  if (!isOnline) { notify(`⚠️ لا اتصال — ${act} متوقف حالياً`); haptic('error'); return false; }
+  return true;
+}
+
+async function checkConnectivity() {
+  try {
+    const c = new AbortController();
+    const t = setTimeout(() => c.abort(), 4000);
+    await fetch('https://www.google.com/favicon.ico?_=' + Date.now(), {method: 'HEAD', mode: 'no-cors', cache: 'no-store', signal: c.signal});
+    clearTimeout(t);
+    if (!isOnline) updateNetStatus(true);
+    isOnline = true;
+  } catch (e) {
+    if (isOnline) updateNetStatus(false);
+    isOnline = false;
+  }
+}
+
+function startNetworkMonitor() {
+  window.addEventListener('online', () => { isOnline = true; updateNetStatus(true); checkConnectivity(); });
+  window.addEventListener('offline', () => { isOnline = false; updateNetStatus(false); });
+  setInterval(checkConnectivity, 30000);
+  setTimeout(checkConnectivity, 2000);
+  window.addEventListener('beforeunload', () => {
+    if (currentUser) {
+      localStorage.setItem('quinn_user_' + currentUser.id, JSON.stringify(currentUser));
+      saveNowToFirebase();
+      executeBatchSave();
+    }
+  });
+}
+
+// ===================== GAME MECHANICS =====================
+function handleClick(e) {
+  if (e.type === 'mousedown' && e.button !== 0) return;
+  const rank = getRankByTokens(currentUser.tokens);
+  let mult = rank.clickMultiplier;
+  if (currentUser.boostActive === 'turbo' && Date.now() < currentUser.boostEnd) mult *= 5;
+  if (currentUser.boostActive !== 'shield' && currentUser.energy <= 0) {
+    notify('⚡ لا طاقة! انتظر قليلاً');
+    haptic('error');
+    return;
+  }
+  const gain = Math.max(1, Math.floor(mult));
+  currentUser.tokens += gain;
+  currentUser.clicks++;
+  if (currentUser.boostActive !== 'shield') currentUser.energy = Math.max(0, currentUser.energy - 1);
+  
+  if (particlesEnabled) {
+    const rect = document.getElementById('coin-btn').getBoundingClientRect();
+    const cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
+    for (let i = 0; i < Math.min(gain, 5); i++) {
+      const p = document.createElement('div');
+      p.className = 'particle';
+      p.textContent = `+${Math.floor(gain / 2) + 1} 🪙`;
+      p.style.left = (cx + (Math.random() - 0.5) * 60) + 'px';
+      p.style.top = (cy + (Math.random() - 0.5) * 60) + 'px';
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 700);
+    }
+  }
+  playSound('click');
+  haptic('light');
+  refreshUI();
+  scheduleLocalSave();
+}
+
+function activateBoost(id) {
+  const b = BOOSTS.find(b => b.id === id);
+  if (!b || currentUser.tokens < b.cost) { notify('رصيد غير كافٍ'); return; }
+  showConfirm(`تفعيل ${b.icon} ${b.name}`, `مقابل ${fmt(b.cost)} توكن؟`, () => {
+    currentUser.tokens -= b.cost;
+    currentUser.boostActive = id;
+    currentUser.boostEnd = Date.now() + b.duration;
+    currentUser.transactions.unshift({desc: `تفعيل ${b.icon} ${b.name}`, amount: -b.cost, time: new Date().toLocaleTimeString()});
+    notify(`✅ تم تفعيل ${b.name}`);
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderBoostTab();
+  });
+}
+
+function buyPassive(id) {
+  const i = PASSIVE_ITEMS.find(i => i.id === id);
+  if (!i) return;
+  if (currentUser.tokens < i.cost) { notify('رصيد غير كافٍ'); return; }
+  showConfirm(`شراء ${i.icon} ${i.name}`, `مقابل ${fmt(i.cost)} توكن؟ (+${i.rate} توكن/دقيقة)`, () => {
+    currentUser.tokens -= i.cost;
+    currentUser.ownedPassive[id] = (currentUser.ownedPassive[id] || 0) + 1;
+    currentUser.passiveIncome = getCurrentPassiveIncome(currentUser);
+    currentUser.transactions.unshift({desc: `شراء ${i.icon} ${i.name}`, amount: -i.cost, time: new Date().toLocaleTimeString()});
+    notify(`✅ +${i.rate} توكن/دقيقة`);
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderBoostTab();
+  });
+}
+
+function completeTask(tid) {
+  const t = TASKS.find(t => t.id === tid);
+  if (!t || currentUser.completedTasks.includes(tid)) return;
+  if (t.type === 'verify' && !currentUser.verified) { notify('وثّق حسابك أولاً'); return; }
+  if (t.type === 'referral' && currentUser.referrals.length === 0) { notify('تحتاج إحالة واحدة'); return; }
+  if (t.type === 'clicks' && currentUser.clicks < t.target) { notify(`تحتاج ${t.target - currentUser.clicks} نقرة`); return; }
+  currentUser.tokens += t.reward;
+  currentUser.completedTasks.push(tid);
+  currentUser.transactions.unshift({desc: `🏆 مهمة: ${t.name}`, amount: t.reward, time: new Date().toLocaleTimeString()});
+  notify(`🎉 +${fmt(t.reward)} توكن`);
+  playSound('win');
+  saveNowToFirebase();
+  refreshUI();
+  renderBoostTab();
+}
+
+// ===================== ENERGY BOOSTS =====================
+const ENERGY_CHARGE_COOLDOWN = 3 * 60 * 60 * 1000;
+
+function renderEnergyBoosts() {
+  const bEl = document.getElementById('bBoosts');
+  if (!bEl) return;
+  const now = Date.now();
+  const lastCharge = currentUser.lastEnergyCharge || 0;
+  const chargeLeft = Math.max(0, (lastCharge + ENERGY_CHARGE_COOLDOWN) - now);
+  const chargeMin = Math.ceil(chargeLeft / 60000);
+  const canCharge = chargeLeft === 0;
+  const chargeActive = currentUser.energyChargeEnd && now < currentUser.energyChargeEnd;
+  const chargeTimeLeft = chargeActive ? Math.ceil((currentUser.energyChargeEnd - now) / 60000) : 0;
+  const chargeType = currentUser.energyChargeType || '';
+  
+  bEl.innerHTML += `
+  <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+    <div style="font-size:14px;font-weight:800;color:var(--cyan);margin-bottom:14px;">⚡ شحن الطاقة</div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:32px;">⚡</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;">شحن 1000 طاقة فوري</div>
+          <div style="color:var(--t3);font-size:12px;">إعادة ملء الطاقة فوراً (cooldown 3 ساعات)</div>
+          <div style="color:var(--gold);font-size:13px;">💰 500 توكن</div>
+          ${!canCharge ? `<div style="font-size:11px;color:var(--red);">⏳ بعد ${chargeMin} دقيقة</div>` : ''}
+        </div>
+        <button class="btn-sm" onclick="buyInstantEnergyCharge()" ${!canCharge || currentUser.tokens < 500 ? 'disabled style="opacity:.5;"' : ''}>
+          ${canCharge ? 'شحن' : '⏳'}
+        </button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:32px;">⏱️</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;">شحن مستمر — دقيقة</div>
+          <div style="color:var(--t3);font-size:12px;">شحن طاقة كاملة كل دقيقة لمدة 10 دقائق</div>
+          <div style="color:var(--gold);font-size:13px;">💰 1 Quinn (10,000 توكن)</div>
+          ${chargeActive && chargeType === 'min' ? `<div style="color:var(--green);font-size:11px;">✅ مفعّل — باقي ${chargeTimeLeft} دقيقة</div>` : ''}
+        </div>
+        <button class="btn-sm" onclick="buyEnergyCharge('min')" ${chargeActive ? 'disabled style="opacity:.5;"' : ''}>${chargeActive && chargeType === 'min' ? 'مفعّل' : 'شراء'}</button>
+      </div>
+    </div>
+    <div class="card" style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div style="font-size:32px;">🕐</div>
+        <div style="flex:1;">
+          <div style="font-weight:800;">شحن مستمر — ساعة</div>
+          <div style="color:var(--t3);font-size:12px;">شحن طاقة كاملة كل ساعة لمدة 6 ساعات</div>
+          <div style="color:var(--gold);font-size:13px;">💰 50 Quinn (500,000 توكن)</div>
+          ${chargeActive && chargeType === 'hr' ? `<div style="color:var(--green);font-size:11px;">✅ مفعّل — باقي ${chargeTimeLeft} دقيقة</div>` : ''}
+        </div>
+        <button class="btn-sm" onclick="buyEnergyCharge('hr')" ${chargeActive ? 'disabled style="opacity:.5;"' : ''}>${chargeActive && chargeType === 'hr' ? 'مفعّل' : 'شراء'}</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function buyInstantEnergyCharge() {
+  const cost = 500;
+  if (currentUser.tokens < cost) { notify('❌ رصيد غير كافٍ (500 توكن)'); return; }
+  const now = Date.now();
+  if ((now - (currentUser.lastEnergyCharge || 0)) < ENERGY_CHARGE_COOLDOWN) {
+    notify(`⏳ انتظر ${Math.ceil((ENERGY_CHARGE_COOLDOWN - (now - (currentUser.lastEnergyCharge || 0))) / 60000)} دقيقة`);
+    return;
+  }
+  showConfirm('شحن 1000 طاقة', 'شحن 1000 نقطة طاقة مقابل 500 توكن؟', () => {
+    currentUser.tokens -= cost;
+    currentUser.energy = Math.min(MAX_ENERGY + 1000, currentUser.energy + 1000);
+    currentUser.lastEnergyCharge = Date.now();
+    currentUser.transactions.unshift({desc: '⚡ شحن 1000 طاقة فوري', amount: -cost, time: new Date().toLocaleTimeString()});
+    notify('✅ تم شحن 1000 طاقة!');
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderBoostTab();
+  });
+}
+
+function buyEnergyCharge(type) {
+  const cost = type === 'min' ? 10000 : 500000;
+  const dur = type === 'min' ? 10 * 60 * 1000 : 6 * 60 * 60 * 1000;
+  const label = type === 'min' ? '10 دقائق' : '6 ساعات';
+  if (currentUser.tokens < cost) { notify('❌ رصيد غير كافٍ'); return; }
+  if (currentUser.energyChargeEnd && Date.now() < currentUser.energyChargeEnd) { notify('⚠️ شحن مفعّل بالفعل'); return; }
+  showConfirm('شراء شحن مستمر', `تفعيل شحن الطاقة لمدة ${label}؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.energyChargeType = type;
+    currentUser.energyChargeEnd = Date.now() + dur;
+    currentUser.transactions.unshift({desc: `⚡ شحن طاقة مستمر (${label})`, amount: -cost, time: new Date().toLocaleTimeString()});
+    notify(`✅ تم تفعيل شحن الطاقة!`);
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderBoostTab();
+  });
+}
+
+// ===================== WALLET =====================
+function updateSendPrev() {
+  const v = parseFloat(document.getElementById('sendAmt').value) || 0;
+  document.getElementById('sendPrev').textContent = v > 0 ? `= ${fmt(toTokens(v))} توكن` : '';
+}
+
+function updateSendUserPreview() {
+  const v = parseFloat(document.getElementById('sendUserAmt')?.value) || 0;
+  const el = document.getElementById('sendUserPreview');
+  if (el) el.textContent = v > 0 ? `= ${fmt(toTokens(v))} توكن` : '';
+}
+
+async function doTransfer() {
+  if (!requireOnline('إرسال العملات')) return;
+  const to = (document.getElementById('sendTo').value || '').trim();
+  const amt = parseFloat(document.getElementById('sendAmt').value);
+  if (!to || isNaN(amt) || amt <= 0) { notify('بيانات غير صحيحة'); return; }
+  const costTok = toTokens(amt);
+  if (currentUser.tokens < costTok) { notify('رصيد غير كافٍ'); return; }
+  let targetId = to.startsWith('@') ? Object.keys(allUsers).find(uid => allUsers[uid].username?.toLowerCase() === to.slice(1).toLowerCase()) : to;
+  if (!targetId || !allUsers[targetId]) {
+    const db = getDb();
+    if (db) {
+      try {
+        const snap = await window.FB_getDoc(window.FB_doc(db, 'users', to));
+        if (snap.exists()) { allUsers[to] = snap.data(); targetId = to; }
+      } catch (e) {}
+    }
+  }
+  if (!targetId || !allUsers[targetId]) { notify('❌ مستخدم غير موجود'); return; }
+  if (targetId === currentUser.id) { notify('❌ لا يمكن إرسال لنفسك'); return; }
+  showConfirm('تأكيد التحويل', `إرسال ${amt} Quinn إلى ${allUsers[targetId].name}؟`, async () => {
+    const ok = await executeFirebaseTransaction(currentUser.id, targetId, (myData, otherData) => {
+      const cost = toTokens(amt);
+      myData.tokens -= cost;
+      otherData.tokens += cost;
+      myData.transactions = myData.transactions || [];
+      otherData.transactions = otherData.transactions || [];
+      myData.transactions.unshift({desc: `📤 إرسال ${amt} Q → ${otherData.name}`, amount: -cost, time: new Date().toLocaleTimeString()});
+      otherData.transactions.unshift({desc: `📥 استلام ${amt} Q من ${myData.name}`, amount: cost, time: new Date().toLocaleTimeString()});
+    });
+    if (ok) {
+      notify('✅ تم التحويل بنجاح');
+      playSound('win');
+      refreshUI();
+      renderWallet();
+      document.getElementById('sendTo').value = '';
+      document.getElementById('sendAmt').value = '';
+      document.getElementById('sendPrev').textContent = '';
+    } else notify('❌ فشل التحويل، حاول مرة أخرى');
+  });
+}
+
+function copyId() { copyToClipboard(currentUser.username ? `@${currentUser.username}` : currentUser.id); }
+
+function copyWalletAddress() {
+  copyToClipboard(currentUser.id);
+}
+
+function updateShopPrev() {
+  const v = parseFloat(document.getElementById('shopQty').value) || 0;
+  document.getElementById('shopPrev').textContent = v > 0 ? `ستحصل على ${fmt(toTokens(v))} توكن` : '';
+}
+
+function shopNext() {
+  const q = parseFloat(document.getElementById('shopQty').value);
+  if (!q || q <= 0) { notify('أدخل كمية صحيحة'); return; }
+  document.getElementById('shopConfLbl').textContent = `شراء ${q} Quinn = ${fmt(toTokens(q))} توكن`;
+  document.getElementById('shopStep1').style.display = 'none';
+  document.getElementById('shopStep2').style.display = 'block';
+}
+
+function shopBack() {
+  document.getElementById('shopStep1').style.display = 'block';
+  document.getElementById('shopStep2').style.display = 'none';
+  document.getElementById('shopPass').value = '';
+}
+
+function shopBuy() {
+  if (!requireOnline('شراء Quinn')) return;
+  const pass = document.getElementById('shopPass').value;
+  const qty = parseFloat(document.getElementById('shopQty').value);
+  if (pass !== SHOP_PASSWORD) { notify('❌ كلمة المرور خاطئة'); return; }
+  const gain = toTokens(qty);
+  currentUser.tokens += gain;
+  currentUser.transactions.unshift({desc: `🏪 شراء ${qty} Quinn`, amount: gain, time: new Date().toLocaleTimeString()});
+  notify(`✅ تمت إضافة ${qty} Quinn`);
+  playSound('win');
+  refreshUI();
+  renderWallet();
+  shopBack();
+  saveNowToFirebase();
+}
+
+function renderStarsPackages(cid) {
+  const html = STARS_PACKAGES.map(p => `
+    <div class="star-pkg" onclick="openStarsModal()">
+      <div style="font-size:32px;">⭐</div>
+      <div style="flex:1;">
+        <div style="font-weight:800;">${p.stars} نجمة → ${p.quinn} Quinn</div>
+        <div style="font-size:12px;color:var(--t3);">= ${fmt(toTokens(p.quinn))} توكن</div>
+      </div>
+      <button class="btn-sm btn-gold">تفاصيل</button>
+    </div>
+  `).join('');
+  const el = document.getElementById(cid);
+  if (el) el.innerHTML = html;
+}
+
+function openStarsModal() {
+  renderStarsPackages('starsPkgs');
+  document.getElementById('starsModal').classList.add('active');
+}
+
+function closeStarsModal() { document.getElementById('starsModal').classList.remove('active'); }
+
+// ===================== QR CODE & BARCODE =====================
+function generateWalletCodes() {
+  const qrContainer = document.getElementById('qrcode');
+  const walletAddr = document.getElementById('walletAddress');
+  
+  if (qrContainer && currentUser) {
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+      text: currentUser.id,
+      width: 150,
+      height: 150,
+      colorDark: '#000000',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+  
+  if (walletAddr && currentUser) {
+    walletAddr.textContent = currentUser.id;
+  }
+  
+  // Generate simple barcode using SVG
+  const barcodeSvg = document.getElementById('barcode');
+  if (barcodeSvg && currentUser) {
+    const id = currentUser.id;
+    let bars = '';
+    for (let i = 0; i < id.length; i++) {
+      const charCode = id.charCodeAt(i);
+      const width = (charCode % 3) + 2;
+      const x = i * 6;
+      bars += `<rect x="${x}" y="0" width="${width}" height="50" fill="#000"/>`;
+    }
+    barcodeSvg.innerHTML = bars;
+    barcodeSvg.setAttribute('viewBox', `0 0 ${id.length * 6} 50`);
+    barcodeSvg.style.width = '100%';
+    barcodeSvg.style.height = '50px';
+  }
+}
+
+
+// ===================== SEND USER MODAL =====================
+function closeSendUserModal() {
+  document.getElementById('sendUserModal').classList.remove('active');
+  selectedSendUser = null;
+}
+
+function openSendUserModal(uid) {
+  const u = allUsers[uid];
+  if (!u) { notify('مستخدم غير موجود'); return; }
+  if (uid === currentUser.id) { notify('لا يمكن إرسال لنفسك'); return; }
+  selectedSendUser = uid;
+  document.getElementById('sendUserName').textContent = u.name;
+  document.getElementById('sendUserBal').textContent = `الرصيد: ${u.showBalance !== false ? toQuinn(u.tokens) + ' Quinn' : '🔒 مخفي'}`;
+  document.getElementById('sendUserAmt').value = '';
+  document.getElementById('sendUserPreview').textContent = '';
+  closeSearchModal();
+  document.getElementById('sendUserModal').classList.add('active');
+}
+
+async function requestSendConfirmation() {
+  if (!requireOnline('إرسال العملات')) return;
+  const amt = parseFloat(document.getElementById('sendUserAmt').value);
+  if (!selectedSendUser || isNaN(amt) || amt <= 0) {
+    notify('❌ أدخل كمية صحيحة أكبر من 0');
+    return;
+  }
+  const u = allUsers[selectedSendUser];
+  if (!u) { notify('❌ مستخدم غير موجود'); return; }
+  const cost = toTokens(amt);
+  if (currentUser.tokens < cost) { notify('❌ رصيد غير كافٍ'); return; }
+  
+  const ok = await executeFirebaseTransaction(currentUser.id, selectedSendUser, (myData, otherData) => {
+    myData.tokens -= cost;
+    otherData.tokens += cost;
+    myData.transactions = myData.transactions || [];
+    otherData.transactions = otherData.transactions || [];
+    myData.transactions.unshift({desc: `📤 إرسال ${amt} Q → ${otherData.name}`, amount: -cost, time: new Date().toLocaleTimeString()});
+    otherData.transactions.unshift({desc: `📥 استلام ${amt} Q من ${myData.name}`, amount: cost, time: new Date().toLocaleTimeString()});
+  });
+  
+  if (ok) {
+    notify('✅ تم الإرسال بنجاح');
+    playSound('win');
+    refreshUI();
+    closeSendUserModal();
+  } else {
+    notify('❌ فشل الإرسال، حاول مرة أخرى');
+  }
+}
+
+// ===================== FIREBASE LINKED GOLD MARKET =====================
+async function loadGoldMarketFromFirebase() {
+  const db = getDb();
+  if (!db) {
+    // Fallback to localStorage
+    const saved = localStorage.getItem('quinn_gold_market_v2');
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        globalGoldPrice = d.price || 61.5;
+        globalMarketHistory = d.history || [];
+      } catch (e) {}
+    }
+    if (!globalMarketHistory.length) {
+      for (let i = 0; i < 20; i++) globalMarketHistory.push({price: 61.5, time: Date.now() - (20 - i) * 30000});
+    }
+    return;
+  }
+  
+  try {
+    const marketRef = window.FB_doc(db, 'market', 'gold');
+    const snap = await window.FB_getDoc(marketRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      globalGoldPrice = data.price || 61.5;
+      globalMarketHistory = data.history || [];
+      // Update local cache
+      localStorage.setItem('quinn_gold_market_v2', JSON.stringify({price: globalGoldPrice, history: globalMarketHistory}));
+    } else {
+      // Initialize market
+      globalGoldPrice = 61.5;
+      globalMarketHistory = [];
+      for (let i = 0; i < 20; i++) globalMarketHistory.push({price: 61.5, time: Date.now() - (20 - i) * 30000});
+      await window.FB_setDoc(marketRef, {price: globalGoldPrice, history: globalMarketHistory, lastUpdate: Date.now()});
+    }
+  } catch (e) {
+    console.warn('Failed to load gold market:', e);
+  }
+}
+
+async function saveGoldMarketToFirebase() {
+  const db = getDb();
+  if (!db) {
+    localStorage.setItem('quinn_gold_market_v2', JSON.stringify({price: globalGoldPrice, history: globalMarketHistory}));
+    return;
+  }
+  try {
+    const marketRef = window.FB_doc(db, 'market', 'gold');
+    await window.FB_setDoc(marketRef, {price: globalGoldPrice, history: globalMarketHistory, lastUpdate: Date.now()});
+  } catch (e) {
+    console.warn('Failed to save gold market:', e);
+    localStorage.setItem('quinn_gold_market_v2', JSON.stringify({price: globalGoldPrice, history: globalMarketHistory}));
+  }
+}
+
+function updateGoldPrice() {
+  // Small random fluctuation
+  const change = (Math.random() - 0.5) * 0.4;
+  globalGoldPrice = Math.max(55, Math.min(80, globalGoldPrice + change));
+  
+  const el = document.getElementById('goldPrice');
+  const chEl = document.getElementById('goldChange');
+  const hint = document.getElementById('buyPriceHint');
+  const trendEl = document.getElementById('marketTrend');
+  
+  if (el) el.textContent = `$${globalGoldPrice.toFixed(2)}`;
+  if (hint) hint.textContent = `$${globalGoldPrice.toFixed(2)}/جرام`;
+  if (chEl) {
+    const pct = ((change / globalGoldPrice) * 100).toFixed(2);
+    chEl.textContent = `${change >= 0 ? '▲' : '▼'} ${Math.abs(pct)}%`;
+    chEl.className = `gold-change ${change >= 0 ? 'up' : 'dn'}`;
+  }
+  if (trendEl) {
+    const trend = change >= 0 ? '📈 صاعد' : '📉 هابط';
+    trendEl.textContent = `الاتجاه: ${trend}`;
+  }
+  
+  globalMarketHistory.push({price: globalGoldPrice, time: Date.now()});
+  if (globalMarketHistory.length > 30) globalMarketHistory.shift();
+  
+  saveGoldMarketToFirebase();
+  
+  if (goldChart) goldChart.destroy();
+  const ctx = document.getElementById('goldChart')?.getContext('2d');
+  if (ctx) {
+    const gradient = ctx.createLinearGradient(0, 0, 0, 160);
+    gradient.addColorStop(0, 'rgba(251, 191, 36, 0.3)');
+    gradient.addColorStop(1, 'rgba(251, 191, 36, 0)');
+    
+    goldChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: globalMarketHistory.map((_, i) => i + 1),
+        datasets: [{
+          label: 'سعر GOLD (USD/جرام)',
+          data: globalMarketHistory.map(h => h.price),
+          borderColor: '#fbbf24',
+          backgroundColor: gradient,
+          fill: true,
+          tension: 0.4,
+          pointRadius: 3,
+          pointBackgroundColor: '#fbbf24',
+          pointBorderColor: '#fff',
+          pointBorderWidth: 2
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: true,
+        plugins: {legend: {display: false}},
+        scales: {
+          y: {grid: {color: 'rgba(255,255,255,0.05)'}, ticks: {color: 'rgba(255,255,255,0.7)', font: {size: 10}}},
+          x: {grid: {display: false}, ticks: {display: false}}
+        }
+      }
+    });
+  }
+}
+
+function calculatePriceImpact(amtUSD, isSell) {
+  const pct = amtUSD / MARKET_LIQUIDITY;
+  const impact = isSell ? -Math.min(0.5, pct * 2) : Math.min(1.5, pct * 1.5);
+  return globalGoldPrice * (1 + impact);
+}
+
+function updateGoldBuyPrev() {
+  const g = parseFloat(document.getElementById('goldBuyAmt').value) || 0;
+  const cost = g * globalGoldPrice;
+  const costTok = cost * TOKENS_PER_QUINN;
+  const el = document.getElementById('goldBuyPrev');
+  if (el) el.innerHTML = g > 0 ? `
+    <div style="background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(251,191,36,0.03));border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:12px;font-size:13px;">
+      <div>${g} جرام × <span style="color:var(--gold);">$${globalGoldPrice.toFixed(2)}/جرام</span></div>
+      <div style="margin-top:6px;">= <span style="color:var(--gold);font-weight:800;">${cost.toFixed(2)} Quinn</span> (${fmt(costTok)} توكن)</div>
+    </div>
+  ` : '';
+}
+
+function updateGoldSellPrev() {
+  const g = parseFloat(document.getElementById('goldSellAmt').value) || 0;
+  const earn = g * globalGoldPrice;
+  const earnTok = earn * TOKENS_PER_QUINN;
+  const el = document.getElementById('goldSellPrev');
+  if (el) el.innerHTML = g > 0 ? `
+    <div style="background:linear-gradient(135deg,rgba(34,197,94,0.1),rgba(34,197,94,0.03));border:1px solid rgba(34,197,94,0.25);border-radius:12px;padding:12px;font-size:13px;">
+      <div>${g} جرام × <span style="color:var(--gold);">$${globalGoldPrice.toFixed(2)}/جرام</span></div>
+      <div style="margin-top:6px;">= <span style="color:var(--green);font-weight:800;">${earn.toFixed(2)} Quinn</span> (${fmt(earnTok)} توكن)</div>
+    </div>
+  ` : '';
+}
+
+async function buyGold() {
+  if (!requireOnline('شراء الذهب')) return;
+  const g = parseFloat(document.getElementById('goldBuyAmt').value);
+  if (!g || g <= 0) { notify('❌ أدخل الكمية'); return; }
+  const costUSD = g * globalGoldPrice;
+  const costTokens = costUSD * TOKENS_PER_QUINN;
+  if (currentUser.tokens < costTokens) { notify('❌ رصيد غير كافٍ'); return; }
+  
+  showConfirm('شراء ذهب', `شراء ${g} جرام ذهب مقابل ${costUSD.toFixed(2)} Quinn؟`, async () => {
+    const ok = await executeFirebaseTransaction(currentUser.id, null, (myData) => {
+      myData.tokens -= costTokens;
+      myData.goldGrams = (myData.goldGrams || 0) + g;
+      myData.goldTxs = myData.goldTxs || [];
+      myData.goldTxs.unshift({desc: `🥇 شراء ${g} جرام @ $${globalGoldPrice.toFixed(2)}`, amount: -costUSD, time: new Date().toLocaleTimeString(), type: 'buy'});
+      myData.transactions = myData.transactions || [];
+      myData.transactions.unshift({desc: `🥇 شراء ${g} جرام ذهب`, amount: -costTokens, time: new Date().toLocaleTimeString()});
+    });
+    if (ok) {
+      // Update global market price based on purchase
+      const newPrice = calculatePriceImpact(costUSD, false);
+      globalGoldPrice = Math.max(55, Math.min(80, newPrice));
+      updateGoldPrice();
+      notify(`✅ تم شراء ${g} جرام ذهب`);
+      playSound('win');
+      refreshUI();
+      renderTradePortfolio();
+      document.getElementById('goldBuyAmt').value = '';
+      document.getElementById('goldBuyPrev').textContent = '';
+    } else notify('❌ فشلت عملية الشراء');
+  });
+}
+
+async function sellGold() {
+  if (!requireOnline('بيع الذهب')) return;
+  const g = parseFloat(document.getElementById('goldSellAmt').value);
+  if (!g || g <= 0) { notify('❌ أدخل الكمية'); return; }
+  if ((currentUser.goldGrams || 0) < g) { notify('❌ ذهب غير كافٍ'); return; }
+  const earnUSD = g * globalGoldPrice;
+  const earnTokens = earnUSD * TOKENS_PER_QUINN;
+  
+  showConfirm('بيع ذهب', `بيع ${g} جرام ذهب مقابل ${earnUSD.toFixed(2)} Quinn؟`, async () => {
+    const ok = await executeFirebaseTransaction(currentUser.id, null, (myData) => {
+      myData.tokens += earnTokens;
+      myData.goldGrams -= g;
+      myData.goldTxs = myData.goldTxs || [];
+      myData.goldTxs.unshift({desc: `💵 بيع ${g} جرام @ $${globalGoldPrice.toFixed(2)}`, amount: earnUSD, time: new Date().toLocaleTimeString(), type: 'sell'});
+      myData.transactions = myData.transactions || [];
+      myData.transactions.unshift({desc: `💵 بيع ${g} جرام ذهب`, amount: earnTokens, time: new Date().toLocaleTimeString()});
+    });
+    if (ok) {
+      // Update global market price based on sale
+      const newPrice = calculatePriceImpact(earnUSD, true);
+      globalGoldPrice = Math.max(55, Math.min(80, newPrice));
+      updateGoldPrice();
+      notify(`✅ تم بيع ${g} جرام ذهب`);
+      playSound('win');
+      refreshUI();
+      renderTradePortfolio();
+      document.getElementById('goldSellAmt').value = '';
+      document.getElementById('goldSellPrev').textContent = '';
+    } else notify('❌ فشلت عملية البيع');
+  });
+}
+
+function renderTradePortfolio() {
+  const g = currentUser.goldGrams || 0;
+  const val = (g * globalGoldPrice).toFixed(2);
+  const myG = document.getElementById('myGoldDisplay');
+  if (myG) myG.textContent = g.toFixed(4);
+  const pG = document.getElementById('portGold');
+  if (pG) pG.textContent = g.toFixed(4);
+  const pV = document.getElementById('portVal');
+  if (pV) pV.textContent = `$${val}`;
+  const txs = currentUser.goldTxs || [];
+  const el = document.getElementById('goldTxList');
+  if (el) el.innerHTML = txs.length ? txs.slice(0, 10).map(tx => `
+    <div class="tx-item">
+      <div>
+        <div class="tx-desc">${tx.desc}</div>
+        <div class="tx-time">${tx.time}</div>
+      </div>
+      <div class="tx-amount ${tx.amount > 0 ? 'pos' : 'neg'}">${tx.amount > 0 ? '+' : ''}${Math.abs(tx.amount).toFixed(2)} USD</div>
+    </div>
+  `).join('') : '<div class="card" style="text-align:center;color:var(--t3);padding:20px;">لا توجد صفقات</div>';
+}
+
+// ===================== DICE GAME (SEGA) =====================
+function openDiceGameModal() {
+  document.getElementById('diceGameModal').classList.add('active');
+  document.getElementById('diceBetAmount').value = '';
+  document.getElementById('diceGameArea').style.display = 'none';
+  document.getElementById('dicePlayBtn').textContent = '🎲 العب الآن';
+  document.getElementById('dicePlayBtn').onclick = playDiceGame;
+}
+
+function closeDiceGameModal() {
+  document.getElementById('diceGameModal').classList.remove('active');
+}
+
+function setDiceBet(amount) {
+  document.getElementById('diceBetAmount').value = amount;
+}
+
+async function playDiceGame() {
+  const bet = parseFloat(document.getElementById('diceBetAmount').value);
+  if (!bet || bet <= 0) { notify('❌ أدخل مبلغ الرهان'); return; }
+  if (currentUser.tokens < bet) { notify('❌ رصيد غير كافٍ'); return; }
+  
+  document.getElementById('diceGameArea').style.display = 'block';
+  document.getElementById('dicePlayBtn').disabled = true;
+  document.getElementById('dicePlayBtn').textContent = '⏳ جاري اللعب...';
+  
+  // Animate dice
+  const playerDice = document.getElementById('playerDice');
+  const botDice = document.getElementById('botDice');
+  const resultEl = document.getElementById('diceResult');
+  
+  resultEl.textContent = '';
+  
+  // Roll animation
+  let rolls = 0;
+  const rollInterval = setInterval(() => {
+    playerDice.textContent = '🎲';
+    botDice.textContent = '🎲';
+    rolls++;
+    if (rolls >= 10) {
+      clearInterval(rollInterval);
+      finalizeDiceGame(bet);
+    }
+  }, 100);
+}
+
+async function finalizeDiceGame(bet) {
+  const playerRoll = Math.floor(Math.random() * 6) + 1;
+  const botRoll = Math.floor(Math.random() * 6) + 1;
+  
+  const diceEmojis = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  document.getElementById('playerDice').textContent = diceEmojis[playerRoll - 1];
+  document.getElementById('botDice').textContent = diceEmojis[botRoll - 1];
+  
+  const resultEl = document.getElementById('diceResult');
+  
+  if (playerRoll > botRoll) {
+    // Player wins - gets total pot (bet * 2)
+    const winAmount = bet * 2;
+    currentUser.tokens += bet; // Get back bet + win
+    currentUser.transactions.unshift({desc: '🎲 فوز في القمار', amount: bet, time: new Date().toLocaleTimeString()});
+    resultEl.innerHTML = `<span style="color:var(--green);">🎉 فزت! +${fmt(bet)} توكن</span>`;
+    notify(`🎉 فزت في القمار! ربحت ${fmt(bet)} توكن`);
+    playSound('win');
+  } else if (playerRoll < botRoll) {
+    // Player loses - loses bet (no prize)
+    currentUser.tokens -= bet;
+    currentUser.transactions.unshift({desc: '🎲 خسارة في القمار', amount: -bet, time: new Date().toLocaleTimeString()});
+    resultEl.innerHTML = `<span style="color:var(--red);">💔 خسرت! -${fmt(bet)} توكن</span>`;
+    notify('💔 خسرت في القمار! حاول مرة أخرى');
+    playSound('loss');
+  } else {
+    // Draw - return bet
+    resultEl.innerHTML = `<span style="color:var(--gold);">🤝 تعادل! استرددت رهانك</span>`;
+    notify('🤝 تعادل! لم تربح ولم تخسر');
+  }
+  
+  scheduleLocalSave();
+  refreshUI();
+  
+  document.getElementById('dicePlayBtn').disabled = false;
+  document.getElementById('dicePlayBtn').textContent = '🎲 العب مرة أخرى';
+}
+
+// ===================== VERIFY =====================
+function requestVerify() {
+  const cost = toTokens(VERIFY_COST);
+  if (currentUser.tokens < cost) { notify('رصيد غير كافٍ'); return; }
+  showConfirm('توثيق الحساب', `توثيق حسابك مقابل ${VERIFY_COST} Quinn لمدة 30 يوم؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.verified = true;
+    currentUser.verifyExpire = Date.now() + 30 * 86400000;
+    currentUser.transactions.unshift({desc: '✅ توثيق الحساب', amount: -cost, time: new Date().toLocaleTimeString()});
+    notify('✅ تم التوثيق');
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderVerifyPanel();
+    if (!currentUser.completedTasks.includes(5)) completeTask(5);
+  });
+}
+
+function renewVerify() {
+  const cost = toTokens(VERIFY_COST);
+  if (currentUser.tokens < cost) { notify('رصيد غير كافٍ'); return; }
+  showConfirm('تجديد التوثيق', `تجديد التوثيق مقابل ${VERIFY_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.verifyExpire = Date.now() + 30 * 86400000;
+    currentUser.transactions.unshift({desc: '🔄 تجديد التوثيق', amount: -cost, time: new Date().toLocaleTimeString()});
+    notify('✅ تم التجديد');
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderVerifyPanel();
+  });
+}
+
+function activateSecondLife() {
+  if (currentUser.secondLife && currentUser.secondLifeExpire > Date.now()) { notify('الحياة الثانية مفعلة'); return; }
+  const cost = toTokens(SECOND_LIFE_COST);
+  if (currentUser.tokens < cost) { notify('رصيد غير كافٍ'); return; }
+  showConfirm('الحياة الثانية', `تفعيل الإطار الذهبي لمدة شهر مقابل ${SECOND_LIFE_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.secondLife = true;
+    currentUser.secondLifeExpire = Date.now() + 30 * 86400000;
+    currentUser.transactions.unshift({desc: '💫 تفعيل الحياة الثانية', amount: -cost, time: new Date().toLocaleTimeString()});
+    notify('✅ تم التفعيل - إطار ذهبي!');
+    playSound('win');
+    saveNowToFirebase();
+    refreshUI();
+    renderVerifyPanel();
+  });
+}
+
+// ===================== TELEGRAM AVATAR =====================
+function renderTelegramAvatarPanel() {
+  const preview = document.getElementById('tgPreview'), status = document.getElementById('tgStatus'), btn = document.getElementById('buyTgBtn'), url = currentUser.telegramAvatarUrl;
+  const mi = document.getElementById('manualPhotoUrl');
+  if (mi && url) mi.value = url;
+  
+  function loadImg(u) {
+    const img = new Image();
+    img.onload = () => { preview.style.backgroundImage = `url(${u})`; preview.style.backgroundSize = 'cover'; preview.textContent = ''; };
+    img.onerror = () => { preview.textContent = '📷'; preview.style.backgroundImage = 'none'; };
+    img.src = u;
+  }
+  
+  if (currentUser.telegramAvatarPurchased && url) {
+    loadImg(url);
+    status.innerHTML = '<span style="color:var(--green);">✅ صورتك مفعلة</span>';
+    if (btn) btn.style.display = 'none';
+  } else if (url) {
+    loadImg(url);
+    status.textContent = `📸 جاهزة للشراء (${TELEGRAM_AVATAR_COST} Quinn)`;
+    if (btn) btn.style.display = 'block';
+  } else {
+    preview.textContent = '📷';
+    preview.style.backgroundImage = 'none';
+    status.textContent = 'لا توجد صورة تلقائية. أدخل الرابط يدوياً.';
+    if (btn) btn.style.display = 'none';
+  }
+}
+
+function purchaseTelegramAvatar() {
+  if (!currentUser.telegramAvatarUrl) { notify('لا توجد صورة'); return; }
+  const cost = toTokens(TELEGRAM_AVATAR_COST);
+  if (currentUser.tokens < cost) { notify(`تحتاج ${TELEGRAM_AVATAR_COST} Quinn`); return; }
+  showConfirm('شراء صورة Telegram', `شراء صورتك مقابل ${TELEGRAM_AVATAR_COST} Quinn؟`, () => {
+    currentUser.tokens -= cost;
+    currentUser.telegramAvatarPurchased = true;
+    currentUser.transactions.unshift({desc: '📸 شراء صورة Telegram', amount: -cost, time: new Date().toLocaleTimeString()});
+    notify('✅ تم شراء الصورة');
+    playSound('win');
+    saveNowToFirebase();
+    renderProfile();
+    refreshUI();
+  });
+}
+
+function applyManualPhotoUrl() {
+  const url = (document.getElementById('manualPhotoUrl').value || '').trim();
+  if (!url) { notify('أدخل الرابط'); return; }
+  if (!url.startsWith('http')) { notify('رابط غير صحيح'); return; }
+  const img = new Image();
+  img.onload = () => {
+    currentUser.telegramAvatarUrl = url;
+    saveAll();
+    renderTelegramAvatarPanel();
+    renderProfile();
+    notify('✅ تم تحديث الصورة');
+  };
+  img.onerror = () => notify('❌ تعذّر تحميل الصورة');
+  img.src = url;
+}
+
+// ===================== AVATAR SWITCH =====================
+function setAvatarType(type) {
+  if (type === 'telegram' && !currentUser.telegramAvatarPurchased) {
+    notify('❌ لم تشترِ صورة Telegram بعد!');
+    return;
+  }
+  currentUser.selectedAvatarType = type;
+  saveNowToFirebase();
+  renderProfile();
+  refreshUI();
+  notify(`✅ تم التبديل إلى ${type === 'emoji' ? 'الصورة الافتراضية' : 'صورة Telegram'}`);
+}
+
+
+// ===================== RENDER FUNCTIONS =====================
+function refreshUI() {
+  if (!currentUser) return;
+  const rank = getRankByTokens(currentUser.tokens);
+  const nextRank = RANKS.find(r => r.level === rank.level + 1);
+  const pct = nextRank ? ((currentUser.tokens - rank.minTokens) / (nextRank.minTokens - rank.minTokens)) * 100 : 100;
+  
+  document.getElementById('sTokens').textContent = fmt(currentUser.tokens);
+  document.getElementById('sQuinn').textContent = toQuinn(currentUser.tokens);
+  document.getElementById('sClicks').textContent = fmt(currentUser.clicks);
+  document.getElementById('rankIcon').textContent = rank.icon;
+  document.getElementById('rankName').textContent = rank.name;
+  document.getElementById('rankLevel').textContent = rank.level;
+  document.getElementById('rankBar').style.width = Math.min(pct, 100) + '%';
+  document.getElementById('clickMult').textContent = rank.clickMultiplier.toFixed(2) + 'x';
+  document.getElementById('xpCurrent').textContent = fmt(currentUser.tokens - rank.minTokens) + ' XP';
+  if (nextRank) {
+    document.getElementById('rankNext').textContent = `→ ${nextRank.name} (${nextRank.level})`;
+    document.getElementById('xpNeeded').textContent = fmt(nextRank.minTokens - rank.minTokens) + ' XP';
+  } else {
+    document.getElementById('rankNext').textContent = '🏆 أعلى مستوى';
+    document.getElementById('xpNeeded').textContent = 'MAX';
+  }
+  document.getElementById('passiveTxt').textContent = currentUser.passiveIncome + ' توكن/دقيقة';
+  const ep = (currentUser.energy / MAX_ENERGY) * 100;
+  const eb = document.getElementById('energyBar');
+  eb.style.width = ep + '%';
+  eb.classList.remove('mid', 'low');
+  if (ep < 30) eb.classList.add('low');
+  else if (ep < 70) eb.classList.add('mid');
+  document.getElementById('energyTxt').textContent = `${currentUser.energy}/${MAX_ENERGY}`;
+  document.getElementById('hdrName').textContent = currentUser.name.split(' ')[0];
+  document.getElementById('hdrRank').innerHTML = `${rank.icon} ${rank.name} (${rank.level})`;
+  document.getElementById('hdrBal').innerHTML = `${toQuinn(currentUser.tokens)} <span style="font-size:11px;opacity:.6;">Q</span>`;
+  document.getElementById('hdrTok').textContent = fmt(currentUser.tokens) + ' توكن';
+  
+  const hdrAv = document.getElementById('hdrAvatar');
+  const isGold = currentUser.secondLife && currentUser.secondLifeExpire > Date.now();
+  const useTelegram = (currentUser.selectedAvatarType === 'telegram' && currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl);
+  if (useTelegram) {
+    hdrAv.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
+    hdrAv.style.backgroundSize = 'cover';
+    hdrAv.textContent = '';
+  } else {
+    hdrAv.style.backgroundImage = 'none';
+    hdrAv.textContent = getAv(currentUser.avatar).emoji;
+  }
+  if (isGold) hdrAv.classList.add('golden-glow');
+  else hdrAv.classList.remove('golden-glow');
+  
+  const banner = document.getElementById('boostBanner');
+  if (currentUser.boostActive && Date.now() < currentUser.boostEnd) {
+    const b = BOOSTS.find(b => b.id === currentUser.boostActive);
+    const left = Math.ceil((currentUser.boostEnd - Date.now()) / 1000);
+    banner.style.display = 'block';
+    banner.innerHTML = `<div style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,rgba(168,85,247,0.2),rgba(59,130,246,0.1));padding:12px;border-radius:var(--rs);border:1px solid var(--border);"><span style="font-size:20px;">${b?.icon || '⚡'}</span><span style="font-weight:800;">${b?.name || ''} مفعّل</span><span style="background:var(--gold);color:#000;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:800;">${left}ث</span></div>`;
+    document.getElementById('coin-btn').classList.add('turbo-active');
+  } else {
+    banner.style.display = 'none';
+    document.getElementById('coin-btn').classList.remove('turbo-active');
+    if (currentUser.boostActive && Date.now() > currentUser.boostEnd) { currentUser.boostActive = null; scheduleLocalSave(); }
+  }
+}
+
+function renderBoostTab() {
+  document.getElementById('bBoosts').innerHTML = BOOSTS.map(b => {
+    const active = currentUser.boostActive === b.id && Date.now() < currentUser.boostEnd;
+    const remaining = active ? Math.ceil((currentUser.boostEnd - Date.now()) / 1000) : 0;
+    return `
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:36px;">${b.icon}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;">${b.name}</div>
+            <div style="color:var(--t3);font-size:12px;">${b.desc}</div>
+            <div style="color:var(--gold);font-size:13px;">💰 ${fmt(b.cost)} توكن</div>
+            ${active ? `<div style="font-size:11px;margin-top:4px;color:var(--gold);">⏱️ متبقي ${remaining} ث</div>` : ''}
+          </div>
+          <button class="btn-sm" onclick="activateBoost('${b.id}')" ${active ? 'disabled style="opacity:.5;"' : ''}>${active ? '✅ مفعّل' : 'تفعيل'}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('bTasks').innerHTML = TASKS.map(t => {
+    const done = currentUser.completedTasks.includes(t.id);
+    const prog = t.target ? Math.min(currentUser.clicks / t.target, 1) * 100 : 0;
+    return `
+      <div class="card" style="margin-bottom:14px;opacity:${done ? 0.6 : 1};">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:30px;">${t.icon}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;">${t.name}</div>
+            <div style="color:var(--green);font-size:13px;">+${fmt(t.reward)} توكن</div>
+            ${t.target && !done ? `
+              <div class="prog-wrap" style="margin-top:6px;"><div class="prog-fill" style="width:${prog}%"></div></div>
+              <div style="font-size:11px;color:var(--t3);margin-top:4px;">${Math.min(currentUser.clicks, t.target)}/${t.target}</div>
+            ` : ''}
+          </div>
+          <button class="btn-sm" onclick="completeTask(${t.id})" ${done ? 'disabled' : ''} style="${done ? 'opacity:.4;' : ''}">${done ? '✓ تم' : 'إنجاز'}</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('passiveVal').textContent = currentUser.passiveIncome;
+  document.getElementById('passiveItems').innerHTML = PASSIVE_ITEMS.map(i => {
+    const owned = currentUser.ownedPassive[i.id] || 0;
+    const canBuy = currentUser.tokens >= i.cost;
+    return `
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <div style="font-size:32px;">${i.icon}</div>
+          <div style="flex:1;">
+            <div style="font-weight:800;">${i.name}</div>
+            <div style="color:var(--green);font-size:13px;">+${i.rate} توكن/دقيقة</div>
+            <div style="color:var(--gold);font-size:13px;">💰 ${fmt(i.cost)} توكن</div>
+            ${owned ? `<div style="font-size:11px;color:var(--purple-l);">✓ تمتلكه (×${owned})</div>` : ''}
+          </div>
+          <button class="btn-sm" onclick="buyPassive('${i.id}')" ${!canBuy ? 'disabled style="opacity:.4;"' : ''}>شراء</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  renderEnergyBoosts();
+}
+
+function renderWallet() {
+  document.getElementById('wQuinn').textContent = toQuinn(currentUser.tokens) + ' Quinn';
+  document.getElementById('wTokens').textContent = `≈ ${fmt(currentUser.tokens)} توكن`;
+  document.getElementById('recvId').textContent = currentUser.username ? `@${currentUser.username}` : currentUser.id;
+  const txs = currentUser.transactions.slice(0, 15);
+  document.getElementById('txList').innerHTML = txs.length ? txs.map(tx => `
+    <div class="tx-item">
+      <div>
+        <div class="tx-desc">${tx.desc}</div>
+        <div class="tx-time">${tx.time}</div>
+      </div>
+      <div class="tx-amount ${tx.amount > 0 ? 'pos' : 'neg'}">${tx.amount > 0 ? '+' : ''}${fmt(Math.abs(tx.amount))}</div>
+    </div>
+  `).join('') : '<div class="card" style="text-align:center;color:var(--t3);padding:30px;">لا توجد معاملات</div>';
+  renderStarsPackages('starsPackagesInline');
+  generateWalletCodes();
+}
+
+// ===================== LEADERBOARD =====================
+async function fetchLeaderboardFromFirebase() {
+  const db = getDb();
+  if (!db) return Object.values(allUsers);
+  try {
+    const q = window.FB_query(window.FB_collection(db, 'users'), window.FB_orderBy('tokens', 'desc'), window.FB_limit(100));
+    const snaps = await window.FB_getDocs(q);
+    const users = [];
+    snaps.forEach(d => {
+      const u = d.data();
+      if (u.id) {
+        allUsers[u.id] = u;
+        users.push(u);
+      }
+    });
+    lbCache = users;
+    lbCacheTime = Date.now();
+    localStorage.setItem('quinn_lb_cache', JSON.stringify({data: lbCache, time: lbCacheTime}));
+    return users;
+  } catch (e) {
+    console.warn('Leaderboard fetch failed:', e);
+    return lbCache.length ? lbCache : Object.values(allUsers);
+  }
+}
+
+async function renderLeaderboard() {
+  const lbLast = document.getElementById('lbLastUpdate');
+  if (lbLast) lbLast.textContent = lbCacheTime ? `آخر تحديث: ${new Date(lbCacheTime).toLocaleTimeString('ar-EG')}` : '';
+  if (!lbCacheTime || (Date.now() - lbCacheTime) > LB_CACHE_TTL) {
+    await fetchLeaderboardFromFirebase();
+  }
+  const users = lbCache.map(u => ({...u, isMe: u.id === currentUser.id, rank: getRankByTokens(u.tokens), showBal: u.showBalance !== false})).sort((a, b) => b.tokens - a.tokens);
+  const top3 = [users[1] || null, users[0] || null, users[2] || null].filter(x => x);
+  const medals = ['🥈', '🥇', '🥉'];
+  const colors = ['#9ca3af', '#fbbf24', '#cd7f32'];
+  const heights = ['75px', '95px', '68px'];
+  
+  document.getElementById('podiumWrap').innerHTML = `
+    <div class="podium">${top3.map((u, i) => `
+      <div class="pod-item">
+        <div style="font-size:28px;margin-bottom:6px;">${medals[i]}</div>
+        <div class="pod-av ${u.secondLife && u.secondLifeExpire > Date.now() ? 'golden-glow' : ''}" style="width:${heights[i]};height:${heights[i]};border-color:${colors[i]};${u.telegramAvatarPurchased && u.telegramAvatarUrl ? `background-image:url(${u.telegramAvatarUrl});background-size:cover;` : ''}">
+          ${u.telegramAvatarPurchased && u.telegramAvatarUrl ? '' : `<span style="font-size:${i === 1 ? '40' : '32'}px;">${getAv(u.avatar).emoji}</span>`}
+        </div>
+        <div class="pod-name">${u.name.split(' ')[0]}${u.verified ? '<span class="vbadge">✓</span>' : ''}</div>
+        <div class="pod-stand" style="border-top:2px solid ${colors[i]}44;">
+          <div style="color:${colors[i]};">${toQuinn(u.tokens)} Q</div>
+        </div>
+      </div>
+    `).join('')}</div>
+  `;
+  
+  document.getElementById('lbList').innerHTML = users.map((u, i) => `
+    <div class="card" style="margin-bottom:12px;display:flex;align-items:center;gap:14px;${u.isMe ? 'border-color:var(--purple);background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(168,85,247,0.02));' : ''}" onclick="showMemberProfile('${u.id}')">
+      <div style="width:32px;font-weight:900;font-size:15px;text-align:center;color:${i === 0 ? 'var(--gold)' : i === 1 ? '#9ca3af' : i === 2 ? '#cd7f32' : 'var(--t3)'};">${i + 1}</div>
+      <div class="${u.secondLife && u.secondLifeExpire > Date.now() ? 'golden-glow' : ''}" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(168,85,247,0.3);overflow:hidden;${u.telegramAvatarPurchased && u.telegramAvatarUrl ? `background-image:url(${u.telegramAvatarUrl});background-size:cover;` : ''}">
+        ${u.telegramAvatarPurchased && u.telegramAvatarUrl ? '' : `<span style="font-size:24px;">${getAv(u.avatar).emoji}</span>`}
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:800;font-size:14px;">${u.name}${u.verified ? '<span class="vbadge">✓</span>' : ''}${u.isMe ? '<span style="color:var(--purple-l);font-size:11px;"> (أنت)</span>' : ''}</div>
+        <div style="font-size:11px;color:var(--t3);">${u.rank.icon} ${u.rank.name} · مستوى ${u.rank.level}</div>
+      </div>
+      <div style="font-weight:900;font-size:14px;color:var(--purple-l);">${u.showBal ? toQuinn(u.tokens) + ' Q' : '🔒'}</div>
+    </div>
+  `).join('');
+}
+
+async function refreshLeaderboard() {
+  notify('🔄 جاري تحديث المتصدرين...');
+  lbCacheTime = 0;
+  await fetchLeaderboardFromFirebase();
+  await renderLeaderboard();
+  notify('✅ تم تحديث المتصدرين');
+}
+
+// ===================== REFERRAL =====================
+function renderReferral() {
+  document.getElementById('refCode').textContent = currentUser.referralCode;
+  document.getElementById('refCount').textContent = currentUser.referrals.length;
+  document.getElementById('refEarnings').textContent = fmt(currentUser.referralEarnings || 0);
+  document.getElementById('tierRewards').textContent = `إجمالي المكافآت: ${fmt(currentUser.referralTierBonus || 0)} توكن`;
+  const es = document.getElementById('enterRefSection');
+  if (es) es.innerHTML = currentUser.referralProcessed ? '<div style="color:var(--green);font-size:13px;font-weight:800;text-align:center;padding:12px;background:var(--glass);border-radius:var(--rs);">✅ استخدمت كود دعوة</div>' : '<button class="btn-sm" style="width:100%;background:linear-gradient(135deg,rgba(34,197,94,0.5),rgba(22,163,74,0.4));border-color:rgba(34,197,94,0.4);" onclick="openManualReferralModal()">🎁 عندي كود دعوة</button>';
+  document.getElementById('referralsList').innerHTML = currentUser.referrals.length ? currentUser.referrals.map(r => `
+    <div class="card" style="margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-weight:800;font-size:13px;">👤 ${r.name}</div>
+        <div style="font-size:11px;color:var(--t3);">${r.date}</div>
+      </div>
+      <div style="font-weight:900;font-size:14px;color:var(--green);">+${fmt(r.bonus)}</div>
+    </div>
+  `).join('') : '<div class="card" style="text-align:center;color:var(--t3);padding:30px;">لا توجد إحالات بعد</div>';
+}
+
+function renderProfile() {
+  const rank = getRankByTokens(currentUser.tokens);
+  const profAv = document.getElementById('profAvatar');
+  const isGold = currentUser.secondLife && currentUser.secondLifeExpire > Date.now();
+  const useTelegram = (currentUser.selectedAvatarType === 'telegram' && currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl);
+  if (useTelegram) {
+    profAv.style.backgroundImage = `url(${currentUser.telegramAvatarUrl})`;
+    profAv.style.backgroundSize = 'cover';
+    profAv.textContent = '';
+  } else {
+    profAv.style.backgroundImage = 'none';
+    profAv.textContent = getAv(currentUser.avatar).emoji;
+  }
+  if (isGold) profAv.classList.add('golden-glow');
+  else profAv.classList.remove('golden-glow');
+  
+  document.getElementById('profName').innerHTML = `${currentUser.name} ${currentUser.verified ? '<span class="vbadge">✓ موثّق</span>' : ''}`;
+  document.getElementById('profTg').textContent = currentUser.username ? `@${currentUser.username}` : `ID: ${currentUser.id}`;
+  document.getElementById('profQuinn').textContent = toQuinn(currentUser.tokens);
+  document.getElementById('profClicks').textContent = fmt(currentUser.clicks);
+  document.getElementById('profRank').textContent = `${rank.icon} ${rank.name}`;
+  
+  const secretShort = currentUser.userSecret ? currentUser.userSecret.slice(0, 12) + '...' : 'غير متاح';
+  document.getElementById('profInfoList').innerHTML = [
+    ['🆔', 'المعرف', currentUser.username || currentUser.id],
+    ['🌍', 'الاسم الكامل', currentUser.name],
+    ['🎯', 'كود الإحالة', currentUser.referralCode],
+    ['🔑', 'المفتاح الفريد', `<span onclick="copyToClipboard('${currentUser.userSecret}'); notify('✅ تم نسخ المفتاح')" style="cursor:pointer;color:var(--gold);">${secretShort} 📋</span>`],
+    ['📊', 'الرتبة', `${rank.icon} ${rank.name} (مستوى ${rank.level} · ${rank.clickMultiplier.toFixed(2)}x)`],
+    ['💎', 'الرصيد', `${toQuinn(currentUser.tokens)} Quinn`],
+    ['🪙', 'التوكن', `${fmt(currentUser.tokens)} توكن`],
+    ['👆', 'النقرات', `${fmt(currentUser.clicks)} نقرة`],
+    ['💰', 'الدخل السلبي', `${currentUser.passiveIncome} توكن/دقيقة`],
+    ['🥇', 'الذهب', `${(currentUser.goldGrams || 0).toFixed(4)} جرام`],
+    ['📅', 'الانضمام', new Date(currentUser.joinDate || Date.now()).toLocaleDateString('ar-EG')]
+  ].map(([ic, lbl, val]) => `
+    <div class="card" style="margin-bottom:10px;display:flex;align-items:center;gap:14px;cursor:default;">
+      <span style="font-size:22px;">${ic}</span>
+      <div style="flex:1;">
+        <div style="font-size:12px;color:var(--t3);font-weight:700;">${lbl}</div>
+        <div style="font-weight:800;font-size:14px;">${val}</div>
+      </div>
+    </div>
+  `).join('');
+  renderAvatarGrid();
+  renderTelegramAvatarPanel();
+  renderVerifyPanel();
+}
+
+function renderAvatarGrid() {
+  const taken = Object.values(allUsers).filter(u => u.id !== currentUser.id).map(u => u.avatar);
+  let html = `
+    <div class="card" style="margin-bottom:14px;text-align:center;background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(59,130,246,0.05));">
+      <div style="font-weight:800;margin-bottom:10px;">🔄 تبديل الصورة الشخصية</div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button class="btn-sm" onclick="setAvatarType('emoji')" ${currentUser.selectedAvatarType === 'emoji' ? 'disabled style="opacity:.5;"' : ''}>🔄 الصورة الافتراضية</button>
+        ${currentUser.telegramAvatarPurchased && currentUser.telegramAvatarUrl ? `<button class="btn-sm" onclick="setAvatarType('telegram')" ${currentUser.selectedAvatarType === 'telegram' ? 'disabled style="opacity:.5;"' : ''}>🖼️ صورة Telegram</button>` : ''}
+      </div>
+    </div>
+  `;
+  html += AVATARS.map(av => {
+    const t = taken.includes(av.id), s = currentUser.avatar === av.id;
+    return `
+      <div class="av-item ${s ? 'selected' : ''} ${t ? 'taken' : ''}" onclick="${t ? `notify('هذه الصورة محجوزة')` : s ? `notify('صورتك الحالية')` : `changeAvatar(${av.id})`}">
+        <div class="av-emoji">${av.emoji}</div>
+        <div class="av-name">${av.name}</div>
+        ${t ? '<div style="font-size:10px;color:var(--red);font-weight:700;">محجوز</div>' : ''}
+        ${s ? '<div style="font-size:10px;color:var(--green);font-weight:700;">✓</div>' : ''}
+      </div>
+    `;
+  }).join('');
+  document.getElementById('avatarGrid').innerHTML = html;
+}
+
+function changeAvatar(id) {
+  const taken = Object.values(allUsers).filter(u => u.id !== currentUser.id).map(u => u.avatar);
+  if (taken.includes(id)) { notify('❌ محجوزة'); return; }
+  currentUser.avatar = id;
+  notify('✅ تم تغيير الصورة');
+  scheduleLocalSave();
+  renderProfile();
+  refreshUI();
+}
+
+function renderVerifyPanel() {
+  const panel = document.getElementById('verifyPanel');
+  if (currentUser.verified && currentUser.verifyExpire > Date.now()) {
+    const days = Math.ceil((currentUser.verifyExpire - Date.now()) / 86400000);
+    panel.innerHTML = `
+      <div class="card" style="padding:24px;text-align:center;cursor:default;background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.05));border-color:rgba(34,197,94,0.3);">
+        <div style="font-size:48px;margin-bottom:12px;">✅</div>
+        <div style="font-weight:900;font-size:19px;color:var(--green);">حساب موثّق</div>
+        <div style="font-size:13px;color:var(--t3);margin:10px 0;">متبقي ${days} يوم</div>
+        <button class="btn" style="margin-bottom:12px;" onclick="renewVerify()">🔄 تجديد (${VERIFY_COST} Quinn)</button>
+        <button class="btn btn-outline" onclick="activateSecondLife()">💫 الحياة الثانية (${SECOND_LIFE_COST} Quinn)</button>
+      </div>
+    `;
+  } else {
+    panel.innerHTML = `
+      <div class="card" style="padding:24px;text-align:center;cursor:default;background:linear-gradient(135deg,rgba(239,68,68,0.1),rgba(239,68,68,0.03));border-color:rgba(239,68,68,0.25);">
+        <div style="font-size:48px;margin-bottom:12px;">🔒</div>
+        <div style="font-weight:900;font-size:19px;color:var(--red);">حساب غير موثّق</div>
+        <div style="font-size:13px;color:var(--t3);margin:10px 0;">التوثيق يمنحك شارة ذهبية ✓ ويفتح الذكاء الاصطناعي</div>
+        <button class="btn" onclick="requestVerify()">✅ توثيق الحساب (${VERIFY_COST} Quinn)</button>
+      </div>
+    `;
+  }
+}
+
+// ===================== SEARCH & MEMBER PROFILE =====================
+function openSearchModal() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchModal').classList.add('active');
+  setTimeout(() => document.getElementById('searchInput').focus(), 200);
+}
+
+function closeSearchModal() { document.getElementById('searchModal').classList.remove('active'); }
+
+function performSearch() {
+  const q = (document.getElementById('searchInput').value || '').trim().toLowerCase();
+  const resDiv = document.getElementById('searchResults');
+  if (!q) { resDiv.innerHTML = ''; return; }
+  const results = Object.values(allUsers).filter(u => u.name.toLowerCase().includes(q) || (u.username || '').toLowerCase().includes(q) || u.id === q || (u.referralCode || '').toLowerCase().includes(q));
+  if (!results.length) { resDiv.innerHTML = '<div style="text-align:center;color:var(--t3);padding:30px;">لا توجد نتائج</div>'; return; }
+  resDiv.innerHTML = results.slice(0, 15).map(u => `
+    <div class="srch-item" onclick="showMemberProfile('${u.id}')">
+      <div style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;background:var(--glass);border:1px solid var(--border);">${getAv(u.avatar).emoji}</div>
+      <div style="flex:1;">
+        <div style="font-weight:800;">${u.name}${u.verified ? '<span class="vbadge">✓</span>' : ''}</div>
+        <div style="font-size:12px;color:var(--t3);">${u.username ? `@${u.username}` : u.id} · ${u.showBalance !== false ? toQuinn(u.tokens) + ' Q' : '🔒'}</div>
+      </div>
+      <button class="btn-sm">👤 ملف</button>
+    </div>
+  `).join('');
+}
+
+function showMemberProfile(uid) {
+  const u = allUsers[uid];
+  if (!u) return;
+  closeSearchModal();
+  const rank = getRankByTokens(u.tokens);
+  const showBal = u.showBalance !== false;
+  const avStyle = (u.selectedAvatarType === 'telegram' && u.telegramAvatarPurchased && u.telegramAvatarUrl)
+    ? `background-image:url(${u.telegramAvatarUrl});background-size:cover;background-position:center;`
+    : `background:var(--glass);`;
+  const avContent = (u.selectedAvatarType === 'telegram' && u.telegramAvatarPurchased && u.telegramAvatarUrl) ? '' : `<span style="font-size:44px;">${getAv(u.avatar).emoji}</span>`;
+  const goldGlow = u.secondLife && u.secondLifeExpire > Date.now() ? 'golden-glow' : '';
+  
+  const modalHtml = `
+    <div style="text-align:center;">
+      <div class="modal-title" style="margin-bottom:16px;">${u.name}${u.verified ? '<span class="vbadge" style="font-size:12px;">✓</span>' : ''}</div>
+      <div class="${goldGlow}" style="width:90px;height:90px;border-radius:50%;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;border:3px solid var(--purple);overflow:hidden;${avStyle}">${avContent}</div>
+      <div style="color:var(--t3);font-size:13px;margin-bottom:18px;">${u.username ? '@' + u.username : 'ID: ' + u.id}</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:18px;text-align:center;">
+        <div style="background:var(--glass);border-radius:14px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--t3);">الرتبة</div>
+          <div style="font-weight:800;">${rank.icon} ${rank.name}</div>
+          <div style="font-size:11px;color:var(--t3);">مستوى ${rank.level}</div>
+        </div>
+        <div style="background:var(--glass);border-radius:14px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--t3);">الرصيد</div>
+          <div style="font-weight:800;color:var(--purple-l);">${showBal ? toQuinn(u.tokens) + ' Q' : '🔒'}</div>
+          <div style="font-size:11px;color:var(--t3);">${showBal ? fmt(u.tokens) + ' توكن' : 'مخفي'}</div>
+        </div>
+        <div style="background:var(--glass);border-radius:14px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--t3);">النقرات</div>
+          <div style="font-weight:800;color:var(--blue);">${fmt(u.clicks)}</div>
+        </div>
+        <div style="background:var(--glass);border-radius:14px;padding:12px;border:1px solid var(--border);">
+          <div style="font-size:11px;color:var(--t3);">كود الإحالة</div>
+          <div style="font-weight:800;color:var(--gold);font-size:13px;">${u.referralCode}</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:var(--t3);margin-bottom:18px;">
+        ${u.verified ? '✅ حساب موثّق' : '🔒 غير موثّق'} ${u.secondLife && u.secondLifeExpire > Date.now() ? '· ✨ إطار ذهبي' : ''}
+        · 📅 انضم ${new Date(u.joinDate).toLocaleDateString('ar-EG')}
+      </div>
+      <div style="display:flex;gap:12px;">
+        <button class="btn" style="flex:1;" onclick="copyToClipboard('${u.id}'); notify('✅ تم نسخ معرف المستخدم');">📋 نسخ المعرف</button>
+        <button style="flex:1;padding:14px;border-radius:var(--rs);border:none;background:var(--glass);color:#fff;font-weight:800;cursor:pointer;border:1px solid var(--border);" onclick="closeConfirm()">إغلاق</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('confirmTitle').innerHTML = '';
+  document.getElementById('confirmMsg').innerHTML = '';
+  document.getElementById('confirmModal').innerHTML = `<div class="modal-box" style="max-width:380px;">${modalHtml}</div>`;
+  document.getElementById('confirmModal').classList.add('active');
+}
+
+// ===================== RANKS MODAL =====================
+function showRanksModal() {
+  document.getElementById('ranksList').innerHTML = `
+    <div style="max-height:55vh;overflow-y:auto;">${RANKS.map(r => `
+      <div style="display:flex;align-items:center;gap:12px;padding:12px 10px;border-bottom:1px solid var(--border);">
+        <span style="font-size:20px;">${r.icon}</span>
+        <span style="flex:1;font-weight:800;">${r.name}</span>
+        <span style="color:var(--t3);font-size:12px;">مستوى ${r.level}</span>
+        <span style="color:var(--gold);font-weight:900;min-width:50px;text-align:left;">${r.clickMultiplier.toFixed(2)}x</span>
+      </div>
+    `).join('')}</div>
+  `;
+  document.getElementById('ranksModal').classList.add('active');
+}
+
+function closeRanksModal() { document.getElementById('ranksModal').classList.remove('active'); }
+
+function copyRefCode() { copyToClipboard(currentUser.referralCode); }
+
+function shareRefLink() {
+  const link = `https://t.me/${BOT_USERNAME}?start=ref_${currentUser.referralCode}`;
+  const tg = window.Telegram?.WebApp;
+  if (tg?.openTelegramLink) {
+    try { tg.openTelegramLink(`https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('انضم لـ Quinn Bot! 🎮')}`); return; } catch (e) {}
+  }
+  copyToClipboard(link);
+}
+
+// ===================== AI ASSISTANT (GEMINI) =====================
+function renderAITab() {
+  const aiLocked = document.getElementById('aiLockedMessage');
+  const aiContent = document.getElementById('aiContent');
+  const attemptsEl = document.getElementById('aiAttemptsRemaining');
+  
+  if (!currentUser.verified || currentUser.verifyExpire < Date.now()) {
+    aiLocked.style.display = 'block';
+    aiContent.style.display = 'none';
+  } else {
+    aiLocked.style.display = 'none';
+    aiContent.style.display = 'block';
+    
+    // Check if new day
+    const today = new Date().toDateString();
+    if (lastAIDate !== today) {
+      aiAttemptsToday = 0;
+      lastAIDate = today;
+      currentUser.aiAttemptsDate = today;
+      currentUser.aiAttemptsCount = 0;
+      scheduleLocalSave();
+    }
+    
+    const remaining = Math.max(0, AI_DAILY_LIMIT - aiAttemptsToday);
+    attemptsEl.textContent = `المحاولات المتبقية اليوم: ${remaining}/${AI_DAILY_LIMIT}`;
+    attemptsEl.style.color = remaining > 0 ? 'var(--green)' : 'var(--red)';
+  }
+}
+
+async function sendAIMessage() {
+  const input = document.getElementById('aiInput');
+  const message = input.value.trim();
+  if (!message) return;
+  
+  // Check attempts
+  const remaining = AI_DAILY_LIMIT - aiAttemptsToday;
+  if (remaining <= 0) {
+    notify('❌ لقد استنفدت محاولاتك اليومية (5 محاولات)');
+    return;
+  }
+  
+  // Add user message
+  const chatContainer = document.getElementById('aiChatContainer');
+  chatContainer.innerHTML += `
+    <div class="ai-message">
+      <div class="ai-bubble user">${message}</div>
+    </div>
+  `;
+  input.value = '';
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Show typing indicator
+  const typingId = 'typing-' + Date.now();
+  chatContainer.innerHTML += `
+    <div class="ai-message" id="${typingId}">
+      <div class="ai-avatar">🤖</div>
+      <div class="ai-bubble" style="display:flex;gap:4px;align-items:center;">
+        <span style="animation:typing 1s infinite;">●</span>
+        <span style="animation:typing 1s infinite 0.2s;">●</span>
+        <span style="animation:typing 1s infinite 0.4s;">●</span>
+      </div>
+    </div>
+  `;
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+  
+  // Call Gemini API
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: `أنت Quinn AI، مساعد ذكي لتطبيق Quinn Bot - لعبة عملات رقمية. المستخدم يسأل: "${message}". 
+            معلومات المستخدم: رصيده ${toQuinn(currentUser.tokens)} Quinn، مستواه ${getRankByTokens(currentUser.tokens).level}، ذهبه ${(currentUser.goldGrams || 0).toFixed(2)} جرام.
+            أجب باختصار وبالعربية بشكل ودي ومفيد. لا تستخدم أكثر من 3 جمل.`
+          }]
+        }]
+      })
+    });
+    
+    const data = await response.json();
+    let reply = 'عذراً، لم أفهم سؤالك. حاول مرة أخرى.';
+    if (data.candidates && data.candidates[0]?.content?.parts?.[0]?.text) {
+      reply = data.candidates[0].content.parts[0].text;
+    }
+    
+    // Remove typing indicator and add reply
+    document.getElementById(typingId).remove();
+    chatContainer.innerHTML += `
+      <div class="ai-message">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-bubble">${reply}</div>
+      </div>
+    `;
+    
+    // Update attempts
+    aiAttemptsToday++;
+    currentUser.aiAttemptsCount = aiAttemptsToday;
+    scheduleLocalSave();
+    renderAITab();
+    
+  } catch (e) {
+    document.getElementById(typingId).remove();
+    chatContainer.innerHTML += `
+      <div class="ai-message">
+        <div class="ai-avatar">🤖</div>
+        <div class="ai-bubble" style="color:var(--red);">عذراً، حدث خطأ. حاول مرة أخرى.</div>
+      </div>
+    `;
+  }
+  
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+// ===================== HARDER MINI-GAMES (NO PRIZE ON LOSS) =====================
+if (typeof window.activeGameInterval === 'undefined') window.activeGameInterval = null;
+
+function renderGamesTab() {
+  const rank = getRankByTokens(currentUser.tokens);
+  const currentTier = RANK_GAMES.find(t => rank.level >= t.minLevel && rank.level <= t.maxLevel) || RANK_GAMES[0];
+  const unlockedCount = RANK_GAMES.filter(t => rank.level >= t.minLevel).length;
+  document.getElementById('gamesUnlockBanner').innerHTML = `
+    <div style="font-size:32px;margin-bottom:8px;">${currentTier.tierIcon}</div>
+    <div style="font-weight:800;font-size:16px;">رتبة ${currentTier.tierName} · مستوى ${rank.level}</div>
+    <div style="font-size:12px;color:var(--t3);margin-top:6px;">${unlockedCount} من ${RANK_GAMES.length} ألعاب مفتوحة</div>
+  `;
+  document.getElementById('gamesTabs').innerHTML = RANK_GAMES.map((t, i) => {
+    const locked = rank.level < t.minLevel;
+    return `<button class="sub-tab${i === 0 ? '' : ''}" onclick="showRankGame(${t.tierId})" ${locked ? 'disabled style="opacity:.4;"' : ''}>${t.tierIcon} ${t.tierName}${locked ? '🔒' : ''}</button>`;
+  }).join('');
+  showRankGame(currentTier.tierId);
+}
+
+function showRankGame(tierId) {
+  const tier = RANK_GAMES.find(t => t.tierId === tierId);
+  if (!tier) return;
+  const rank = getRankByTokens(currentUser.tokens);
+  const locked = rank.level < tier.minLevel;
+  document.querySelectorAll('#gamesTabs .sub-tab').forEach((b, i) => b.classList.toggle('active', RANK_GAMES[i].tierId === tierId));
+  if (locked) {
+    document.getElementById('gamesContent').innerHTML = `
+      <div class="card" style="text-align:center;padding:40px;cursor:default;background:var(--glass);">
+        <div style="font-size:56px;margin-bottom:16px;">🔒</div>
+        <div style="font-weight:800;font-size:18px;">لعبة ${tier.tierName} مقفلة</div>
+        <div style="color:var(--t3);font-size:14px;margin-top:10px;">تحتاج مستوى ${tier.minLevel}</div>
+      </div>
+    `;
+    return;
+  }
+  const g = tier.game;
+  const lastPlayed = currentUser['game_' + g.id + '_last'] || 0;
+  const cdLeft = Math.max(0, (lastPlayed + g.cooldown) - Date.now());
+  const canPlay = cdLeft === 0;
+  const cdMin = Math.ceil(cdLeft / 60000);
+  document.getElementById('gamesContent').innerHTML = `
+    <div class="card" style="cursor:default;">
+      <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
+        <div style="font-size:40px;">${tier.tierIcon}</div>
+        <div>
+          <div style="font-weight:800;font-size:16px;">${g.name}</div>
+          <div style="font-size:13px;color:var(--t3);">${g.desc}</div>
+        </div>
+      </div>
+      <div style="background:linear-gradient(135deg,rgba(251,191,36,0.1),rgba(251,191,36,0.03));border:1px solid rgba(251,191,36,0.25);border-radius:12px;padding:12px;text-align:center;margin-bottom:16px;">
+        <div style="font-size:12px;color:var(--t3);">مكافأة الفوز</div>
+        <div style="font-size:24px;font-weight:900;color:var(--gold);text-shadow:0 0 15px rgba(251,191,36,0.3);">+${fmt(g.reward)} توكن</div>
+        <div style="font-size:11px;color:var(--red);margin-top:6px;">⚠️ لا جائزة عند الخسارة!</div>
+      </div>
+      <div id="gameArea" class="game-area"></div>
+      ${canPlay ? `<button class="btn btn-gold" style="margin-top:16px;" onclick="startGame('${g.id}','${g.play}',${tierId})">▶ ابدأ اللعبة</button>` : `<div class="card" style="text-align:center;color:var(--t3);margin-top:16px;cursor:default;padding:20px;">⏰ بعد ${cdMin} دقيقة</div>`}
+    </div>
+  `;
+}
+
+function startGame(gid, fn, tid) { if (typeof window[fn] === 'function') window[fn](gid, tid); }
+
+function endGame(gid, won, reward) {
+  if (window.activeGameInterval) { clearInterval(window.activeGameInterval); window.activeGameInterval = null; }
+  if (won) {
+    currentUser.tokens += reward;
+    currentUser['game_' + gid + '_last'] = Date.now();
+    currentUser.transactions.unshift({desc: '🎮 جائزة لعبة', amount: reward, time: new Date().toLocaleTimeString()});
+    scheduleLocalSave();
+    refreshUI();
+    notify(`🎉 فزت! +${fmt(reward)} توكن`);
+    playSound('win');
+  } else {
+    // No prize on loss - just record the attempt
+    currentUser['game_' + gid + '_last'] = Date.now();
+    scheduleLocalSave();
+    notify('💔 خسرت! حاول مرة أخرى - لا جائزة هذه المرة');
+    playSound('loss');
+  }
+  setTimeout(() => showRankGame(RANK_GAMES.find(t => t.game.id === gid)?.tierId || 1), 2000);
+}
+
+// Harder Game Implementations
+function playTapCoinGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  const needed = 8 + (tid - 1) * 4; // Increased difficulty
+  const timeInit = Math.max(5, 10 - (tid - 1)); // Less time
+  let taps = 0, timeLeft = timeInit;
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="gcTimer" style="font-size:16px;color:var(--t3);font-weight:800;">⏱️ ${timeLeft}ث</div>
+      <button onclick="gcTap()" style="font-size:70px;background:none;border:none;cursor:pointer;display:block;margin:12px auto;animation:bounce 0.4s infinite alternate;">🪙</button>
+      <div id="gcTaps" style="font-weight:800;font-size:18px;">${taps}/${needed}</div>
+      <div style="font-size:12px;color:var(--red);margin-top:8px;">⚡ سريع!</div>
+    </div>
+  `;
+  window.gcTap = function() {
+    taps++;
+    haptic('light');
+    const el = document.getElementById('gcTaps');
+    if (el) el.textContent = taps + '/' + needed;
+    if (taps >= needed) { clearInterval(window.activeGameInterval); endGame(gid, true, tier.game.reward); }
+  };
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('gcTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, taps >= needed, tier.game.reward); }
+  }, 1000);
+}
+
+function playMemoryGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  const num = Math.floor(Math.random() * 90000) + 10000; // 5 digits
+  let timeLeft = 2; // Only 2 seconds!
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="gmPhase" style="font-size:13px;color:var(--t3);margin-bottom:10px;">احفظ الرقم! (${timeLeft}ث فقط)</div>
+      <div id="gmNum" style="font-size:56px;font-weight:900;color:var(--gold);text-shadow:0 0 20px rgba(251,191,36,0.3);">${num}</div>
+      <input id="gmInp" class="inp" type="number" placeholder="أدخل الرقم هنا" style="margin-top:16px;display:none;text-align:center;font-size:28px;letter-spacing:4px;">
+      <button id="gmBtn" class="btn" style="display:none;margin-top:12px;" onclick="gmCheck(${num},'${gid}',${tier.game.reward})">تأكيد</button>
+    </div>
+  `;
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const ph = document.getElementById('gmPhase');
+    if (ph) ph.textContent = `احفظ الرقم! (${timeLeft}ث)`;
+    if (timeLeft <= 0) {
+      clearInterval(window.activeGameInterval);
+      const n = document.getElementById('gmNum');
+      if (n) n.style.visibility = 'hidden';
+      const i = document.getElementById('gmInp');
+      if (i) { i.style.display = 'block'; i.focus(); }
+      const b = document.getElementById('gmBtn');
+      if (b) b.style.display = 'block';
+      const ph2 = document.getElementById('gmPhase');
+      if (ph2) ph2.textContent = 'أدخل الرقم الآن:';
+    }
+  }, 1000);
+  window.gmCheck = function(num, gid, rew) {
+    const val = parseInt(document.getElementById('gmInp')?.value);
+    endGame(gid, val === num, rew);
+  };
+}
+
+function playFastGuessGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  const range = 15 + (tid - 3) * 15;
+  const secret = Math.floor(Math.random() * (range || 15)) + 1;
+  let tries = 0, maxTries = Math.max(2, 3 - Math.floor(tid / 4)); // Only 2-3 tries!
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div style="font-size:13px;color:var(--t3);margin-bottom:12px;">خمّن رقماً من 1 إلى ${range} (${maxTries} محاولات فقط!)</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">${Array.from({length: Math.min(range, 10)}, (_, i) => i + 1).map(n => `<button class="btn-sm" onclick="fgGuess(${n},${secret},'${gid}',${tier.game.reward},${maxTries})" style="min-width:50px;padding:12px;">${n}</button>`).join('')}</div>
+      <div id="fgMsg" style="margin-top:14px;font-size:14px;font-weight:800;"></div>
+      <div id="fgTries" style="font-size:12px;color:var(--t3);">0/${maxTries}</div>
+    </div>
+  `;
+  window.fgGuess = function(g, s, gid, rew, max) {
+    tries++;
+    document.getElementById('fgTries').textContent = tries + '/' + max;
+    if (g === s) { endGame(gid, true, rew); return; }
+    const m = document.getElementById('fgMsg');
+    if (m) m.textContent = g < s ? '📈 أكبر!' : '📉 أصغر!';
+    if (tries >= max) endGame(gid, false, rew);
+  };
+}
+
+function playRockBreakGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  let rocks = 0, needed = 12, timeLeft = 10; // More rocks, less time
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="rbTimer" style="font-size:16px;font-weight:800;color:var(--t3);">⏱️ ${timeLeft}ث</div>
+      <div id="rbArea" style="min-height:100px;position:relative;margin:12px 0;"></div>
+      <div id="rbCount" style="font-size:18px;font-weight:800;">${rocks}/${needed}</div>
+    </div>
+  `;
+  function spawn() {
+    const a = document.getElementById('rbArea');
+    if (!a) return;
+    const r = document.createElement('span');
+    r.textContent = '🪨';
+    r.style.cssText = `font-size:32px;cursor:pointer;position:absolute;left:${Math.random() * 80}%;top:${Math.random() * 60}%;`;
+    r.onclick = () => {
+      rocks++;
+      r.textContent = '💥';
+      setTimeout(() => r.remove(), 300);
+      const c = document.getElementById('rbCount');
+      if (c) c.textContent = rocks + '/' + needed;
+      if (rocks >= needed) { clearInterval(spawnT); clearInterval(window.activeGameInterval); endGame(gid, true, tier.game.reward); }
+    };
+    a.appendChild(r);
+    setTimeout(() => r.remove(), 1800);
+  }
+  const spawnT = setInterval(spawn, 500);
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('rbTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(spawnT); clearInterval(window.activeGameInterval); endGame(gid, rocks >= needed, tier.game.reward); }
+  }, 1000);
+}
+
+function playDiamondRushGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  const needed = 25 + tid * 5; // More clicks needed
+  const timeInit = Math.max(6, 10 - tid);
+  let clicks = 0, timeLeft = timeInit;
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="drTimer" style="font-size:20px;font-weight:900;color:var(--gold);">⏱️ ${timeLeft}ث</div>
+      <button onclick="drClick()" style="font-size:72px;background:none;border:none;cursor:pointer;display:block;width:100%;">🪙</button>
+      <div id="drClicks" style="font-size:22px;font-weight:900;color:var(--purple-l);">0 نقرة</div>
+      <div style="font-size:12px;color:var(--t3);">اهدف ${needed}+ (صعب!)</div>
+    </div>
+  `;
+  window.drClick = function() { clicks++; haptic('light'); const el = document.getElementById('drClicks'); if (el) el.textContent = clicks + ' نقرة'; };
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('drTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, clicks >= needed, tier.game.reward); }
+  }, 1000);
+}
+
+function playRoyalMatchGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  const emojis = ['👑', '💎', '⚡', '🌌', '🔱', '⭐'];
+  const pairs = [...emojis.slice(0, 5), ...emojis.slice(0, 5)].sort(() => Math.random() - 0.5);
+  let flipped = [], matched = 0, locked = false;
+  const cards = pairs.map((e, i) => `<div id="mc${i}" onclick="rmFlip(${i})" style="width:54px;height:54px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:var(--glass);border:1px solid var(--border);cursor:pointer;font-size:0;transition:.2s;" data-e="${e}">❓</div>`).join('');
+  document.getElementById('gameArea').innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:10px;width:100%;justify-items:center;">${cards}</div>
+    <div id="rmMsg" style="margin-top:12px;text-align:center;font-size:13px;"></div>
+    <div id="rmTimer" style="text-align:center;font-size:16px;font-weight:800;color:var(--gold);margin-top:8px;">⏱️ 15ث</div>
+  `;
+  let timeLeft = 15;
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('rmTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, matched === 5, tier.game.reward); }
+  }, 1000);
+  window.rmFlip = function(i) {
+    if (locked || flipped.includes(i) || document.getElementById(`mc${i}`).style.fontSize === '28px') return;
+    const c = document.getElementById(`mc${i}`);
+    c.textContent = c.dataset.e;
+    c.style.fontSize = '28px';
+    flipped.push(i);
+    if (flipped.length === 2) {
+      locked = true;
+      const [a, b] = flipped;
+      const ca = document.getElementById(`mc${a}`), cb = document.getElementById(`mc${b}`);
+      if (ca.dataset.e === cb.dataset.e) {
+        ca.style.background = 'rgba(34,197,94,0.3)';
+        cb.style.background = 'rgba(34,197,94,0.3)';
+        matched++;
+        if (matched === 5) { clearInterval(window.activeGameInterval); endGame(gid, true, tier.game.reward); return; }
+        flipped = [];
+        locked = false;
+      } else {
+        setTimeout(() => { ca.textContent = '❓'; ca.style.fontSize = '0'; cb.textContent = '❓'; cb.style.fontSize = '0'; flipped = []; locked = false; }, 700);
+      }
+    }
+  };
+}
+
+function playLegendTapGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  let clicks = 0, timeLeft = 6;
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="ltTimer" style="font-size:22px;font-weight:900;color:var(--purple-l);">⏱️ ${timeLeft}ث</div>
+      <button onclick="ltClick()" style="font-size:80px;background:none;border:none;cursor:pointer;display:block;width:100%;">⚡</button>
+      <div id="ltClicks" style="font-size:24px;font-weight:900;color:var(--gold);">0</div>
+      <div style="font-size:12px;color:var(--t3);">اهدف 50+ (أسطوري!)</div>
+    </div>
+  `;
+  window.ltClick = function() { clicks++; haptic('light'); const el = document.getElementById('ltClicks'); if (el) el.textContent = clicks; };
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('ltTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, clicks >= 50, tier.game.reward); }
+  }, 1000);
+}
+
+function playCosmicCalcGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  let solved = 0, target = 5, timeLeft = 20;
+  const ops = ['+', '-', '*'];
+  let currentOp = ops[Math.floor(Math.random() * ops.length)];
+  let a = Math.floor(Math.random() * 15) + 5, b = Math.floor(Math.random() * 10) + 1;
+  let ans = currentOp === '+' ? a + b : currentOp === '-' ? a - b : a * b;
+  
+  function generateProblem() {
+    currentOp = ops[Math.floor(Math.random() * ops.length)];
+    a = Math.floor(Math.random() * 15) + 5;
+    b = Math.floor(Math.random() * 10) + 1;
+    ans = currentOp === '+' ? a + b : currentOp === '-' ? a - b : a * b;
+    const wrong = [ans - 1, ans + 1, ans + 2].filter(x => x !== ans).slice(0, 3);
+    const opts = [ans, ...wrong].sort(() => Math.random() - 0.5);
+    document.getElementById('gameArea').innerHTML = `
+      <div style="text-align:center;width:100%;">
+        <div style="font-size:32px;font-weight:900;margin-bottom:16px;">${a} ${currentOp} ${b} = ?</div>
+        <div style="font-size:14px;color:var(--t3);margin-bottom:12px;">حلول: ${solved}/${target}</div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">${opts.map(o => `<button class="btn-sm" onclick="ccAns(${o},${ans},'${gid}',${tier.game.reward})" style="font-size:20px;padding:14px 22px;">${o}</button>`).join('')}</div>
+        <div id="ccTimer" style="margin-top:16px;font-size:16px;font-weight:800;color:var(--gold);">⏱️ ${timeLeft}ث</div>
+      </div>
+    `;
+  }
+  
+  generateProblem();
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('ccTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, solved >= target, tier.game.reward); }
+  }, 1000);
+  
+  window.ccAns = function(g, c, gid, r) {
+    if (g === c) {
+      solved++;
+      if (solved >= target) { clearInterval(window.activeGameInterval); endGame(gid, true, r); }
+      else generateProblem();
+    }
+  };
+}
+
+function playTitanBossGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  let hp = 60, timeLeft = 12;
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="tbTimer" style="font-size:14px;color:var(--t3);">⏱️ ${timeLeft}ث</div>
+      <div style="height:14px;background:rgba(255,255,255,0.08);border-radius:8px;margin:10px 0;">
+        <div id="tbHpFill" style="height:100%;background:linear-gradient(90deg,var(--red),var(--orange));border-radius:8px;width:100%;transition:width .2s;"></div>
+      </div>
+      <button onclick="tbHit()" style="font-size:72px;background:none;border:none;cursor:pointer;">🦹</button>
+      <div id="tbHp" style="font-size:13px;color:var(--t3);">HP: ${hp}/60</div>
+    </div>
+  `;
+  window.tbHit = function() {
+    hp = Math.max(0, hp - 2);
+    haptic('light');
+    const el = document.getElementById('tbHp');
+    if (el) el.textContent = `HP: ${hp}/60`;
+    const f = document.getElementById('tbHpFill');
+    if (f) f.style.width = (hp / 60 * 100) + '%';
+    if (hp <= 0) { clearInterval(window.activeGameInterval); endGame(gid, true, tier.game.reward); }
+  };
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('tbTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, hp <= 0, tier.game.reward); }
+  }, 1000);
+}
+
+function playInfinityGame(gid, tid) {
+  const tier = RANK_GAMES.find(t => t.tierId === tid);
+  let clicks = 0, timeLeft = 5;
+  document.getElementById('gameArea').innerHTML = `
+    <div style="text-align:center;width:100%;">
+      <div id="ifTimer" style="font-size:24px;font-weight:900;color:var(--purple-l);">⏱️ ${timeLeft}ث</div>
+      <button onclick="ifClick()" style="font-size:90px;background:none;border:none;cursor:pointer;display:block;width:100%;">♾️</button>
+      <div id="ifClicks" style="font-size:28px;font-weight:900;color:var(--gold);">0</div>
+      <div style="font-size:12px;color:var(--t3);">اهدف 60+ (التحدي الأصعب!)</div>
+    </div>
+  `;
+  window.ifClick = function() { clicks++; haptic('light'); const el = document.getElementById('ifClicks'); if (el) el.textContent = clicks; };
+  window.activeGameInterval = setInterval(() => {
+    timeLeft--;
+    const el = document.getElementById('ifTimer');
+    if (el) el.textContent = `⏱️ ${timeLeft}ث`;
+    if (timeLeft <= 0) { clearInterval(window.activeGameInterval); endGame(gid, clicks >= 60, tier.game.reward); }
+  }, 1000);
+}
+
+
+// ===================== NAVIGATION =====================
+function showTab(tab) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tab-${tab}`).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector(`[onclick="showTab('${tab}')"]`);
+  if (btn) btn.classList.add('active');
+  if (tab === 'wallet') renderWallet();
+  if (tab === 'leaderboard') renderLeaderboard();
+  if (tab === 'referral') renderReferral();
+  if (tab === 'boost') renderBoostTab();
+  if (tab === 'profile') renderProfile();
+  if (tab === 'trade') { updateGoldPrice(); renderTradePortfolio(); }
+  if (tab === 'games') renderGamesTab();
+  if (tab === 'ai') renderAITab();
+  haptic('light');
+}
+
+function showWalletSub(sub, btn) {
+  ['wOverview', 'wSend', 'wReceive', 'wShop', 'wStars'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById(`w${sub.charAt(0).toUpperCase() + sub.slice(1)}`).style.display = 'block';
+  document.querySelectorAll('#tab-wallet .sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (sub === 'overview') renderWallet();
+  if (sub === 'stars') renderStarsPackages('starsPackagesInline');
+}
+
+function showBoostSub(sub, btn) {
+  ['bBoosts', 'bTasks', 'bPassive'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById(`b${sub.charAt(0).toUpperCase() + sub.slice(1)}`).style.display = 'block';
+  document.querySelectorAll('#tab-boost .sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function showProfileSub(sub, btn) {
+  ['pInfo', 'pAvatar', 'pTelegram', 'pVerify'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById(`p${sub.charAt(0).toUpperCase() + sub.slice(1)}`).style.display = 'block';
+  document.querySelectorAll('#tab-profile .sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (sub === 'avatar') renderAvatarGrid();
+  if (sub === 'telegram') renderTelegramAvatarPanel();
+  if (sub === 'verify') renderVerifyPanel();
+}
+
+function showTradeSub(sub, btn) {
+  ['tBuy', 'tSell', 'tPortfolio'].forEach(id => {
+    const e = document.getElementById(id);
+    if (e) e.style.display = 'none';
+  });
+  document.getElementById(`t${sub.charAt(0).toUpperCase() + sub.slice(1)}`).style.display = 'block';
+  document.querySelectorAll('#tab-trade .sub-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  if (sub === 'portfolio') renderTradePortfolio();
+}
+
+function showConfirm(title, msg, cb) {
+  const modal = document.getElementById('confirmModal');
+  if (!modal.querySelector('#confirmTitle')) {
+    modal.innerHTML = `
+      <div class="modal-box">
+        <div class="modal-title" id="confirmTitle">تأكيد</div>
+        <div class="modal-msg" id="confirmMsg"></div>
+        <div class="modal-btns">
+          <button class="cancel" onclick="closeConfirm()">إلغاء</button>
+          <button class="confirm" onclick="confirmAction()">تأكيد</button>
+        </div>
+      </div>
+    `;
+  }
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  pendingConfirm = cb;
+  modal.classList.add('active');
+}
+
+function closeConfirm() {
+  const modal = document.getElementById('confirmModal');
+  modal.classList.remove('active');
+  pendingConfirm = null;
+  if (!modal.querySelector('#confirmTitle')) {
+    modal.innerHTML = `
+      <div class="modal-box">
+        <div class="modal-title" id="confirmTitle">تأكيد</div>
+        <div class="modal-msg" id="confirmMsg"></div>
+        <div class="modal-btns">
+          <button class="cancel" onclick="closeConfirm()">إلغاء</button>
+          <button class="confirm" onclick="confirmAction()">تأكيد</button>
+        </div>
+      </div>
+    `;
+  }
+}
+
+function confirmAction() { if (pendingConfirm) { pendingConfirm(); } closeConfirm(); }
+
+// ===================== TIMERS =====================
+function startTimers() {
+  // Energy regeneration
+  setInterval(() => {
+    if (currentUser.energy < MAX_ENERGY) {
+      currentUser.energy = Math.min(MAX_ENERGY, currentUser.energy + 3);
+      refreshUI();
+      scheduleLocalSave();
+    }
+  }, 1500);
+  
+  // Passive income
+  setInterval(() => {
+    if (currentUser.passiveIncome > 0) {
+      currentUser.tokens += currentUser.passiveIncome;
+      currentUser.transactions.unshift({desc: '💰 دخل سلبي', amount: currentUser.passiveIncome, time: new Date().toLocaleTimeString()});
+      if (currentUser.transactions.length > 50) currentUser.transactions = currentUser.transactions.slice(0, 50);
+      refreshUI();
+      scheduleLocalSave();
+    }
+  }, 60000);
+  
+  // Magnet boost
+  setInterval(() => {
+    if (currentUser.boostActive === 'magnet' && Date.now() < currentUser.boostEnd) {
+      currentUser.tokens += 3;
+      refreshUI();
+      scheduleLocalSave();
+    }
+  }, 500);
+  
+  // Boost expiry check
+  setInterval(() => {
+    if (currentUser.boostActive && Date.now() > currentUser.boostEnd) {
+      currentUser.boostActive = null;
+      refreshUI();
+      scheduleLocalSave();
+    }
+  }, 1000);
+  
+  // Gold price updates
+  setInterval(updateGoldPrice, 30000);
+  
+  // Energy charge check
+  setInterval(() => {
+    if (currentUser.energyChargeEnd && Date.now() < currentUser.energyChargeEnd) {
+      if (currentUser.energyChargeType === 'min') {
+        currentUser.energy = MAX_ENERGY;
+        refreshUI();
+        scheduleLocalSave();
+      }
+    } else if (currentUser.energyChargeEnd && Date.now() >= currentUser.energyChargeEnd) {
+      currentUser.energyChargeType = null;
+      currentUser.energyChargeEnd = 0;
+      scheduleLocalSave();
+    }
+  }, 60000);
+}
+
+// ===================== INIT =====================
+async function init() {
+  loadP(10);
+  loadMsg('تهيئة Firebase...');
+  
+  if (!window.FB_READY) {
+    await new Promise(resolve => {
+      window.addEventListener('firebase-ready', resolve, {once: true});
+      setTimeout(resolve, 5000);
+    });
+  }
+  
+  loadP(30);
+  loadMsg('تحديد المستخدم...');
+  
+  const tg = window.Telegram?.WebApp;
+  let tgUser;
+  if (tg) {
+    tg.ready?.();
+    tg.expand?.();
+    tgUser = tg.initDataUnsafe?.user;
+    if (!tgUser) tgUser = {id: 'tg_' + Date.now(), first_name: 'زائر'};
+  } else {
+    tgUser = {id: 'guest_' + Date.now(), first_name: 'تجريبي', last_name: '', username: 'test'};
+  }
+  
+  loadP(50);
+  loadMsg('تحميل بيانات المستخدم...');
+  
+  try {
+    const lbRaw = localStorage.getItem('quinn_lb_cache');
+    if (lbRaw) {
+      const d = JSON.parse(lbRaw);
+      lbCache = d.data || [];
+      lbCacheTime = d.time || 0;
+      lbCache.forEach(u => { allUsers[u.id] = u; });
+    }
+  } catch (e) {}
+  
+  currentUser = await loadUserFromFirebase(String(tgUser.id), tgUser);
+  allUsers[currentUser.id] = currentUser;
+  
+  loadP(70);
+  loadMsg('تحميل سوق الذهب...');
+  await loadGoldMarketFromFirebase();
+  
+  loadP(80);
+  loadMsg('تحميل الإعدادات...');
+  
+  try {
+    const s = localStorage.getItem('quinn_sound');
+    if (s) soundEnabled = JSON.parse(s);
+  } catch (e) {}
+  try {
+    const p = localStorage.getItem('quinn_particles');
+    if (p !== null) particlesEnabled = p === 'true';
+  } catch (e) {}
+  
+  loadP(95);
+  loadMsg('جاري الإطلاق...');
+  
+  initAudio();
+  refreshUI();
+  startTimers();
+  startNetworkMonitor();
+  startPeriodicBackup();
+  
+  // Setup send user modal buttons
+  document.getElementById('sendUserCancelBtn').onclick = closeSendUserModal;
+  document.getElementById('sendUserConfirmBtn').onclick = requestSendConfirmation;
+  
+  setTimeout(() => fetchLeaderboardFromFirebase(), 3000);
+  
+  loadP(100);
+  setTimeout(() => {
+    hideLoader();
+    showTab('home');
+    notify(`مرحباً ${currentUser.name.split(' ')[0]} في Quinn Bot 2026 🪙`);
+  }, 500);
+}
+
+window.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>
