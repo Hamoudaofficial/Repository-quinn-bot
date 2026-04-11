@@ -506,11 +506,13 @@ async function boot() {
   initLang();
   _animateProgress();
 
-  // فحص Telegram
-  const hasTG = !!window.Telegram?.WebApp?.initData;
+  // فحص Telegram - استخدام فحص دقيق
+  const tg = window.Telegram?.WebApp;
+  // التحقق من وجود بيانات المستخدم الفعلية من تيليجرام
+  const hasValidTGData = tg && tg.initData && tg.initData.length > 0;
   const isDev = window.location.search.includes('dev') || window.location.hostname === 'localhost';
 
-  if (!hasTG && !isDev) {
+  if (!hasValidTGData && !isDev) {
     await _delay(1200);
     document.getElementById('boot-screen').style.display    = 'none';
     document.getElementById('tg-only-screen').style.display = 'flex';
@@ -518,9 +520,9 @@ async function boot() {
   }
 
   // تهيئة Telegram
-  const tg = window.Telegram?.WebApp;
   if (tg) {
-    tg.ready(); tg.expand();
+    tg.ready(); 
+    tg.expand();
     tg.setHeaderColor('#030712');
     tg.setBackgroundColor('#030712');
   }
@@ -533,682 +535,289 @@ async function boot() {
 
   // تحميل المستخدم
   const user = await User.load(tgUser.id, tgUser);
-  if (!user) { _showFatalError('فشل تحميل البيانات'); return; }
+  if (!user) { 
+    _showFatalError('فشل تحميل البيانات'); 
+    return; 
+  }
   userRef.current = user;
 
   // فحص الحظر
   if (user.banned) {
-    document.getElementById('boot-screen').style.display   = 'none';
-    document.getElementById('banned-screen').style.display = 'flex';
+    document.getElementById('boot-screen').style.display    = 'none';
+    document.getElementById('banned-screen').style.display  = 'flex';
     return;
   }
 
-  // تهيئة السوق
-  await initExchange();
-
-  // بدء الخدمات
-  startEnergyRegen(userRef, updateEnergyUI);
-  startPeriodicSave(userRef);
-  registerBeforeUnload(userRef);
-
-  // إخفاء شاشة التحميل
-  await _delay(400);
+  // إخفاء شاشة التحميل وإظهار التطبيق
   document.getElementById('boot-screen').style.display = 'none';
   document.getElementById('app-shell').classList.add('visible');
 
-  // بناء الواجهة
-  buildHeader(user);
-  bindNav();
-  switchTab('home');
-  startNotifListener();
-  bindConnectionStatus();
-
-  // معالجة start_param
-  const startParam = tg?.initDataUnsafe?.start_param || '';
-  if (startParam.startsWith('ref_'))    handleReferral(startParam.slice(4), user);
-  if (startParam.startsWith('stars_'))  handleStarsPayment(startParam, user);
-  if (startParam.startsWith('duel_'))   { switchTab('arena'); }
-
-  // أحداث عامة
-  document.addEventListener('balanceUpdated', () => {
-    document.getElementById('hdr-balance').textContent = fmtQ(userRef.current?.tokens || 0);
-  });
-  document.addEventListener('refreshTab', e => {
-    if (e.detail === _activeTab) switchTab(_activeTab);
-  });
-  document.addEventListener('langChanged', () => {
-    buildHeader(userRef.current);
-    switchTab(_activeTab);
-  });
-  document.addEventListener('userBanned', () => {
-    document.getElementById('app-shell').style.display  = 'none';
-    document.getElementById('banned-screen').style.display = 'flex';
-  });
-
-  // Global refs للـ inline onclick
-  window._switchToProfile = () => switchTab('profile');
+  // تهيئة باقي المكونات
+  await _initAppAfterBoot(user);
 }
 
 function _animateProgress() {
   const fill = document.getElementById('boot-fill');
+  if (!fill) return;
   let w = 0;
-  const iv = setInterval(() => {
-    w = Math.min(95, w + Math.random() * 15);
-    if (fill) fill.style.width = w + '%';
-    if (w >= 95) clearInterval(iv);
-  }, 200);
-  setTimeout(() => { if (fill) fill.style.width = '100%'; }, 1800);
+  const interval = setInterval(() => {
+    w += 5;
+    if (w >= 100) { w = 100; clearInterval(interval); }
+    fill.style.width = w + '%';
+  }, 30);
 }
 
 function _delay(ms) { return new Promise(r => setTimeout(r, ms)); }
 
 function _showFatalError(msg) {
-  document.getElementById('boot-screen').innerHTML = `
-    <i class="fas fa-triangle-exclamation" style="font-size:48px;color:var(--red)"></i>
-    <p style="color:var(--muted);font-size:14px;">${msg}</p>`;
+  const bootScreen = document.getElementById('boot-screen');
+  bootScreen.innerHTML = `<div style="color:var(--red);font-weight:bold;text-align:center;">${msg}</div>`;
+  console.error(msg);
 }
 
 // ══════════════════════════════════════════
-// HEADER
+// تهيئة التطبيق بعد الإقلاع الناجح
 // ══════════════════════════════════════════
-function buildHeader(user) {
-  const rank = getRank(user.totalTokens);
-  document.getElementById('hdr-name').textContent         = user.name;
-  document.getElementById('hdr-rank').textContent         = rank.nameAr;
-  document.getElementById('hdr-rank').style.color         = rank.color;
-  document.getElementById('hdr-balance').textContent      = fmtQ(user.tokens);
-  document.getElementById('hdr-avatar-letter').textContent= user.name.charAt(0).toUpperCase();
-  if (user.photoUrl) {
+async function _initAppAfterBoot(user) {
+  // تحديث واجهة الهيدر
+  updateHeaderUI(user);
+  
+  // بدء حفظ دوري
+  startPeriodicSave(user, 30000);
+  registerBeforeUnload(user);
+  
+  // بدء استعادة الطاقة
+  startEnergyRegen(user, () => {
+    // يمكن تحديث واجهة الطاقة في التبويبات إذا لزم
+  });
+
+  // تهيئة أحداث التنقل
+  initNavigation();
+
+  // تحميل التبويب الافتراضي (الرئيسية)
+  await switchTab('home');
+
+  // مراقبة حالة الاتصال
+  initConnectionWatcher();
+
+  // تحميل الإشعارات من Firestore (اختياري)
+  // loadNotifications();
+
+  // تعريف دوال عامة
+  window._switchToProfile = () => switchTab('profile');
+  window.toggleNotifPanel = toggleNotifPanel;
+  window.openAIModal = openAIModal;
+  window.closeAIModal = closeAIModal;
+  window.sendAIMessage = sendAIMessage;
+}
+
+function updateHeaderUI(user) {
+  document.getElementById('hdr-name').textContent = user.first_name || 'Quinn Player';
+  document.getElementById('hdr-balance').textContent = Math.floor(user.balance).toLocaleString();
+  
+  const rank = getRank(user.xp || 0);
+  document.getElementById('hdr-rank').textContent = rank.icon + ' ' + rank.name;
+  
+  const letter = (user.first_name || 'Q').charAt(0).toUpperCase();
+  document.getElementById('hdr-avatar-letter').textContent = letter;
+  
+  if (user.photo_url) {
     const img = document.createElement('img');
-    img.src   = user.photoUrl;
-    img.onerror = () => img.remove();
-    document.getElementById('hdr-avatar').appendChild(img);
+    img.src = user.photo_url;
+    const avatar = document.getElementById('hdr-avatar');
+    avatar.innerHTML = '';
+    avatar.appendChild(img);
   }
 }
 
-// ══════════════════════════════════════════
-// NAV
-// ══════════════════════════════════════════
-function bindNav() {
-  document.querySelectorAll('.nav-btn').forEach(btn => {
-    btn.addEventListener('click', () => switchTab(btn.dataset.tab));
-  });
-}
-
-function switchTab(tabId) {
-  _activeTab = tabId;
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById(`nav-${tabId}`)?.classList.add('active');
-
-  const container = document.getElementById('tab-content');
-  container.scrollTo(0, 0);
-  container.innerHTML = '';
-
-  const user = userRef.current;
-  if (!user) return;
-
-  switch (tabId) {
-    case 'home':        renderHome(container, user);       break;
-    case 'vault':       renderVaultTab(container, user);   break;
-    case 'exchange':    renderExchangeTab(container, user);break;
-    case 'arena':       renderArena(container, user);      break;
-    case 'leaderboard': renderLeaderboardTab(container, user.id); break;
-    case 'profile':     renderProfile(container, user);   break;
-  }
-}
-
-// ══════════════════════════════════════════
-// HOME TAB
-// ══════════════════════════════════════════
-let _tapCombo = 0, _comboTimer = null;
-
-function renderHome(container, user) {
-  const rank = getRank(user.totalTokens);
-  container.innerHTML = `
-    <div class="home-tab">
-
-      <!-- Balance Card -->
-      <div class="glass-card" style="padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:14px;">
-        <div style="flex:1">
-          <div style="font-size:11px;color:var(--muted);margin-bottom:3px;">${t('tokens')}</div>
-          <div id="home-bal" style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--gold);line-height:1.1;">${fmtQ(user.tokens)}</div>
-          <div style="font-size:10px;color:var(--muted);margin-top:2px;">≈ ${(user.tokens/10000).toFixed(4)} Quinn</div>
-        </div>
-        <div style="text-align:center;">
-          <div style="font-size:10px;color:var(--muted);margin-bottom:3px;">${t('perClick')}</div>
-          <div id="home-power" style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan);">×${user.tapPower}</div>
-          <div style="font-size:9px;color:var(--muted);margin-top:2px;" id="home-rank-lbl">${rank.nameAr}</div>
-        </div>
-      </div>
-
-      <!-- Tap Orb -->
-      <div style="display:flex;flex-direction:column;align-items:center;margin-bottom:16px;">
-        <div style="position:relative;width:170px;height:170px;">
-          <div class="tap-ring-outer"></div>
-          <div class="tap-ring-inner"></div>
-          <div id="tap-orb" class="tap-orb" data-pressed="false">
-            <i class="fas fa-coins tap-icon"></i>
-          </div>
-        </div>
-        <div style="margin-top:10px;font-size:11px;color:var(--muted);" id="combo-display"></div>
-      </div>
-
-      <!-- Energy -->
-      <div class="glass-card" style="padding:12px 16px;margin-bottom:14px;">
-        <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:7px;">
-          <span><i class="fas fa-bolt" style="color:var(--cyan)"></i> ${t('energy')}</span>
-          <span id="energy-text" style="color:var(--cyan);">${user.energy}/${user.maxEnergy}</span>
-        </div>
-        <div class="energy-bar">
-          <div class="energy-fill" id="energy-fill" style="width:${(user.energy/user.maxEnergy)*100}%"></div>
-        </div>
-      </div>
-
-      <!-- Stats Row -->
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
-        <div class="glass-card" style="padding:12px 8px;text-align:center;">
-          <i class="fas fa-mouse-pointer" style="font-size:18px;color:var(--gold);display:block;margin-bottom:4px;"></i>
-          <div style="font-size:14px;font-weight:800;font-family:'Orbitron',sans-serif;">${fmtQ(user.clicks)}</div>
-          <div style="font-size:9px;color:var(--muted);">النقرات</div>
-        </div>
-        <div class="glass-card" style="padding:12px 8px;text-align:center;">
-          <i class="fas fa-users" style="font-size:18px;color:var(--cyan);display:block;margin-bottom:4px;"></i>
-          <div style="font-size:14px;font-weight:800;font-family:'Orbitron',sans-serif;">${user.referrals}</div>
-          <div style="font-size:9px;color:var(--muted);">${t('referrals')}</div>
-        </div>
-        <div class="glass-card" style="padding:12px 8px;text-align:center;">
-          <i class="fas fa-vault" style="font-size:18px;color:var(--purple);display:block;margin-bottom:4px;"></i>
-          <div style="font-size:14px;font-weight:800;font-family:'Orbitron',sans-serif;">${fmtQ(user.vaultStaked)}</div>
-          <div style="font-size:9px;color:var(--muted);">مودع</div>
-        </div>
-      </div>
-
-      <!-- Quick Actions -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
-        <div class="glass-card" style="padding:15px;text-align:center;cursor:pointer;" onclick="window._navTo('vault')">
-          <i class="fas fa-vault" style="font-size:24px;color:var(--gold);display:block;margin-bottom:6px;"></i>
-          <div style="font-size:12px;font-weight:700;">${t('tabVault')}</div>
-          <div style="font-size:10px;color:var(--muted);">0.5% يومياً</div>
-        </div>
-        <div class="glass-card" style="padding:15px;text-align:center;cursor:pointer;" onclick="window._navTo('exchange')">
-          <i class="fas fa-chart-line" style="font-size:24px;color:var(--cyan);display:block;margin-bottom:6px;"></i>
-          <div style="font-size:12px;font-weight:700;">${t('tabExchange')}</div>
-          <div style="font-size:10px;color:var(--muted);">سوق الذهب</div>
-        </div>
-        <div class="glass-card" style="padding:15px;text-align:center;cursor:pointer;" onclick="window._navTo('arena')">
-          <i class="fas fa-gamepad" style="font-size:24px;color:var(--pink);display:block;margin-bottom:6px;"></i>
-          <div style="font-size:12px;font-weight:700;">${t('tabArena')}</div>
-          <div style="font-size:10px;color:var(--muted);">5 ألعاب + قمار</div>
-        </div>
-        <div class="glass-card" style="padding:15px;text-align:center;cursor:pointer;" onclick="window._navTo('leaderboard')">
-          <i class="fas fa-trophy" style="font-size:24px;color:#FFD700;display:block;margin-bottom:6px;"></i>
-          <div style="font-size:12px;font-weight:700;">${t('tabLeaderboard')}</div>
-          <div style="font-size:10px;color:var(--muted);">قائمة المتصدرين</div>
-        </div>
-      </div>
-    </div>`;
-
-  // Tap handler
-  document.getElementById('tap-orb').addEventListener('click', e => handleTap(e, user));
-  window._navTo = (tab) => switchTab(tab);
-}
-
-function handleTap(e, user) {
-  if (user.energy <= 0) { showToast('⚡ نفدت الطاقة!', 'warning'); return; }
-
-  user.gainTokens(user.tapPower);
-  user.consumeEnergy(1);
-  user.clicks++;
-
-  // Float
-  spawnFloat(e.clientX, e.clientY, `+${user.tapPower}`);
-
-  // Tap pulse
-  const orb = document.getElementById('tap-orb');
-  orb?.classList.add('tap-pulse');
-  setTimeout(() => orb?.classList.remove('tap-pulse'), 130);
-
-  // Combo
-  _tapCombo++;
-  clearTimeout(_comboTimer);
-  _comboTimer = setTimeout(() => { _tapCombo = 0; document.getElementById('combo-display').textContent = ''; }, 1800);
-
-  const cd = document.getElementById('combo-display');
-  if (cd && _tapCombo >= 5) {
-    cd.textContent = `🔥 كومبو ×${_tapCombo}`;
-    cd.style.color = _tapCombo >= 20 ? 'var(--red)' : _tapCombo >= 10 ? 'var(--gold)' : 'var(--cyan)';
-  }
-
-  // Update
-  const balEl = document.getElementById('home-bal');
-  if (balEl) balEl.textContent = fmtQ(user.tokens);
-  document.getElementById('hdr-balance').textContent = fmtQ(user.tokens);
-  updateEnergyUI();
-}
-
-function spawnFloat(x, y, text) {
-  const el = document.createElement('div');
-  el.className = 'tap-float';
-  el.textContent = text;
-  el.style.left  = x + 'px';
-  el.style.top   = y + 'px';
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 900);
-}
-
-function updateEnergyUI() {
-  const u = userRef.current; if (!u) return;
-  const pct  = (u.energy / u.maxEnergy) * 100;
-  const fill = document.getElementById('energy-fill');
-  const txt  = document.getElementById('energy-text');
-  if (fill) fill.style.width  = pct + '%';
-  if (txt)  txt.textContent   = `${u.energy}/${u.maxEnergy}`;
-}
-
-// ══════════════════════════════════════════
-// ARENA TAB
-// ══════════════════════════════════════════
-const GAMES_CFG = [
-  { Class:PulseCheck,  name:'pulse_check',  title:'Pulse Check',   icon:'fa-heart-pulse',   desc:'سرعة رد الفعل — 700ms فقط للضغط!',  cd:60000  },
-  { Class:CipherBreak, name:'cipher_break', title:'Cipher Break',  icon:'fa-brain',         desc:'احفظ تسلسل أرقام طويل بأقل وقت',     cd:120000 },
-  { Class:ChartOracle, name:'chart_oracle', title:'Chart Oracle',  icon:'fa-chart-line',    desc:'توقع اتجاه الشارت في 5 ثوان',         cd:90000  },
-  { Class:RektMiner,   name:'rekt_miner',   title:'Rekt Miner',    icon:'fa-mountain',      desc:'دمّر 15 صخرة في 20 ثانية',            cd:60000  },
-  { Class:WhaleHunt,   name:'whale_hunt',   title:'Whale Hunt',    icon:'fa-fish',          desc:'اصطد الحيتان قبل أن تختفي!',          cd:45000  },
-];
-
-function renderArena(container, user) {
-  container.innerHTML = `
-    <div class="arena-tab">
-      <div style="text-align:center;padding:16px 0 12px;">
-        <div style="font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">${t('arenaTitle')}</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">الخسارة = لا مكافأة</div>
-      </div>
-      <div class="arena-section-tabs" id="arena-tabs">
-        <button class="section-tab active" data-section="games"><i class="fas fa-dice-d20"></i> ${t('games')}</button>
-        <button class="section-tab" data-section="gamble"><i class="fas fa-coins"></i> ${t('gamble')}</button>
-        <button class="section-tab" data-section="shop"><i class="fas fa-bag-shopping"></i> ${t('shopTitle')}</button>
-      </div>
-      <div id="arena-content"></div>
-      <div id="game-fullscreen" style="display:none;position:fixed;inset:0;z-index:80;background:var(--bg-0);overflow-y:auto;"></div>
-    </div>`;
-
-  const content = document.getElementById('arena-content');
-  function loadArenaSection(sec) {
-    container.querySelectorAll('.section-tab').forEach(b => b.classList.remove('active'));
-    container.querySelector(`[data-section="${sec}"]`)?.classList.add('active');
-    content.innerHTML = '';
-    if      (sec === 'games')  renderGamesList(content, user);
-    else if (sec === 'gamble') { _gambleInst = new Gamble(user); _gambleInst.renderLobby(content); }
-    else if (sec === 'shop')   renderShopTab(content, user);
-  }
-  container.querySelectorAll('.section-tab').forEach(b => b.addEventListener('click', () => loadArenaSection(b.dataset.section)));
-  loadArenaSection('games');
-}
-
-function renderGamesList(container, user) {
-  container.innerHTML = `<div style="display:flex;flex-direction:column;gap:10px;padding-top:4px;">${
-    GAMES_CFG.map(g => {
-      const onCD = _isCD(g.name, g.cd);
-      const sec  = _cdSec(g.name, g.cd);
-      return `<div class="glass-card" style="padding:14px 16px;display:flex;align-items:center;gap:12px;">
-        <div style="width:48px;height:48px;border-radius:14px;background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.12);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;color:var(--gold);">
-          <i class="fas ${g.icon}"></i>
-        </div>
-        <div style="flex:1;">
-          <div style="font-size:14px;font-weight:800;margin-bottom:3px;">${g.title}</div>
-          <div style="font-size:10px;color:var(--muted);">${g.desc}</div>
-        </div>
-        <button class="btn-game ${onCD?'btn-cooldown':''}" data-game="${g.name}" ${onCD?'disabled':''}>
-          ${onCD ? `<i class="fas fa-clock"></i> ${sec}ث` : `<i class="fas fa-play"></i> العب`}
-        </button>
-      </div>`;
-    }).join('')
-  }</div>`;
-
-  container.querySelectorAll('.btn-game:not([disabled])').forEach(btn => {
-    btn.addEventListener('click', () => launchGame(btn.dataset.game, user));
-  });
-}
-
-function launchGame(name, user) {
-  const cfg = GAMES_CFG.find(g => g.name === name); if (!cfg) return;
-  const fs  = document.getElementById('game-fullscreen'); if (!fs) return;
-  fs.style.display = 'block';
-  fs.innerHTML = `
-    <div style="position:sticky;top:0;z-index:10;background:rgba(8,12,25,.95);backdrop-filter:blur(20px);padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;">
-      <button id="game-back-btn" style="width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;"><i class="fas fa-arrow-right"></i></button>
-      <span style="font-size:16px;font-weight:800;">${cfg.title}</span>
-    </div>
-    <div id="game-inner" style="padding:14px;"></div>`;
-
-  document.getElementById('game-back-btn').addEventListener('click', () => {
-    fs.style.display = 'none';
-    if (_activeTab === 'arena') switchTab('arena');
-  });
-
-  const inst = new cfg.Class(document.getElementById('game-inner'), user);
-  inst.start();
-
-  document.addEventListener('gameEnded', () => {
-    setTimeout(() => {
-      fs.style.display = 'none';
-      if (_activeTab === 'arena') switchTab('arena');
-    }, 3500);
-  }, { once: true });
-}
-
-function _isCD(name, ms) {
-  const last = parseInt(localStorage.getItem(`quinn_game_cd_${name}`) || '0');
-  return Date.now() - last < ms;
-}
-function _cdSec(name, ms) {
-  const last = parseInt(localStorage.getItem(`quinn_game_cd_${name}`) || '0');
-  return Math.max(0, Math.ceil((ms - (Date.now() - last)) / 1000));
-}
-
-// ══════════════════════════════════════════
-// PROFILE TAB
-// ══════════════════════════════════════════
-function renderProfile(container, user) {
-  const rank     = getRank(user.totalTokens);
-  const progress = getLevelProgress(user.xp, rank);
-  const xpNeeded = xpForNext(rank);
-  const days     = Math.max(1, Math.floor((Date.now() - user.joinDate) / 86400000));
-
-  container.innerHTML = `
-    <div style="padding-bottom:10px;">
-      <!-- Hero -->
-      <div class="glass-card" style="padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;position:relative;">
-        <div style="width:62px;height:62px;border-radius:50%;background:${rank.color}1a;border:3px solid ${rank.color};display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;flex-shrink:0;">
-          ${user.name.charAt(0).toUpperCase()}
-        </div>
-        <div style="flex:1;min-width:0;">
-          <div style="font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${user.name}</div>
-          <div style="font-size:12px;font-weight:700;margin:3px 0;" class="gold">${rank.nameAr} <i class="fas ${rank.icon}"></i></div>
-          <div style="font-size:10px;color:var(--muted);">@${user.username || 'quinn_user'}</div>
-        </div>
-        <button class="btn-icon" id="open-settings-btn" style="position:absolute;top:12px;left:12px;"><i class="fas fa-gear" style="font-size:18px;"></i></button>
-      </div>
-
-      <!-- Stats -->
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;">
-        <div class="glass-card" style="padding:14px;display:flex;align-items:center;gap:10px;">
-          <i class="fas fa-coins" style="font-size:22px;color:var(--gold)"></i>
-          <div><div style="font-size:16px;font-weight:800;">${fmtQ(user.totalTokens)}</div><div style="font-size:10px;color:var(--muted);">${t('totalEarned')}</div></div>
-        </div>
-        <div class="glass-card" style="padding:14px;display:flex;align-items:center;gap:10px;">
-          <i class="fas fa-mouse-pointer" style="font-size:22px;color:var(--cyan)"></i>
-          <div><div style="font-size:16px;font-weight:800;">${fmtQ(user.clicks)}</div><div style="font-size:10px;color:var(--muted);">النقرات</div></div>
-        </div>
-        <div class="glass-card" style="padding:14px;display:flex;align-items:center;gap:10px;">
-          <i class="fas fa-users" style="font-size:22px;color:var(--pink)"></i>
-          <div><div style="font-size:16px;font-weight:800;">${user.referrals}</div><div style="font-size:10px;color:var(--muted);">${t('referrals')}</div></div>
-        </div>
-        <div class="glass-card" style="padding:14px;display:flex;align-items:center;gap:10px;">
-          <i class="fas fa-calendar" style="font-size:22px;color:var(--green)"></i>
-          <div><div style="font-size:16px;font-weight:800;">${days}</div><div style="font-size:10px;color:var(--muted);">يوم عضوية</div></div>
-        </div>
-      </div>
-
-      <!-- Level Progress -->
-      <div class="glass-card" style="padding:16px;margin-bottom:12px;">
-        <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:8px;">
-          <span>${t('level')} ${user.level} — ${rank.nameAr}</span>
-          <span style="color:var(--muted);font-size:11px;">${fmtQ(user.xp)} / ${fmtQ(xpNeeded)} XP</span>
-        </div>
-        <div style="height:8px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;">
-          <div style="height:100%;width:${progress}%;background:${rank.color};border-radius:4px;transition:width 1s ease;box-shadow:0 0 8px ${rank.color}60;"></div>
-        </div>
-      </div>
-
-      <!-- Wallet -->
-      <div class="glass-card" style="padding:14px 16px;margin-bottom:10px;">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <i class="fas fa-wallet" style="color:var(--gold)"></i>
-          <span style="font-size:13px;font-weight:700;">معرف المحفظة</span>
-          <button class="btn-icon" id="copy-wallet-btn"><i class="fas fa-copy"></i></button>
-        </div>
-        <div style="font-family:monospace;font-size:13px;color:var(--cyan);letter-spacing:1px;">${user.walletId}</div>
-      </div>
-
-      <!-- Invite -->
-      <button class="btn btn-outline" style="width:100%;justify-content:center;margin-bottom:10px;" id="invite-btn">
-        <i class="fas fa-share-nodes"></i> دعوة صديق (+5000 Quinn)
-      </button>
-
-      <!-- Secure Key -->
-      <div class="glass-card" style="padding:14px 16px;margin-bottom:10px;border-color:rgba(255,215,0,.15);background:rgba(255,215,0,.04);">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
-          <i class="fas fa-shield-halved" style="color:var(--gold)"></i>
-          <span style="font-size:13px;font-weight:700;">${t('secureKey')}</span>
-        </div>
-        <div id="sk-val" style="font-family:monospace;font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:8px;">●●●●-●●●●-●●●●-●●●●</div>
-        <div style="font-size:11px;color:var(--red);margin-bottom:10px;">${t('secureKeyWarn')}</div>
-        <button class="btn btn-sm" id="reveal-sk-btn"><i class="fas fa-eye"></i> إظهار المفتاح</button>
-      </div>
-
-      <!-- Settings Panel -->
-      <div id="settings-panel" class="glass-card" style="padding:16px;display:none;">
-        <h3 style="font-size:15px;margin-bottom:14px;"><i class="fas fa-gear"></i> ${t('settings')}</h3>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-          <span style="font-size:13px;">${t('language')}</span>
-          <div style="display:flex;gap:4px;">
-            ${['ar','en','ru','es'].map(l => `<button class="btn-lang ${getLang()===l?'active':''}" data-lang="${l}">${l.toUpperCase()}</button>`).join('')}
-          </div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05);">
-          <span style="font-size:13px;">${t('notifications')}</span>
-          <div class="toggle ${user.notifications?'on':''}" id="notif-toggle-profile"></div>
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
-          <span style="font-size:13px;">الدعم الفني</span>
-          <a href="https://t.me/Quinnofficialbot" style="font-size:12px;color:var(--cyan);">تواصل معنا</a>
-        </div>
-        <div style="text-align:center;padding-top:12px;font-size:10px;color:var(--muted);">Quinn Bot v3.0 • 2026 • @Quinnofficialbot</div>
-      </div>
-    </div>`;
-
-  // Events
-  document.getElementById('open-settings-btn')?.addEventListener('click', () => {
-    const p = document.getElementById('settings-panel');
-    p.style.display = p.style.display === 'none' ? 'block' : 'none';
-    setTimeout(() => p?.scrollIntoView({ behavior:'smooth' }), 50);
-  });
-  document.getElementById('copy-wallet-btn')?.addEventListener('click', () => {
-    navigator.clipboard?.writeText(user.walletId);
-    showToast(t('copied'), 'success');
-  });
-  document.getElementById('invite-btn')?.addEventListener('click', () => {
-    const link = `${BOT_LINK}?start=ref_${user.id}`;
-    if (window.Telegram?.WebApp) window.Telegram.WebApp.openTelegramLink(link);
-    else navigator.clipboard?.writeText(link);
-    showToast('تم نسخ رابط الدعوة!', 'success');
-  });
-  document.getElementById('reveal-sk-btn')?.addEventListener('click', () => {
-    document.getElementById('sk-val').textContent = user.secureKey || 'لم يتم توليد المفتاح بعد';
-    document.getElementById('sk-val').style.color = 'var(--gold)';
-  });
-  document.querySelectorAll('.btn-lang').forEach(btn => {
-    btn.addEventListener('click', () => setLang(btn.dataset.lang));
-  });
-  document.getElementById('notif-toggle-profile')?.addEventListener('click', function() {
-    user.notifications = !user.notifications;
-    this.classList.toggle('on');
-    user.saveToFirebase();
-  });
-}
-
-// ══════════════════════════════════════════
-// NOTIFICATIONS
-// ══════════════════════════════════════════
-function startNotifListener() {
-  let first = true;
-  try {
-    const q = query(collection(db, 'notifications'), orderBy('timestamp','desc'), limit(5));
-    onSnapshot(q, snap => {
-      snap.docChanges().forEach(change => {
-        if (change.type === 'added') {
-          const d = change.doc.data();
-          _notifs.unshift({ msg: d.message, time: d.timestamp?.toDate?.()?.toLocaleString?.('ar-SA') || 'الآن' });
-          if (!first) {
-            showToast(`🔔 ${d.message}`, 'info');
-            document.getElementById('notif-badge').style.display = 'block';
-          }
-        }
-      });
-      first = false;
+function initNavigation() {
+  const navBtns = document.querySelectorAll('.nav-btn');
+  navBtns.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const tab = btn.dataset.tab;
+      if (tab) switchTab(tab);
     });
-  } catch (_) {}
+  });
 }
 
-window.toggleNotifPanel = function() {
-  const panel = document.getElementById('notif-panel');
-  panel.classList.toggle('open');
-  document.getElementById('notif-badge').style.display = 'none';
-  const itemsEl = document.getElementById('notif-items');
-  if (_notifs.length) {
-    document.getElementById('notif-empty-msg').style.display = 'none';
-    itemsEl.innerHTML = _notifs.map(n => `
-      <div class="notif-item">
-        <div>${n.msg}</div>
-        <div class="notif-time">${n.time}</div>
-      </div>`).join('');
-  }
-  document.addEventListener('click', function closePanel(e) {
-    if (!panel.contains(e.target) && e.target.id !== 'hdr-notif-btn') {
-      panel.classList.remove('open');
-      document.removeEventListener('click', closePanel);
+async function switchTab(tabId) {
+  if (!userRef.current) return;
+  
+  // تحديث نشاط الزر
+  document.querySelectorAll('.nav-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.tab === tabId);
+  });
+  
+  _activeTab = tabId;
+  const container = document.getElementById('tab-content');
+  
+  // عرض مؤشر تحميل بسيط
+  container.innerHTML = `<div class="loading-spinner"><i class="fas fa-spinner fa-pulse"></i> جاري التحميل...</div>`;
+  
+  try {
+    switch (tabId) {
+      case 'home':
+        await renderHomeTab(container);
+        break;
+      case 'vault':
+        await renderVaultTab(container, userRef.current);
+        break;
+      case 'exchange':
+        await renderExchangeTab(container, userRef.current);
+        initExchange(userRef.current);
+        break;
+      case 'arena':
+        await renderArenaTab(container, userRef.current);
+        break;
+      case 'leaderboard':
+        await renderLeaderboardTab(container, userRef.current);
+        break;
+      case 'profile':
+        await renderProfileTab(container, userRef.current);
+        break;
+      default:
+        container.innerHTML = '<p>تبويب غير معروف</p>';
     }
-  }, { once: true });
-};
+  } catch (err) {
+    console.error('خطأ في تحميل التبويب:', err);
+    container.innerHTML = '<p style="color:var(--red)">حدث خطأ أثناء تحميل المحتوى</p>';
+  }
+}
 
-// ══════════════════════════════════════════
-// CONNECTION STATUS
-// ══════════════════════════════════════════
-function bindConnectionStatus() {
+// دوال مؤقتة لتحميل التبويبات غير المكتملة
+async function renderHomeTab(container) {
+  const user = userRef.current;
+  const rank = getRank(user.xp || 0);
+  const { level, currentXP, nextXP } = getLevelProgress(user.xp || 0);
+  container.innerHTML = `
+    <div class="glass-card" style="padding:20px;text-align:center;">
+      <i class="fas fa-home" style="font-size:32px;color:var(--gold);margin-bottom:12px;"></i>
+      <h2>مرحباً ${user.first_name || 'بطل'}!</h2>
+      <p style="margin:8px 0;">رصيدك: <strong style="color:var(--gold);">${Math.floor(user.balance).toLocaleString()}</strong> عملة</p>
+      <div style="margin:16px 0;">
+        <div>المستوى ${level} - ${rank.name}</div>
+        <div class="xp-bar" style="height:6px;background:rgba(255,255,255,.1);border-radius:4px;margin:8px 0;">
+          <div style="width:${(currentXP/nextXP)*100}%;height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:4px;"></div>
+        </div>
+        <small>${currentXP} / ${nextXP} XP</small>
+      </div>
+      <p style="color:var(--muted);">استكشف التبويبات الأخرى للعب والتداول!</p>
+    </div>
+  `;
+}
+
+async function renderArenaTab(container, user) {
+  container.innerHTML = `
+    <div class="glass-card" style="padding:16px;">
+      <h3><i class="fas fa-gamepad"></i> ساحة الألعاب</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div class="game-card" onclick="alert('لعبة Pulse Check')">
+          <i class="fas fa-heartbeat"></i> Pulse Check
+        </div>
+        <div class="game-card" onclick="alert('لعبة Cipher Break')">
+          <i class="fas fa-key"></i> Cipher Break
+        </div>
+        <div class="game-card" onclick="alert('لعبة Chart Oracle')">
+          <i class="fas fa-chart-bar"></i> Chart Oracle
+        </div>
+        <div class="game-card" onclick="alert('لعبة Rekt Miner')">
+          <i class="fas fa-digging"></i> Rekt Miner
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+async function renderProfileTab(container, user) {
+  const rank = getRank(user.xp || 0);
+  container.innerHTML = `
+    <div class="glass-card" style="padding:20px;text-align:center;">
+      <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--cyan));margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:32px;color:#000;">
+        ${(user.first_name || 'Q').charAt(0).toUpperCase()}
+      </div>
+      <h3>${user.first_name || 'لاعب'} ${user.last_name || ''}</h3>
+      <p style="color:var(--muted);">@${user.username || 'username'}</p>
+      <div style="display:flex;justify-content:center;gap:24px;margin:20px 0;">
+        <div><strong>${rank.name}</strong><br><small>الرتبة</small></div>
+        <div><strong>${Math.floor(user.balance).toLocaleString()}</strong><br><small>الرصيد</small></div>
+      </div>
+      <button class="btn-primary" onclick="alert('تسجيل الخروج')">تسجيل الخروج</button>
+    </div>
+  `;
+}
+
+function initConnectionWatcher() {
   const bar = document.getElementById('conn-bar');
   function update() {
     if (navigator.onLine) {
-      bar.className = 'online'; bar.textContent = '🟢 متصل بالإنترنت';
+      bar.className = 'online';
+      bar.innerHTML = '<i class="fas fa-circle" style="font-size:8px;"></i> متصل بالإنترنت';
       setTimeout(() => bar.classList.remove('online'), 2000);
     } else {
-      bar.className = 'offline'; bar.textContent = '🔴 لا يوجد اتصال — البيانات محفوظة محلياً';
+      bar.className = 'offline';
+      bar.innerHTML = '<i class="fas fa-exclamation-triangle"></i> غير متصل - جاري إعادة المحاولة...';
     }
   }
-  window.addEventListener('online',  update);
+  window.addEventListener('online', update);
   window.addEventListener('offline', update);
+  update();
 }
 
-// ══════════════════════════════════════════
-// REFERRAL & STARS
-// ══════════════════════════════════════════
-async function handleReferral(referrerId, user) {
-  if (user.referredBy || String(user.id) === String(referrerId)) return;
-  try {
-    const { doc: fDoc, updateDoc: fUpdate, increment: fInc } = await import('https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js');
-    user.referredBy = referrerId;
-    user.gainTokens(1000);
-    user.addTransaction('referral_bonus', 1000, { from: referrerId });
-    await fUpdate(fDoc(db, 'users', String(referrerId)), { referrals: fInc(1), tokens: fInc(5000), totalTokens: fInc(5000) });
-    user.saveToFirebase();
-    showToast('🎁 حصلت على 1000 Quinn كمكافأة إحالة!', 'success');
-  } catch (err) { console.error('[Referral]', err); }
-}
-
-async function handleStarsPayment(param, user) {
-  const pts = param.split('_');
-  const q   = parseInt(pts[2] || 0);
-  if (q > 0) {
-    user.gainTokens(q);
-    user.addTransaction('stars_purchase', q);
-    user.saveToFirebase();
-    showToast(`⭐ تم إضافة ${q} Quinn من النجوم!`, 'success');
+function toggleNotifPanel() {
+  const panel = document.getElementById('notif-panel');
+  panel.classList.toggle('open');
+  if (panel.classList.contains('open')) {
+    renderNotifications();
   }
 }
 
-// ══════════════════════════════════════════
-// AI ASSISTANT
-// ══════════════════════════════════════════
-window.openAIModal  = function() {
-  document.getElementById('ai-modal').classList.add('open');
+function renderNotifications() {
+  const container = document.getElementById('notif-items');
+  const emptyMsg = document.getElementById('notif-empty-msg');
+  if (_notifs.length === 0) {
+    container.innerHTML = '';
+    emptyMsg.style.display = 'block';
+  } else {
+    emptyMsg.style.display = 'none';
+    container.innerHTML = _notifs.map(n => `
+      <div class="notif-item">
+        ${n.message}
+        <div class="notif-time">${n.time}</div>
+      </div>
+    `).join('');
+  }
+}
+
+function openAIModal() {
   document.getElementById('ai-modal-overlay').classList.add('show');
-  document.getElementById('ai-input').focus();
-};
-window.closeAIModal = function() {
-  document.getElementById('ai-modal').classList.remove('open');
-  document.getElementById('ai-modal-overlay').classList.remove('show');
-};
-window.sendAIMessage = async function() {
-  const input = document.getElementById('ai-input');
-  const msg   = input.value.trim(); if (!msg) return;
-  input.value = '';
-
-  const chat = document.getElementById('ai-chat-area');
-  chat.innerHTML += `<div class="ai-msg user">${msg}</div>`;
-  chat.innerHTML += `<div class="ai-msg bot loading" id="ai-loading">⏳ جاري التفكير...</div>`;
-  chat.scrollTop  = chat.scrollHeight;
-
-  try {
-    const u    = userRef.current;
-    const ctx  = u ? `المستخدم ${u.name} | رتبة ${u.rank?.nameAr} | رصيد ${fmtQ(u.tokens)} Quinn` : '';
-    const res  = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_KEY}`,
-      { method:'POST', headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({ contents:[{ parts:[{ text: `أنت مساعد Quinn Bot. ${ctx}. أجب بالعربية بشكل مختصر وودي. السؤال: ${msg}` }] }] }) }
-    );
-    const data = await res.json();
-    const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || 'لم أستطع الإجابة.';
-    document.getElementById('ai-loading')?.remove();
-    chat.innerHTML += `<div class="ai-msg bot">${reply}</div>`;
-  } catch (_) {
-    document.getElementById('ai-loading')?.remove();
-    chat.innerHTML += `<div class="ai-msg bot">عذراً، حدث خطأ في الاتصال.</div>`;
-  }
-  chat.scrollTop = chat.scrollHeight;
-};
-document.getElementById('ai-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') window.sendAIMessage();
-});
-
-// ══════════════════════════════════════════
-// TOAST
-// ══════════════════════════════════════════
-window.showToast = function(msg, type='info') {
-  const el = document.createElement('div');
-  el.className = `toast-item ${type}`;
-  el.textContent = msg;
-  document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 3200);
-};
-// Export for modules
-window._showToast = window.showToast;
-
-// ══════════════════════════════════════════
-// UTILITIES
-// ══════════════════════════════════════════
-function fmtQ(n) {
-  n = Math.floor(n||0);
-  if (n>=1e9) return (n/1e9).toFixed(2)+'B';
-  if (n>=1e6) return (n/1e6).toFixed(2)+'M';
-  if (n>=1e3) return (n/1e3).toFixed(1)+'K';
-  return n.toLocaleString();
+  document.getElementById('ai-modal').classList.add('open');
 }
 
-// ══════════════════════════════════════════
-// START
-// ══════════════════════════════════════════
-boot();
-</script>
+function closeAIModal() {
+  document.getElementById('ai-modal-overlay').classList.remove('show');
+  document.getElementById('ai-modal').classList.remove('open');
+}
 
-<!-- Fix: export showToast for JS modules -->
-<script>
-// Bridge for module imports that call showToast
-window.addEventListener('DOMContentLoaded', () => {
-  // re-export after module init
-  setTimeout(() => {
-    if (!window.showToast) window.showToast = (m,t) => console.log(m);
-  }, 2000);
+async function sendAIMessage() {
+  const input = document.getElementById('ai-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  
+  const chatArea = document.getElementById('ai-chat-area');
+  chatArea.innerHTML += `<div class="ai-msg user">${msg}</div>`;
+  input.value = '';
+  
+  // رد بسيط (يمكن ربطه بـ Gemini لاحقاً)
+  chatArea.innerHTML += `<div class="ai-msg bot">شكراً لسؤالك! فريق Quinn سيساعدك قريباً.</div>`;
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// تشغيل عملية الإقلاع
+boot().catch(err => {
+  console.error('Boot error:', err);
+  _showFatalError('حدث خطأ غير متوقع');
 });
+
 </script>
 </body>
 </html>
