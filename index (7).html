@@ -1,0 +1,2441 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#030B1A">
+<title>Quinn Bot</title>
+
+<!-- Telegram WebApp SDK -->
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<!-- Firebase Compat SDK (NOT ES modules - works everywhere) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+
+<!-- Font Awesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+
+<style>
+/* ═══════ ROOT ═══════ */
+:root {
+  --gold:#FFD700; --gold2:#FFA500; --cyan:#00F5FF;
+  --green:#00FF88; --red:#FF4757; --purple:#9B59B6; --pink:#FF6B9D;
+  --bg0:#030B1A; --bg1:#071122; --bg2:#0C1830;
+  --glass:rgba(255,255,255,0.05); --border:rgba(255,255,255,0.08);
+  --text:#F0F4FF; --muted:rgba(255,255,255,0.45);
+  --nav:68px; --hdr:58px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg0);color:var(--text);font-family:'Cairo',sans-serif;-webkit-tap-highlight-color:transparent;user-select:none}
+
+/* ═══════ ANIMATED BG ═══════ */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(ellipse 80% 60% at 10% 5%,   rgba(0,245,255,.07) 0%,transparent 65%),
+    radial-gradient(ellipse 60% 80% at 90% 15%,  rgba(255,215,0,.05) 0%,transparent 65%),
+    radial-gradient(ellipse 50% 50% at 50% 50%,  rgba(155,89,182,.04) 0%,transparent 70%),
+    radial-gradient(ellipse 40% 60% at 5% 85%,   rgba(0,255,136,.04) 0%,transparent 65%),
+    radial-gradient(ellipse 45% 45% at 95% 80%,  rgba(255,107,157,.04) 0%,transparent 65%),
+    radial-gradient(ellipse 35% 35% at 60% 95%,  rgba(0,245,255,.03) 0%,transparent 65%),
+    radial-gradient(ellipse 70% 70% at 50% 50%,  rgba(255,71,87,.02) 0%,transparent 70%);
+  animation:bgPulse 10s ease-in-out infinite alternate;
+}
+@keyframes bgPulse{0%{opacity:.7}100%{opacity:1}}
+
+/* ═══════ SHELL ═══════ */
+#app{position:fixed;inset:0;z-index:1;display:flex;flex-direction:column;opacity:0;transition:opacity .4s}
+#app.show{opacity:1}
+
+/* ═══════ HEADER ═══════ */
+#hdr{
+  height:var(--hdr);flex-shrink:0;
+  background:rgba(5,10,25,.92);
+  backdrop-filter:blur(30px) saturate(200%);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 12px;gap:10px;
+  position:relative;z-index:20;
+}
+#hdr::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,.3),rgba(0,245,255,.2),transparent)}
+.hdr-av{
+  width:38px;height:38px;border-radius:50%;flex-shrink:0;cursor:pointer;
+  background:linear-gradient(135deg,rgba(255,215,0,.15),rgba(0,245,255,.08));
+  border:2px solid rgba(255,215,0,.35);
+  box-shadow:0 0 12px rgba(255,215,0,.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:900;color:var(--gold);
+  position:relative;overflow:hidden;
+}
+.hdr-av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
+.hdr-info{flex:1;min-width:0}
+.hdr-name{font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hdr-rank{font-size:10px;font-weight:700;margin-top:1px}
+.hdr-right{display:flex;align-items:center;gap:7px}
+.hdr-pill{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(255,215,0,.08);border:1px solid rgba(255,215,0,.2);
+  border-radius:18px;padding:4px 10px;cursor:pointer;
+}
+#hdr-bal{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:700;color:var(--gold)}
+.hdr-icon-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:rgba(255,255,255,.05);border:1px solid var(--border);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:13px;color:var(--muted);
+  position:relative;
+}
+#notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 5px var(--red);display:none}
+
+/* ═══════ CONTENT ═══════ */
+#content{
+  flex:1;overflow-y:auto;overflow-x:hidden;
+  padding:12px 12px calc(var(--nav) + 16px + env(safe-area-inset-bottom));
+}
+#content::-webkit-scrollbar{width:2px}
+#content::-webkit-scrollbar-thumb{background:rgba(255,215,0,.12)}
+
+/* ═══════ NAV ═══════ */
+#nav{
+  height:calc(var(--nav) + env(safe-area-inset-bottom));
+  padding-bottom:env(safe-area-inset-bottom);
+  background:rgba(4,8,20,.93);
+  backdrop-filter:blur(30px) saturate(180%);
+  border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  padding-left:4px;padding-right:4px;
+  flex-shrink:0;position:relative;z-index:20;
+}
+#nav::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,215,0,.2),rgba(0,245,255,.18),transparent)}
+.nb{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;
+  padding:7px 2px;border:none;background:transparent;
+  color:var(--muted);cursor:pointer;font-family:'Cairo',sans-serif;
+  border-radius:10px;transition:all .22s;position:relative;
+}
+.nb i{font-size:18px;transition:transform .22s,color .22s;display:block}
+.nb span{font-size:8px;font-weight:700;white-space:nowrap;transition:color .22s}
+.nb.on i{transform:translateY(-3px) scale(1.15);color:var(--gold)}
+.nb.on span{color:var(--gold)}
+.nb.on::after{content:'';position:absolute;bottom:4px;left:50%;transform:translateX(-50%);width:18px;height:2.5px;border-radius:2px;background:linear-gradient(90deg,var(--gold),var(--cyan));box-shadow:0 0 6px rgba(255,215,0,.5)}
+
+/* ═══════ GLASS CARD ═══════ */
+.gc{
+  background:rgba(255,255,255,.04);
+  backdrop-filter:blur(20px) saturate(180%);
+  border:1px solid var(--border);border-radius:20px;
+  position:relative;overflow:hidden;
+}
+.gc::before{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(255,255,255,.055) 0%,transparent 55%);pointer-events:none}
+.gc-gold{background:rgba(255,215,0,.05);border-color:rgba(255,215,0,.14)}
+
+/* ═══════ BUTTONS ═══════ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:11px 18px;border-radius:14px;border:none;
+  font-family:'Cairo',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+}
+.btn:active{transform:scale(.96)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold2));color:#000;box-shadow:0 4px 18px rgba(255,215,0,.25)}
+.btn-green{background:rgba(0,255,136,.14);border:1px solid rgba(0,255,136,.22);color:var(--green)}
+.btn-red{background:rgba(255,71,87,.14);border:1px solid rgba(255,71,87,.22);color:var(--red)}
+.btn-cyan{background:rgba(0,245,255,.12);border:1px solid rgba(0,245,255,.2);color:var(--cyan)}
+.btn-ghost{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--text)}
+.btn-full{width:100%;justify-content:center}
+.btn-sm{padding:6px 12px;font-size:11px;border-radius:9px}
+.btn-disabled{opacity:.4;pointer-events:none}
+
+/* ═══════ INPUT ═══════ */
+.inp{
+  width:100%;padding:11px 14px;border-radius:13px;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+  color:var(--text);font-size:14px;font-family:'Cairo',sans-serif;outline:none;
+  transition:border .2s;
+}
+.inp:focus{border-color:rgba(255,215,0,.4)}
+.inp::placeholder{color:var(--muted)}
+.inp-shake{animation:shake .4s ease}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* ═══════ TOGGLE ═══════ */
+.tog{width:42px;height:23px;border-radius:12px;background:rgba(255,255,255,.1);position:relative;cursor:pointer;transition:.3s;flex-shrink:0}
+.tog.on{background:rgba(0,255,136,.45)}
+.tog::before{content:'';position:absolute;top:2.5px;left:2.5px;width:18px;height:18px;border-radius:50%;background:white;transition:.3s}
+.tog.on::before{left:21.5px}
+
+/* ═══════ SECTIONS ═══════ */
+.sec-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:800;margin-bottom:12px}
+.sec-title i{color:var(--gold)}
+.row{display:flex;align-items:center;gap:10px}
+.col{display:flex;flex-direction:column;gap:4px}
+.mt8{margin-top:8px}
+.mt12{margin-top:12px}
+.mb12{margin-bottom:12px}
+.gold{color:var(--gold)}
+.cyan{color:var(--cyan)}
+.green{color:var(--green)}
+.red{color:var(--red)}
+.muted{color:var(--muted)}
+.small{font-size:11px}
+.mono{font-family:monospace;letter-spacing:1px}
+
+/* ═══════ ENERGY BAR ═══════ */
+.ebar{height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden}
+.efill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--cyan),var(--green));transition:width .5s ease;box-shadow:0 0 7px rgba(0,245,255,.3)}
+
+/* ═══════ LEVEL BAR ═══════ */
+.lbar{height:7px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;margin-top:6px}
+.lfill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--gold),var(--gold2));transition:width 1s ease}
+
+/* ═══════ TAP ORB ═══════ */
+.tap-wrap{width:170px;height:170px;position:relative;margin:0 auto 14px}
+.tap-ring-a{position:absolute;inset:-13px;border-radius:50%;border:2px solid rgba(255,215,0,.12);animation:rot 8s linear infinite}
+.tap-ring-b{position:absolute;inset:-6px;border-radius:50%;border:1px dashed rgba(0,245,255,.13);animation:rot 4s linear infinite reverse}
+@keyframes rot{to{transform:rotate(360deg)}}
+.tap-orb{
+  width:170px;height:170px;border-radius:50%;cursor:pointer;
+  background:radial-gradient(circle at 35% 35%,rgba(255,215,0,.22),rgba(255,215,0,.05) 60%,transparent);
+  border:2.5px solid rgba(255,215,0,.28);
+  box-shadow:0 0 50px rgba(255,215,0,.12),inset 0 0 28px rgba(255,215,0,.05);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:.12s;position:relative;overflow:hidden;
+}
+.tap-orb::before{content:'';position:absolute;inset:0;border-radius:50%;background:linear-gradient(135deg,rgba(255,255,255,.1) 0%,transparent 50%)}
+.tap-orb.press{transform:scale(.92);box-shadow:0 0 25px rgba(255,215,0,.2)}
+.tap-orb i{font-size:56px;filter:drop-shadow(0 4px 12px rgba(255,215,0,.5))}
+.tap-orb .pow{font-size:10px;color:rgba(255,215,0,.7);font-weight:700;margin-top:4px}
+.tap-float{position:fixed;pointer-events:none;z-index:999;font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--gold);text-shadow:0 0 10px rgba(255,215,0,.6);animation:floatUp .9s ease forwards}
+@keyframes floatUp{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-72px) scale(.7);opacity:0}}
+
+/* ═══════ STATS GRID ═══════ */
+.sgrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:13px}
+.scard{padding:12px 8px;text-align:center}
+.scard i{font-size:19px;display:block;margin-bottom:5px}
+.scard .sv{font-size:14px;font-weight:800;font-family:'Orbitron',sans-serif}
+.scard .sl{font-size:9px;color:var(--muted);margin-top:2px}
+
+/* ═══════ GAME SCREEN ═══════ */
+#game-screen{position:fixed;inset:0;z-index:100;background:var(--bg0);display:none;flex-direction:column;overflow:hidden}
+#game-screen.open{display:flex;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%);opacity:0}to{transform:none;opacity:1}}
+.game-hdr{padding:14px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0}
+.game-back{width:35px;height:35px;border-radius:50%;background:rgba(255,255,255,.08);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;color:var(--text)}
+.game-body{flex:1;overflow-y:auto;padding:14px}
+
+/* ═══════ MODAL ═══════ */
+.modal-bg{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.open{display:flex;animation:fadeIn .2s ease}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal-box{width:100%;max-width:360px;padding:20px;background:rgba(8,14,30,.96);border:1px solid var(--border);border-radius:22px}
+.modal-box.gold{border-color:rgba(255,215,0,.2)}
+.modal-hdr{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.modal-hdr h3{flex:1;font-size:16px;font-weight:800}
+.modal-close{background:transparent;border:none;color:var(--muted);cursor:pointer;font-size:18px;padding:4px}
+
+/* ═══════ TOAST ═══════ */
+#toast-wrap{position:fixed;bottom:calc(var(--nav) + 12px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);z-index:500;display:flex;flex-direction:column;align-items:center;gap:6px;pointer-events:none}
+.toast{background:rgba(12,18,38,.97);border:1px solid var(--border);backdrop-filter:blur(20px);padding:9px 18px;border-radius:28px;font-size:12px;font-weight:700;white-space:nowrap;animation:toastIn .3s ease;max-width:85vw;text-align:center}
+@keyframes toastIn{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+.toast.s{border-color:rgba(0,255,136,.25);color:var(--green)}
+.toast.e{border-color:rgba(255,71,87,.25);color:var(--red)}
+.toast.w{border-color:rgba(255,215,0,.25);color:var(--gold)}
+.toast.i{border-color:rgba(0,245,255,.2);color:var(--cyan)}
+
+/* ═══════ BOOT SCREEN ═══════ */
+#boot{position:fixed;inset:0;z-index:9999;background:var(--bg0);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.boot-orb{width:90px;height:90px;position:relative}
+.boot-r1{position:absolute;inset:0;border-radius:50%;border:3px solid rgba(255,215,0,.12);border-top-color:var(--gold);animation:rot 1.2s linear infinite}
+.boot-r2{position:absolute;inset:10px;border-radius:50%;border:2px solid rgba(0,245,255,.1);border-bottom-color:var(--cyan);animation:rot 2s linear infinite reverse}
+.boot-c{position:absolute;inset:20px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,0,.15),rgba(255,215,0,.03));border:1px solid rgba(255,215,0,.2);display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--gold)}
+.boot-name{font-family:'Orbitron',sans-serif;font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:3px}
+.boot-prog{width:140px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.boot-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:2px;transition:width .3s ease;box-shadow:0 0 7px rgba(255,215,0,.4)}
+
+/* ═══════ LEADERBOARD ═══════ */
+.lb-item{display:flex;align-items:center;gap:10px;padding:10px;border-radius:14px;margin-bottom:7px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+.lb-item.me{background:rgba(255,215,0,.06);border-color:rgba(255,215,0,.15)}
+.lb-rank{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;width:26px;text-align:center}
+.lb-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;flex-shrink:0;border:2px solid}
+.lb-info{flex:1}
+.lb-name{font-size:12px;font-weight:700}
+.lb-sub{font-size:9px;color:var(--muted)}
+.lb-bal{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;color:var(--gold)}
+
+/* ═══════ TX LIST ═══════ */
+.tx{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.04)}
+.tx:last-child{border-bottom:none}
+.tx-ic{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.tx-ic.in{background:rgba(0,255,136,.1);border:1px solid rgba(0,255,136,.18)}
+.tx-ic.out{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.18)}
+.tx-info{flex:1}
+.tx-t{font-size:12px;font-weight:700}
+.tx-d{font-size:10px;color:var(--muted);margin-top:1px}
+.tx-a{font-size:13px;font-weight:800;font-family:'Orbitron',sans-serif}
+
+/* ═══════ EMPTY STATE ═══════ */
+.empty{text-align:center;padding:28px 16px;color:var(--muted)}
+.empty i{font-size:30px;display:block;margin-bottom:8px;opacity:.35}
+.empty p{font-size:12px}
+
+/* ═══════ TABS ═══════ */
+.tab-row{display:flex;gap:7px;margin-bottom:13px;overflow-x:auto;padding-bottom:2px}
+.tab-row::-webkit-scrollbar{display:none}
+.tabn{padding:7px 15px;border-radius:18px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:11px;font-weight:700;font-family:'Cairo',sans-serif;white-space:nowrap;transition:.18s}
+.tabn.on{background:rgba(255,215,0,.1);border-color:rgba(255,215,0,.25);color:var(--gold)}
+
+/* ═══════ GAMES ═══════ */
+.game-card{display:flex;align-items:center;gap:12px;padding:13px 14px;margin-bottom:9px}
+.game-ic{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:21px;flex-shrink:0;border:1px solid rgba(255,215,0,.12);background:rgba(255,215,0,.07)}
+.game-info{flex:1}
+.game-title{font-size:13px;font-weight:800;margin-bottom:2px}
+.game-desc{font-size:10px;color:var(--muted)}
+.game-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:8px;display:inline-block;margin-top:3px;background:rgba(255,71,87,.15);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+
+/* ═══════ PULSE CHECK ═══════ */
+.pc-target{width:160px;height:160px;border-radius:50%;margin:14px auto;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;border:3px solid;transition:.15s}
+.pc-wait{border-color:rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--muted)}
+.pc-ready{border-color:var(--green);background:rgba(0,255,136,.09);box-shadow:0 0 28px rgba(0,255,136,.25);animation:readyPls .4s ease infinite alternate}
+@keyframes readyPls{from{transform:scale(1)}to{transform:scale(1.04)}}
+.pc-hit{border-color:var(--gold);background:rgba(255,215,0,.09)}
+.pc-miss{border-color:var(--red);background:rgba(255,71,87,.09)}
+
+/* ═══════ CIPHER ═══════ */
+.numpad{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.nkey{padding:15px 8px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-size:16px;font-weight:800;cursor:pointer;font-family:'Cairo',sans-serif;text-align:center}
+.nkey.del{color:var(--red);border-color:rgba(255,71,87,.2)}
+.nkey.ok{color:var(--green);border-color:rgba(0,255,136,.2)}
+
+/* ═══════ MINER ═══════ */
+.rock{display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:50%;cursor:pointer;position:relative;transition:.1s;margin:0 auto}
+.rock:active{transform:scale(.93);filter:brightness(1.4)}
+.rock-hpb{position:absolute;top:7px;left:50%;transform:translateX(-50%);width:65%;height:5px;background:rgba(255,255,255,.1);border-radius:3px;overflow:hidden}
+.rock-hpf{height:100%;background:linear-gradient(90deg,var(--green),var(--gold));transition:width .15s}
+.ptcl{position:fixed;width:7px;height:7px;border-radius:50%;background:var(--gold);pointer-events:none;z-index:9999;animation:ptcl .55s ease forwards}
+@keyframes ptcl{0%{transform:translate(0,0) scale(1);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(0);opacity:0}}
+
+/* ═══════ WHALE ═══════ */
+.ocean{width:100%;height:200px;border-radius:18px;overflow:hidden;position:relative;background:linear-gradient(180deg,rgba(0,25,55,.6),rgba(0,8,35,.8));border:1px solid rgba(0,245,255,.08);margin:8px 0}
+.whale{position:absolute;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;animation:wh 2s ease-in-out;user-select:none}
+@keyframes wh{0%{opacity:0;transform:scale(.4)}15%{opacity:1;transform:scale(1)}85%{opacity:1}100%{opacity:0}}
+
+/* ═══════ GAMBLE ═══════ */
+.die{width:65px;height:65px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:38px;background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12)}
+.die.roll{animation:droll 1s ease infinite}
+@keyframes droll{0%,100%{transform:rotate(0)}25%{transform:rotate(90deg)}75%{transform:rotate(270deg)}}
+
+/* ═══════ EXCHANGE / VAULT ═══════ */
+.price-big{font-family:'Orbitron',sans-serif;font-size:30px;font-weight:900;color:var(--gold)}
+.chg{font-size:12px;font-weight:700;padding:3px 10px;border-radius:18px;display:inline-block;margin-top:4px}
+.chg.up{background:rgba(0,255,136,.13);color:var(--green)}
+.chg.dn{background:rgba(255,71,87,.13);color:var(--red)}
+.chart-wrap{height:130px;margin:10px 0}
+.quick-btns{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.qb{padding:5px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);cursor:pointer;font-size:11px;font-weight:700;font-family:'Cairo',sans-serif}
+.qb:active{background:rgba(255,215,0,.12)}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+
+/* ═══════ SCROLLBAR ═══════ */
+::-webkit-scrollbar{width:3px;height:3px}
+::-webkit-scrollbar-thumb{background:rgba(255,215,0,.12);border-radius:2px}
+</style>
+</head>
+<body>
+
+<!-- BOOT -->
+<div id="boot">
+  <div class="boot-orb">
+    <div class="boot-r1"></div>
+    <div class="boot-r2"></div>
+    <div class="boot-c"><i class="fas fa-coins"></i></div>
+  </div>
+  <div class="boot-name">QUINN</div>
+  <div style="font-size:11px;color:var(--muted);letter-spacing:3px">BOT · 2026</div>
+  <div class="boot-prog"><div class="boot-fill" id="bfill"></div></div>
+</div>
+
+<!-- APP SHELL -->
+<div id="app">
+  <!-- Header -->
+  <header id="hdr">
+    <div class="hdr-av" id="hdr-av" onclick="Q.openProfile()">
+      <span id="hdr-av-letter">Q</span>
+    </div>
+    <div class="hdr-info">
+      <div class="hdr-name" id="hdr-name">تحميل...</div>
+      <div class="hdr-rank" id="hdr-rank">...</div>
+    </div>
+    <div class="hdr-right">
+      <div class="hdr-pill">
+        <i class="fas fa-coins" style="font-size:11px;color:var(--gold)"></i>
+        <span id="hdr-bal">0</span>
+      </div>
+      <div class="hdr-icon-btn" onclick="Q.toggleNotifs()">
+        <i class="fas fa-bell"></i>
+        <div id="notif-dot"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Content -->
+  <main id="content"></main>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <button class="nb on" data-tab="home"  id="nb-home">
+      <i class="fas fa-house"></i><span>الرئيسية</span>
+    </button>
+    <button class="nb" data-tab="wallet"   id="nb-wallet">
+      <i class="fas fa-wallet"></i><span>المحفظة</span>
+    </button>
+    <button class="nb" data-tab="exchange" id="nb-exchange">
+      <i class="fas fa-chart-line"></i><span>التداول</span>
+    </button>
+    <button class="nb" data-tab="arena"    id="nb-arena">
+      <i class="fas fa-gamepad"></i><span>الساحة</span>
+    </button>
+    <button class="nb" data-tab="vault"    id="nb-vault">
+      <i class="fas fa-vault"></i><span>Vault</span>
+    </button>
+    <button class="nb" data-tab="leaders"  id="nb-leaders">
+      <i class="fas fa-trophy"></i><span>المتصدرون</span>
+    </button>
+    <button class="nb" data-tab="profile"  id="nb-profile">
+      <i class="fas fa-user"></i><span>الملف</span>
+    </button>
+  </nav>
+</div>
+
+<!-- Game Screen (fullscreen overlay) -->
+<div id="game-screen">
+  <div class="game-hdr">
+    <div class="game-back" id="game-back"><i class="fas fa-arrow-right"></i></div>
+    <div style="font-size:16px;font-weight:800;flex:1" id="game-title">اللعبة</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:12px;color:var(--gold)" id="game-stat">0</div>
+  </div>
+  <div class="game-body" id="game-body"></div>
+</div>
+
+<!-- Profile Modal -->
+<div class="modal-bg" id="profile-modal">
+  <div class="modal-box gold" style="max-width:380px">
+    <div class="modal-hdr">
+      <i class="fas fa-id-card" style="font-size:20px;color:var(--gold)"></i>
+      <h3>Quinn ID</h3>
+      <button class="modal-close" onclick="Q.closeModal('profile-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="profile-modal-body"></div>
+  </div>
+</div>
+
+<!-- Send Modal -->
+<div class="modal-bg" id="send-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <i class="fas fa-paper-plane" style="font-size:18px;color:var(--cyan)"></i>
+      <h3>تحويل برقي</h3>
+      <button class="modal-close" onclick="Q.closeModal('send-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="col" style="gap:10px">
+      <input class="inp" id="send-to" placeholder="معرف المستلم (QN-XXXX-XXXX)" autocomplete="off">
+      <input class="inp" id="send-amt" type="number" placeholder="الكمية" min="1">
+      <div class="small muted" id="send-bal-hint"></div>
+      <button class="btn btn-gold btn-full" onclick="Q.execSend()">
+        <i class="fas fa-paper-plane"></i> إرسال
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Buy Gold Modal -->
+<div class="modal-bg" id="buy-modal">
+  <div class="modal-box gold">
+    <div class="modal-hdr">
+      <i class="fas fa-arrow-trend-up" style="color:var(--green)"></i>
+      <h3>شراء عقد فوري</h3>
+      <button class="modal-close" onclick="Q.closeModal('buy-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="col" style="gap:10px">
+      <div style="padding:10px;background:rgba(0,255,136,.07);border-radius:12px;font-size:12px;color:var(--green)">
+        <i class="fas fa-info-circle"></i> كل شراء يرفع السعر العالمي 0.1%
+      </div>
+      <input class="inp" id="buy-g" type="number" placeholder="الكمية بالغرام" step="0.001" min="0.001" oninput="Q.calcBuy()">
+      <div class="small" id="buy-cost">التكلفة: — Quinn</div>
+      <button class="btn btn-green btn-full" onclick="Q.execBuy()">
+        <i class="fas fa-cart-shopping"></i> شراء
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Sell Gold Modal -->
+<div class="modal-bg" id="sell-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <i class="fas fa-arrow-trend-down" style="color:var(--red)"></i>
+      <h3>بيع عقد فوري</h3>
+      <button class="modal-close" onclick="Q.closeModal('sell-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="col" style="gap:10px">
+      <div style="padding:10px;background:rgba(255,71,87,.07);border-radius:12px;font-size:12px;color:var(--red)">
+        <i class="fas fa-info-circle"></i> كل بيع يخفض السعر العالمي 0.1%
+      </div>
+      <input class="inp" id="sell-g" type="number" placeholder="الكمية بالغرام" step="0.001" min="0.001" oninput="Q.calcSell()">
+      <div class="small" id="sell-rev">ستحصل: — Quinn</div>
+      <button class="btn btn-red btn-full" onclick="Q.execSell()">
+        <i class="fas fa-hand-holding-dollar"></i> بيع
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Vault Deposit Modal -->
+<div class="modal-bg" id="vault-dep-modal">
+  <div class="modal-box gold">
+    <div class="modal-hdr">
+      <i class="fas fa-vault" style="color:var(--gold)"></i>
+      <h3>إيداع في Vault</h3>
+      <button class="modal-close" onclick="Q.closeModal('vault-dep-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div class="col" style="gap:10px">
+      <input class="inp" id="vd-amt" type="number" placeholder="الكمية (الحد الأدنى 1000)" min="1000" oninput="">
+      <div class="small muted" id="vd-hint">رصيدك: — Quinn</div>
+      <div style="padding:10px;background:rgba(255,215,0,.06);border-radius:12px;font-size:11px;color:var(--muted)">
+        ⚠️ السحب قبل 7 أيام = خصم 10%
+      </div>
+      <button class="btn btn-gold btn-full" onclick="Q.execDeposit()">
+        <i class="fas fa-arrow-down"></i> إيداع
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Gamble Modal -->
+<div class="modal-bg" id="gamble-modal">
+  <div class="modal-box">
+    <div class="modal-hdr">
+      <i class="fas fa-dice" style="font-size:20px;color:var(--gold)"></i>
+      <h3>سيجا القمار</h3>
+      <button class="modal-close" onclick="Q.closeModal('gamble-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="gamble-body"></div>
+  </div>
+</div>
+
+<!-- Password Shop Modal -->
+<div class="modal-bg" id="shop-modal">
+  <div class="modal-box gold">
+    <div class="modal-hdr">
+      <i class="fas fa-key" style="color:var(--gold)"></i>
+      <h3>شراء بكلمة المرور</h3>
+      <button class="modal-close" onclick="Q.closeModal('shop-modal')"><i class="fas fa-xmark"></i></button>
+    </div>
+    <div id="shop-body"></div>
+  </div>
+</div>
+
+<!-- Toast Container -->
+<div id="toast-wrap"></div>
+
+<!-- ════════════════════════════════════════════
+     MAIN SCRIPT — ALL INLINE, NO IMPORTS
+═════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+/* ══════════════════════════════════════════
+   FIREBASE INIT (COMPAT SDK)
+══════════════════════════════════════════ */
+const fbConfig = {
+  apiKey:            'AIzaSyDYyxW9P-_DlOEqK6FCQqqBWo5UFxGnshY',
+  authDomain:        'quinnbot-9f797.firebaseapp.com',
+  databaseURL:       'https://quinnbot-9f797-default-rtdb.firebaseio.com',
+  projectId:         'quinnbot-9f797',
+  storageBucket:     'quinnbot-9f797.firebasestorage.app',
+  messagingSenderId: '592205334333',
+  appId:             '1:592205334333:web:9f8a3b6ec7e7fee81fa754',
+  measurementId:     'G-W5HRWB45GX'
+};
+firebase.initializeApp(fbConfig);
+const db   = firebase.firestore();
+const rtdb = firebase.database();
+
+// Offline persistence
+db.enablePersistence({ synchronizeTabs:true }).catch(()=>{});
+
+/* ══════════════════════════════════════════
+   CONSTANTS
+══════════════════════════════════════════ */
+const BOT     = 'https://t.me/Quinnofficialbot';
+const PASS    = 'T9@xQ#4mL!2vZ$7pR';
+const RANKS   = [
+  {min:0,       max:99,      name:'الحالم',    en:'Dreamer',     color:'#8B9DC3', icon:'fa-moon'},
+  {min:100,     max:499,     name:'المستكشف',  en:'Seeker',      color:'#4ECDC4', icon:'fa-compass'},
+  {min:500,     max:1999,    name:'الخيميائي', en:'Alchemist',   color:'#45B7D1', icon:'fa-flask'},
+  {min:2000,    max:9999,    name:'المنقب',    en:'Prospector',  color:'#96CEB4', icon:'fa-hammer'},
+  {min:10000,   max:49999,   name:'الطاغية',   en:'Magnate',     color:'#FF6B6B', icon:'fa-crown'},
+  {min:50000,   max:199999,  name:'الحوت',     en:'Whale',       color:'#A8E6CF', icon:'fa-fish'},
+  {min:200000,  max:499999,  name:'المتنور',   en:'Illuminati',  color:'#DDA0DD', icon:'fa-star'},
+  {min:500000,  max:999999,  name:'الأسطورة',  en:'Legend',      color:'#FFD700', icon:'fa-fire-flame-curved'},
+  {min:1000000, max:Infinity,name:'Quinn God', en:'Quinn God',   color:'#FF4757', icon:'fa-infinity'},
+];
+
+/* ══════════════════════════════════════════
+   STATE
+══════════════════════════════════════════ */
+const S = {
+  uid: null, name:'', username:'', photoUrl:'',
+  tokens:0, totalTokens:0, clicks:0,
+  energy:1000, maxEnergy:1000, tapPower:1,
+  level:1, xp:0,
+  goldGrams:0, goldAvgPrice:0,
+  vaultStaked:0, vaultLastDeposit:0, vaultLastClaim:0, vaultLoyaltyMul:1,
+  walletId:'', secureKey:null, referralCode:'', referredBy:null,
+  referrals:0, transactions:[], banned:false,
+  joinDate:Date.now(), lastSeen:Date.now(), notifications:true,
+  // internal
+  _dirty:false, _saveTimer:null, _batchCount:0,
+};
+
+// Gold market state
+let goldPrice  = 100;
+let goldHist   = [];
+let goldUnsub  = null;
+let goldChart  = null;
+
+// Current tab
+let curTab = 'home';
+
+/* ══════════════════════════════════════════
+   HELPERS
+══════════════════════════════════════════ */
+function $(id){ return document.getElementById(id) }
+function fmt(n){
+  n = Math.floor(n||0);
+  if(n>=1e9) return (n/1e9).toFixed(2)+'B';
+  if(n>=1e6) return (n/1e6).toFixed(2)+'M';
+  if(n>=1e3) return (n/1e3).toFixed(1)+'K';
+  return n.toLocaleString('ar-EG');
+}
+function fmtFull(n){ return Math.floor(n||0).toLocaleString('ar-EG') }
+function getRank(t){
+  let r=RANKS[0];
+  for(const k of RANKS){ if(t>=k.min) r=k; else break; }
+  return r;
+}
+function genWalletId(){
+  const r=()=>Math.random().toString(36).substr(2,4).toUpperCase();
+  return `QN-${r()}-${r()}`;
+}
+function genSecureKey(uid){
+  const ts   = Date.now().toString(36).toUpperCase();
+  const rand = Math.random().toString(36).substr(2,4).toUpperCase();
+  const id   = (uid||'').toString().substr(-4).toUpperCase().padStart(4,'0');
+  return `QNN-${id}-${ts.substr(-4)}-${rand}`;
+}
+function delay(ms){ return new Promise(r=>setTimeout(r,ms)) }
+
+/* ══════════════════════════════════════════
+   TOAST
+══════════════════════════════════════════ */
+function toast(msg, type='i', dur=2800){
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.textContent=msg;
+  $('toast-wrap').appendChild(el);
+  setTimeout(()=>el.remove(),dur);
+}
+
+/* ══════════════════════════════════════════
+   SAVE STRATEGY (6 layers)
+══════════════════════════════════════════ */
+const LS_KEY = 'quinn_u';
+
+function saveLocal(){
+  try{ localStorage.setItem(LS_KEY,JSON.stringify(_plain())) }catch(_){}
+}
+function _plain(){
+  const k=['uid','name','username','photoUrl','tokens','totalTokens','clicks',
+    'energy','maxEnergy','tapPower','level','xp','goldGrams','goldAvgPrice',
+    'vaultStaked','vaultLastDeposit','vaultLastClaim','vaultLoyaltyMul',
+    'walletId','referralCode','referredBy','referrals','transactions','banned',
+    'joinDate','lastSeen','notifications'];
+  const o={};
+  k.forEach(k=>{ o[k]=S[k]; });
+  return o;
+}
+function loadLocal(){
+  try{
+    const raw=localStorage.getItem(LS_KEY);
+    if(raw){ const d=JSON.parse(raw); Object.assign(S,d); return true; }
+  }catch(_){}
+  return false;
+}
+
+let _debounceTimer=null;
+function debounceSave(){
+  clearTimeout(_debounceTimer);
+  _debounceTimer=setTimeout(()=>saveLocal(),300);
+}
+
+async function pushFirebase(force=false){
+  if(!S.uid) return;
+  if(!S._dirty && !force) return;
+  try{
+    const d={..._plain(), lastSeen:firebase.firestore.FieldValue.serverTimestamp()};
+    await db.collection('users').doc(S.uid).set(d,{merge:true});
+    S._dirty=false;
+  }catch(e){ console.warn('[FB] save failed',e); }
+}
+
+function markDirty(){
+  S._dirty=true;
+  debounceSave();
+  S._batchCount++;
+  if(S._batchCount>=20){ S._batchCount=0; pushFirebase(); }
+}
+
+// Layer 4: periodic
+setInterval(()=>{ if(S._dirty) pushFirebase(); },5*60*1000);
+
+// Layer 5: beforeunload
+window.addEventListener('beforeunload',()=>{
+  if(S._dirty) pushFirebase();
+});
+
+/* ══════════════════════════════════════════
+   FIREBASE LOAD
+══════════════════════════════════════════ */
+async function loadFromFirebase(uid){
+  try{
+    const snap=await db.collection('users').doc(uid).get();
+    if(snap.exists){
+      const d=snap.data();
+      if(d.banned){ showBanned(); return false; }
+      Object.assign(S,d);
+      S.uid=uid;
+      saveLocal();
+    } else {
+      // New user
+      S.uid=uid;
+      if(!S.walletId)  S.walletId=genWalletId();
+      if(!S.secureKey) S.secureKey=genSecureKey(uid);
+      if(!S.referralCode) S.referralCode=genWalletId();
+      S.joinDate=Date.now();
+      await pushFirebase(true);
+    }
+    return true;
+  }catch(e){
+    console.warn('[FB] load failed:',e);
+    return false; // Use cached data
+  }
+}
+
+/* ══════════════════════════════════════════
+   BOOT SEQUENCE
+══════════════════════════════════════════ */
+(async function boot(){
+  // Animate progress
+  let w=0;
+  const iv=setInterval(()=>{ w=Math.min(90,w+Math.random()*18); $('bfill').style.width=w+'%'; },220);
+
+  // Init Telegram
+  const tg=window.Telegram?.WebApp;
+  if(tg){ tg.ready(); tg.expand(); tg.setHeaderColor('#030B1A'); tg.setBackgroundColor('#030B1A'); }
+
+  const tgUser = tg?.initDataUnsafe?.user || {
+    id:'demo_'+Math.random().toString(36).substr(2,8),
+    first_name:'حمودة',
+    username:'hamoudawaheed',
+    photo_url:''
+  };
+
+  S.uid      = String(tgUser.id);
+  S.name     = tgUser.first_name || 'Quinn Player';
+  S.username = tgUser.username   || '';
+  S.photoUrl = tgUser.photo_url  || '';
+
+  // Load local cache first (instant display)
+  const hadCache=loadLocal();
+  if(hadCache && String(localStorage.getItem(LS_KEY+'_uid'))===S.uid){
+    // Same user cached
+  } else {
+    localStorage.setItem(LS_KEY+'_uid',S.uid);
+  }
+
+  // Show app immediately with cached data
+  clearInterval(iv); $('bfill').style.width='100%';
+  await delay(350);
+  $('boot').style.opacity='0'; $('boot').style.transition='opacity .3s';
+  await delay(300);
+  $('boot').style.display='none';
+  $('app').classList.add('show');
+
+  // Build initial UI
+  buildHeader();
+  bindNav();
+  renderTab('home');
+
+  // Load from Firebase in background
+  await loadFromFirebase(S.uid);
+  buildHeader();
+  if(curTab==='home') renderTab('home');
+
+  // Handle referral
+  const startParam = tg?.initDataUnsafe?.start_param||'';
+  if(startParam.startsWith('ref_')) handleReferral(startParam.slice(4));
+
+  // Gold market listener
+  startGoldListener();
+
+  // Notification listener
+  startNotifListener();
+
+  // Energy regen
+  setInterval(energyRegen,1000);
+
+  // Set passive income for vault
+  setInterval(checkVaultRewards,60*1000);
+
+  console.log('[Quinn] Boot complete, uid:',S.uid);
+})();
+
+/* ══════════════════════════════════════════
+   HEADER
+══════════════════════════════════════════ */
+function buildHeader(){
+  const rank=getRank(S.totalTokens);
+  $('hdr-name').textContent   = S.name;
+  $('hdr-rank').textContent   = rank.name;
+  $('hdr-rank').style.color   = rank.color;
+  $('hdr-bal').textContent    = fmt(S.tokens);
+  $('hdr-av-letter').textContent = S.name.charAt(0).toUpperCase();
+  if(S.photoUrl){
+    const img=document.createElement('img');
+    img.src=S.photoUrl; img.onerror=()=>img.remove();
+    $('hdr-av').appendChild(img);
+  }
+}
+
+/* ══════════════════════════════════════════
+   NAV
+══════════════════════════════════════════ */
+function bindNav(){
+  document.querySelectorAll('.nb').forEach(b=>{
+    b.addEventListener('click',()=>{
+      if(goldUnsub && b.dataset.tab!=='exchange'){ goldUnsub(); goldUnsub=null; }
+      renderTab(b.dataset.tab);
+    });
+  });
+}
+function setNav(tab){
+  document.querySelectorAll('.nb').forEach(b=>b.classList.remove('on'));
+  const nb=document.getElementById('nb-'+tab);
+  if(nb) nb.classList.add('on');
+  curTab=tab;
+}
+
+/* ══════════════════════════════════════════
+   TAB ROUTER
+══════════════════════════════════════════ */
+function renderTab(tab){
+  setNav(tab);
+  const c=$('content');
+  c.innerHTML='';
+  c.scrollTo(0,0);
+  switch(tab){
+    case 'home':     renderHome(c);     break;
+    case 'wallet':   renderWallet(c);   break;
+    case 'exchange': renderExchange(c); break;
+    case 'arena':    renderArena(c);    break;
+    case 'vault':    renderVault(c);    break;
+    case 'leaders':  renderLeaders(c);  break;
+    case 'profile':  renderProfileTab(c); break;
+  }
+}
+
+/* ══════════════════════════════════════════
+   HOME TAB
+══════════════════════════════════════════ */
+let tapCombo=0, comboTimer=null;
+
+function renderHome(c){
+  const rank=getRank(S.totalTokens);
+  const ePct=(S.energy/S.maxEnergy*100).toFixed(1);
+  c.innerHTML=`
+    <!-- Balance Card -->
+    <div class="gc gc-gold" style="padding:15px 17px;margin-bottom:13px;display:flex;align-items:center;gap:13px">
+      <div style="flex:1">
+        <div class="small muted mb-4">Quinn Tokens</div>
+        <div id="home-bal" style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--gold);line-height:1.1">${fmt(S.tokens)}</div>
+        <div class="small muted" style="margin-top:3px">≈ ${(S.tokens/10000).toFixed(4)} Quinn</div>
+      </div>
+      <div style="text-align:center;padding:10px 14px;background:rgba(255,215,0,.07);border-radius:14px;border:1px solid rgba(255,215,0,.14)">
+        <div class="small muted">لكل نقرة</div>
+        <div id="home-pow" style="font-family:'Orbitron',sans-serif;font-size:20px;font-weight:900;color:var(--cyan)">×${S.tapPower}</div>
+        <div style="font-size:9px;color:${rank.color};font-weight:700;margin-top:2px">${rank.name}</div>
+      </div>
+    </div>
+
+    <!-- Tap Orb -->
+    <div style="text-align:center;margin-bottom:14px">
+      <div class="tap-wrap">
+        <div class="tap-ring-a"></div>
+        <div class="tap-ring-b"></div>
+        <div class="tap-orb" id="tap-orb">
+          <i class="fas fa-coins"></i>
+          <div class="pow">+${S.tapPower} لكل نقرة</div>
+        </div>
+      </div>
+      <div id="combo-txt" style="font-size:11px;color:var(--muted);min-height:16px"></div>
+    </div>
+
+    <!-- Energy -->
+    <div class="gc" style="padding:11px 14px;margin-bottom:13px">
+      <div class="row" style="justify-content:space-between;margin-bottom:7px">
+        <span style="font-size:12px;font-weight:700"><i class="fas fa-bolt" style="color:var(--cyan)"></i> الطاقة</span>
+        <span id="e-txt" style="font-size:11px;color:var(--cyan)">${S.energy}/${S.maxEnergy}</span>
+      </div>
+      <div class="ebar"><div class="efill" id="e-fill" style="width:${ePct}%"></div></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="sgrid">
+      <div class="gc scard"><i class="fas fa-mouse-pointer" style="color:var(--gold)"></i>
+        <div class="sv">${fmt(S.clicks)}</div><div class="sl">النقرات</div></div>
+      <div class="gc scard"><i class="fas fa-users" style="color:var(--cyan)"></i>
+        <div class="sv">${S.referrals}</div><div class="sl">الإحالات</div></div>
+      <div class="gc scard"><i class="fas fa-vault" style="color:var(--purple)"></i>
+        <div class="sv">${fmt(S.vaultStaked)}</div><div class="sl">مودع</div></div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="two-col" style="gap:9px">
+      <div class="gc" style="padding:14px;text-align:center;cursor:pointer" onclick="renderTab('vault')">
+        <i class="fas fa-vault" style="font-size:22px;color:var(--gold);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">Quinn Vault</div>
+        <div class="small muted">0.5% يومياً</div>
+      </div>
+      <div class="gc" style="padding:14px;text-align:center;cursor:pointer" onclick="renderTab('exchange')">
+        <i class="fas fa-chart-line" style="font-size:22px;color:var(--cyan);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">Quinn Exchange</div>
+        <div class="small muted">سوق الذهب</div>
+      </div>
+      <div class="gc" style="padding:14px;text-align:center;cursor:pointer" onclick="renderTab('arena')">
+        <i class="fas fa-gamepad" style="font-size:22px;color:var(--pink);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">Quinn Arena</div>
+        <div class="small muted">5 ألعاب + قمار</div>
+      </div>
+      <div class="gc" style="padding:14px;text-align:center;cursor:pointer" onclick="Q.openShop()">
+        <i class="fas fa-bag-shopping" style="font-size:22px;color:var(--green);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">المتجر</div>
+        <div class="small muted">شراء بكلمة المرور</div>
+      </div>
+    </div>`;
+
+  // Tap handler
+  $('tap-orb').addEventListener('click',function(e){
+    if(S.energy<=0){ toast('⚡ نفدت الطاقة!','w'); return; }
+    S.tokens      += S.tapPower;
+    S.totalTokens += S.tapPower;
+    S.energy       = Math.max(0,S.energy-1);
+    S.clicks++;
+    S.xp          += S.tapPower;
+    markDirty();
+
+    // Float
+    const fl=document.createElement('div');
+    fl.className='tap-float';
+    fl.textContent=`+${S.tapPower}`;
+    fl.style.left=(e.clientX-12)+'px';
+    fl.style.top=(e.clientY-12)+'px';
+    document.body.appendChild(fl);
+    setTimeout(()=>fl.remove(),900);
+
+    // Pulse
+    this.classList.add('press');
+    setTimeout(()=>this.classList.remove('press'),130);
+
+    // Combo
+    tapCombo++;
+    clearTimeout(comboTimer);
+    comboTimer=setTimeout(()=>{ tapCombo=0; const ct=$('combo-txt'); if(ct) ct.textContent=''; },1800);
+    if(tapCombo>=5){
+      const ct=$('combo-txt');
+      if(ct){
+        ct.textContent=`🔥 كومبو ×${tapCombo}`;
+        ct.style.color=tapCombo>=20?'var(--red)':tapCombo>=10?'var(--gold)':'var(--cyan)';
+      }
+    }
+
+    // Update UI
+    $('home-bal').textContent=$('hdr-bal').textContent=fmt(S.tokens);
+    updateEnergyUI();
+    checkLevelUp();
+  });
+}
+
+/* Energy */
+function energyRegen(){
+  if(S.energy<S.maxEnergy){
+    S.energy=Math.min(S.maxEnergy,S.energy+1);
+    updateEnergyUI();
+  }
+}
+function updateEnergyUI(){
+  const f=$('e-fill'), t=$('e-txt');
+  const pct=(S.energy/S.maxEnergy*100).toFixed(1);
+  if(f) f.style.width=pct+'%';
+  if(t) t.textContent=`${S.energy}/${S.maxEnergy}`;
+}
+
+/* Level */
+function checkLevelUp(){
+  const xpNeeded=1000*Math.pow(1.4,S.level-1);
+  if(S.xp>=xpNeeded && S.level<50){
+    S.level++;
+    S.xp=0;
+    S.tapPower=Math.floor(1+S.level*0.5);
+    toast(`🎉 ارتقيت للمستوى ${S.level}! النقر ×${S.tapPower}`,'s');
+    buildHeader();
+  }
+}
+
+/* ══════════════════════════════════════════
+   WALLET TAB
+══════════════════════════════════════════ */
+function renderWallet(c){
+  const rank=getRank(S.totalTokens);
+  c.innerHTML=`
+    <!-- Premium Wallet Card -->
+    <div style="
+      background:linear-gradient(135deg,rgba(255,215,0,.1),rgba(155,89,182,.07),rgba(0,245,255,.06));
+      border:1px solid rgba(255,215,0,.18);border-radius:22px;
+      padding:22px 18px;margin-bottom:14px;position:relative;overflow:hidden">
+      <div style="position:absolute;top:-40px;right:-40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,rgba(255,215,0,.08),transparent)"></div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:18px">
+        <div style="font-family:'Orbitron',sans-serif;font-size:16px;font-weight:900;color:var(--gold);letter-spacing:2px">QUINN</div>
+        <div style="width:34px;height:26px;border-radius:5px;background:linear-gradient(135deg,rgba(255,215,0,.5),rgba(255,165,0,.3));border:1px solid rgba(255,215,0,.3)"></div>
+      </div>
+      <div class="small muted mb-4">الرصيد الكلي</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;background:linear-gradient(135deg,#FFD700,#FFF,#FFD700);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">${fmtFull(S.tokens)}</div>
+      <div class="small muted" style="margin-top:3px;margin-bottom:18px">≈ ${(S.tokens/10000).toFixed(4)} QUINN COIN</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end">
+        <div>
+          <div style="font-size:8px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:1.5px">معرف المحفظة</div>
+          <div id="wid-display" class="mono" style="font-size:12px;color:rgba(255,255,255,.7);margin-top:2px;cursor:pointer" onclick="Q.copyWallet()">${S.walletId||'QN-????-????'}</div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:var(--cyan)">TON Network</div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px">
+      <div class="gc" style="padding:13px 8px;text-align:center;cursor:pointer" onclick="Q.openSendModal()">
+        <i class="fas fa-paper-plane" style="font-size:20px;color:var(--cyan);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">تحويل برقي</div>
+      </div>
+      <div class="gc" style="padding:13px 8px;text-align:center;cursor:pointer" onclick="Q.copyWallet()">
+        <i class="fas fa-qrcode" style="font-size:20px;color:var(--gold);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">استقبال</div>
+      </div>
+      <div class="gc" style="padding:13px 8px;text-align:center;cursor:pointer" onclick="Q.openShop()">
+        <i class="fas fa-bag-shopping" style="font-size:20px;color:var(--green);display:block;margin-bottom:5px"></i>
+        <div style="font-size:11px;font-weight:700">شراء</div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="two-col" style="gap:9px;margin-bottom:14px">
+      <div class="gc" style="padding:13px">
+        <div class="small muted mb-4">إجمالي الكسب</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:var(--gold)">${fmt(S.totalTokens)}</div>
+      </div>
+      <div class="gc" style="padding:13px">
+        <div class="small muted mb-4">رصيد الذهب</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:15px;font-weight:900;color:var(--gold)">${S.goldGrams.toFixed(4)}g</div>
+      </div>
+    </div>
+
+    <!-- Transactions -->
+    <div class="sec-title"><i class="fas fa-list-ul"></i> المعاملات الأخيرة</div>
+    <div class="gc" style="padding:4px 14px" id="tx-list">
+      ${renderTxList()}
+    </div>`;
+}
+
+function renderTxList(){
+  if(!S.transactions||!S.transactions.length)
+    return '<div class="empty"><i class="fas fa-receipt"></i><p>لا توجد معاملات بعد</p></div>';
+  const types={
+    tap_reward:'نقر',send:'تحويل',receive:'استقبال',
+    gold_buy:'شراء ذهب',gold_sell:'بيع ذهب',
+    vault_dep:'إيداع Vault',vault_wd:'سحب Vault',vault_rw:'مكافأة Vault',
+    gamble_win:'فوز قمار',gamble_lose:'خسارة قمار',
+    shop_buy:'شراء',referral:'إحالة',
+  };
+  const icons={
+    tap_reward:'fa-coins',send:'fa-paper-plane',receive:'fa-arrow-down',
+    gold_buy:'fa-arrow-trend-up',gold_sell:'fa-arrow-trend-down',
+    vault_dep:'fa-vault',vault_wd:'fa-vault',vault_rw:'fa-gift',
+    gamble_win:'fa-dice',gamble_lose:'fa-dice',
+    shop_buy:'fa-bag-shopping',referral:'fa-users',
+  };
+  const isIn=(t)=>['receive','vault_rw','gamble_win','referral','gold_sell'].includes(t);
+  return S.transactions.slice(0,20).map(tx=>`
+    <div class="tx">
+      <div class="tx-ic ${isIn(tx.type)?'in':'out'}">
+        <i class="fas ${icons[tx.type]||'fa-circle'}"></i>
+      </div>
+      <div class="tx-info">
+        <div class="tx-t">${types[tx.type]||tx.type}</div>
+        <div class="tx-d">${new Date(tx.time||Date.now()).toLocaleDateString('ar-SA')}</div>
+      </div>
+      <div class="tx-a ${isIn(tx.type)?'green':'red'}">${isIn(tx.type)?'+':'-'}${fmt(tx.amount)}</div>
+    </div>`).join('');
+}
+
+function addTx(type,amount,meta={}){
+  S.transactions.unshift({type,amount,time:Date.now(),...meta});
+  if(S.transactions.length>100) S.transactions=S.transactions.slice(0,100);
+}
+
+/* ══════════════════════════════════════════
+   EXCHANGE TAB (Gold Market)
+══════════════════════════════════════════ */
+function renderExchange(c){
+  c.innerHTML=`
+    <!-- Price Display -->
+    <div class="gc gc-gold" style="padding:18px;margin-bottom:12px;text-align:center">
+      <div class="small muted" style="margin-bottom:4px"><i class="fas fa-coins" style="color:var(--gold)"></i> Quinn Exchange — سعر الذهب</div>
+      <div class="price-big" id="ex-price">$${goldPrice.toFixed(2)}</div>
+      <div class="chg" id="ex-chg">—</div>
+      <div style="font-size:10px;color:var(--muted);margin-top:6px">رصيدك: <span id="ex-my-gold">${S.goldGrams.toFixed(4)}g</span> ≈ <span id="ex-gold-val">${fmt(S.goldGrams*goldPrice)}</span> Quinn</div>
+    </div>
+
+    <!-- Chart -->
+    <div class="gc" style="padding:10px;margin-bottom:12px">
+      <div class="chart-wrap"><canvas id="gold-canvas"></canvas></div>
+    </div>
+
+    <!-- Actions -->
+    <div class="two-col" style="gap:10px;margin-bottom:12px">
+      <button class="btn btn-green btn-full" onclick="Q.openModal('buy-modal')">
+        <i class="fas fa-arrow-trend-up"></i> شراء ذهب
+      </button>
+      <button class="btn btn-red btn-full" onclick="Q.openModal('sell-modal')">
+        <i class="fas fa-arrow-trend-down"></i> بيع ذهب
+      </button>
+    </div>
+
+    <!-- Market Stats -->
+    <div class="two-col" style="gap:9px;margin-bottom:12px">
+      <div class="gc" style="padding:12px;text-align:center">
+        <div class="small muted">حجم التداول</div>
+        <div id="ex-vol" style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:800;color:var(--cyan);margin-top:3px">0</div>
+      </div>
+      <div class="gc" style="padding:12px;text-align:center">
+        <div class="small muted">آخر تحديث</div>
+        <div id="ex-upd" style="font-size:11px;font-weight:700;color:var(--muted);margin-top:3px">—</div>
+      </div>
+    </div>
+
+    <!-- My Gold TX -->
+    <div class="sec-title"><i class="fas fa-history"></i> صفقاتي</div>
+    <div class="gc" style="padding:4px 14px">
+      ${S.transactions.filter(t=>t.type==='gold_buy'||t.type==='gold_sell').slice(0,8).map(tx=>`
+        <div class="tx">
+          <div class="tx-ic ${tx.type==='gold_sell'?'in':'out'}"><i class="fas ${tx.type==='gold_buy'?'fa-arrow-trend-up':'fa-arrow-trend-down'}"></i></div>
+          <div class="tx-info"><div class="tx-t">${tx.type==='gold_buy'?'شراء':'بيع'} ${(tx.grams||0).toFixed(4)}g</div>
+          <div class="tx-d">@${tx.price?.toFixed(2)||'—'}</div></div>
+          <div class="tx-a ${tx.type==='gold_sell'?'green':'red'}">${tx.type==='gold_sell'?'+':'-'}${fmt(tx.amount)}</div>
+        </div>`).join('') || '<div class="empty"><i class="fas fa-chart-bar"></i><p>لا توجد صفقات</p></div>'}
+    </div>`;
+
+  // Draw chart
+  drawGoldChart();
+
+  // Start live listener
+  startGoldListener();
+}
+
+function startGoldListener(){
+  if(goldUnsub) goldUnsub();
+  goldUnsub=db.collection('market').doc('global_gold').onSnapshot(snap=>{
+    if(!snap.exists) return;
+    const d=snap.data();
+    const prev=goldPrice;
+    goldPrice=d.price||100;
+    goldHist.push(goldPrice);
+    if(goldHist.length>50) goldHist.shift();
+
+    const el=$('ex-price');
+    if(!el) return;
+    el.textContent=`$${goldPrice.toFixed(2)}`;
+    const diff=goldPrice-prev;
+    const pct=prev?(diff/prev*100).toFixed(2):'0.00';
+    const chg=$('ex-chg');
+    if(chg){ chg.textContent=(diff>=0?'+':'')+pct+'%'; chg.className='chg '+(diff>=0?'up':'dn'); }
+    const mg=$('ex-my-gold');if(mg) mg.textContent=S.goldGrams.toFixed(4)+'g';
+    const gv=$('ex-gold-val');if(gv) gv.textContent=fmt(S.goldGrams*goldPrice);
+    const vol=$('ex-vol');if(vol) vol.textContent=fmt(d.volume||0);
+    const upd=$('ex-upd');if(upd) upd.textContent='الآن';
+    drawGoldChart();
+  });
+}
+
+function drawGoldChart(){
+  const canvas=$('gold-canvas'); if(!canvas||!window.Chart) return;
+  if(goldChart){ goldChart.destroy(); goldChart=null; }
+  const data=goldHist.length>1?goldHist:[goldPrice,goldPrice];
+  const rising=data[data.length-1]>=data[0];
+  goldChart=new Chart(canvas,{
+    type:'line',
+    data:{
+      labels:data.map((_,i)=>i+1),
+      datasets:[{data,borderColor:rising?'#00FF88':'#FF4757',
+        backgroundColor:rising?'rgba(0,255,136,.06)':'rgba(255,71,87,.06)',
+        borderWidth:2,pointRadius:0,tension:.4,fill:true}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false}},
+      scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.04)'},ticks:{color:'#777',font:{size:9}}}},
+      animation:{duration:250}}
+  });
+}
+
+async function execBuyGold(){
+  const g=parseFloat($('buy-g').value)||0;
+  if(g<=0){ toast('أدخل كمية صحيحة','e'); return; }
+  const cost=Math.ceil(g*goldPrice);
+  if(cost>S.tokens){ toast('رصيد غير كافٍ','e'); return; }
+  S.tokens-=cost;
+  S.goldGrams+=g;
+  S.goldAvgPrice=S.goldGrams>0?((S.goldAvgPrice*(S.goldGrams-g)+goldPrice*g)/S.goldGrams):goldPrice;
+  addTx('gold_buy',cost,{grams:g,price:goldPrice});
+  markDirty();
+  // Update global price
+  const newP=+(goldPrice*(1.001)).toFixed(4);
+  await updateGoldMarket(newP,cost);
+  closeModal('buy-modal');
+  $('buy-g').value='';
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`✅ اشتريت ${g.toFixed(4)}g ذهب`,'s');
+}
+
+async function execSellGold(){
+  const g=parseFloat($('sell-g').value)||0;
+  if(g<=0){ toast('أدخل كمية صحيحة','e'); return; }
+  if(g>S.goldGrams){ toast('لا تملك كافية من الذهب','e'); return; }
+  const rev=Math.floor(g*goldPrice);
+  S.goldGrams-=g;
+  S.tokens+=rev;
+  addTx('gold_sell',rev,{grams:g,price:goldPrice});
+  markDirty();
+  const newP=+(goldPrice*(0.999)).toFixed(4);
+  await updateGoldMarket(newP,-rev);
+  closeModal('sell-modal');
+  $('sell-g').value='';
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`✅ بعت ${g.toFixed(4)}g مقابل ${fmt(rev)} Quinn`,'s');
+}
+
+async function updateGoldMarket(newPrice,volDelta){
+  newPrice=Math.max(5,Math.min(50000,newPrice));
+  try{
+    await db.collection('market').doc('global_gold').set({
+      price:newPrice,
+      volume:firebase.firestore.FieldValue.increment(Math.abs(volDelta||0)),
+      lastUpdate:firebase.firestore.FieldValue.serverTimestamp(),
+    },{merge:true});
+    // Add to history
+    await db.collection('market').doc('global_gold').update({
+      priceHistory:firebase.firestore.FieldValue.arrayUnion(newPrice)
+    });
+  }catch(e){ console.warn('[Gold]',e); }
+}
+
+/* ══════════════════════════════════════════
+   ARENA TAB
+══════════════════════════════════════════ */
+const GAMES=[
+  {id:'pulse',  title:'Pulse Check',  icon:'fa-heart-pulse', desc:'سرعة رد الفعل — 700ms للضغط!',    cd:60000,  rmin:200, rmax:1000},
+  {id:'cipher', title:'Cipher Break', icon:'fa-brain',        desc:'احفظ تسلسل الأرقام — يصعب سريعاً', cd:90000,  rmin:300, rmax:2000},
+  {id:'oracle', title:'Chart Oracle', icon:'fa-chart-line',   desc:'توقع اتجاه السعر في 5 ثوان',       cd:80000,  rmin:250, rmax:1500},
+  {id:'miner',  title:'Rekt Miner',   icon:'fa-mountain',     desc:'دمّر 15 صخرة في 20 ثانية',         cd:60000,  rmin:150, rmax:800},
+  {id:'whale',  title:'Whale Hunt',   icon:'fa-fish',         desc:'اصطد الحيتان قبل أن تختفي',         cd:45000,  rmin:200, rmax:1200},
+];
+
+function renderArena(c){
+  c.innerHTML=`
+    <div style="text-align:center;padding:14px 0 12px">
+      <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Quinn Arena</div>
+      <div class="small muted" style="margin-top:4px">الخسارة = لا مكافأة</div>
+    </div>
+
+    <!-- Arena Tabs -->
+    <div class="tab-row">
+      <div class="tabn on" onclick="arenaTab(this,'games')">الألعاب</div>
+      <div class="tabn" onclick="arenaTab(this,'gamble')">القمار</div>
+      <div class="tabn" onclick="arenaTab(this,'shop')">المتجر</div>
+    </div>
+
+    <div id="arena-content"></div>`;
+
+  arenaSection('games');
+}
+
+function arenaTab(el,sec){
+  document.querySelectorAll('.tabn').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');
+  arenaSection(sec);
+}
+
+function arenaSection(sec){
+  const c=$('arena-content');
+  c.innerHTML='';
+  if(sec==='games') renderGamesList(c);
+  else if(sec==='gamble') renderGambleLobby(c);
+  else if(sec==='shop') renderShopSection(c);
+}
+
+function isOnCD(id){
+  const last=parseInt(localStorage.getItem('qcd_'+id)||'0');
+  const cds={pulse:60000,cipher:90000,oracle:80000,miner:60000,whale:45000};
+  return Date.now()-last<(cds[id]||60000);
+}
+function getCDSec(id){
+  const last=parseInt(localStorage.getItem('qcd_'+id)||'0');
+  const cds={pulse:60000,cipher:90000,oracle:80000,miner:60000,whale:45000};
+  return Math.max(0,Math.ceil(((cds[id]||60000)-(Date.now()-last))/1000));
+}
+
+function renderGamesList(c){
+  c.innerHTML=GAMES.map(g=>{
+    const cd=isOnCD(g.id);
+    return `<div class="gc game-card">
+      <div class="game-ic"><i class="fas ${g.icon}"></i></div>
+      <div class="game-info">
+        <div class="game-title">${g.title}</div>
+        <div class="game-desc">${g.desc}</div>
+        <div class="game-badge">مكافأة: ${fmt(g.rmin)}-${fmt(g.rmax)} Quinn</div>
+      </div>
+      <button class="btn ${cd?'btn-ghost btn-disabled':'btn-gold'} btn-sm" data-game="${g.id}" ${cd?'disabled':''}>
+        ${cd?`<i class="fas fa-clock"></i> ${getCDSec(g.id)}ث`:'<i class="fas fa-play"></i> العب'}
+      </button>
+    </div>`;
+  }).join('');
+
+  c.querySelectorAll('[data-game]').forEach(btn=>{
+    btn.addEventListener('click',()=>launchGame(btn.dataset.game));
+  });
+}
+
+/* ══════════════════════════════════════════
+   GAMES ENGINE
+══════════════════════════════════════════ */
+let activeGame=null, gameTimer=null;
+
+function launchGame(id){
+  const cfg=GAMES.find(g=>g.id===id);
+  if(!cfg||isOnCD(id)) return;
+  activeGame={id,cfg};
+  $('game-title').textContent=cfg.title;
+  $('game-stat').textContent='';
+  $('game-screen').classList.add('open');
+  document.getElementById('game-back').onclick=()=>closeGameScreen();
+  if(id==='pulse')  startPulse(cfg);
+  else if(id==='cipher') startCipher(cfg);
+  else if(id==='oracle') startOracle(cfg);
+  else if(id==='miner')  startMiner(cfg);
+  else if(id==='whale')  startWhale(cfg);
+}
+
+function closeGameScreen(){
+  clearInterval(gameTimer);clearTimeout(activeGame?._t);
+  $('game-screen').classList.remove('open');
+  $('game-body').innerHTML='';
+  activeGame=null;
+}
+
+function gameWin(score,cfg){
+  clearInterval(gameTimer);
+  localStorage.setItem('qcd_'+cfg.id,String(Date.now()));
+  const pct=Math.min(100,Math.max(0,score));
+  const reward=Math.floor(cfg.rmin+(cfg.rmax-cfg.rmin)*pct/100);
+  S.tokens+=reward; S.totalTokens+=reward;
+  addTx('tap_reward',reward,{game:cfg.id});
+  markDirty();
+  $('hdr-bal').textContent=fmt(S.tokens);
+  $('game-body').innerHTML=`
+    <div style="text-align:center;padding:28px 16px">
+      <div style="font-size:60px;animation:bounceIn .5s">🏆</div>
+      <div style="font-size:24px;font-weight:900;color:var(--gold);margin:12px 0">فزت!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">أداء: ${pct.toFixed(0)}%</div>
+      <div style="font-family:'Orbitron',sans-serif;font-size:22px;font-weight:900;color:var(--gold)">+${fmt(reward)} Quinn</div>
+      <button class="btn btn-gold btn-full" style="margin-top:20px" onclick="closeGameScreen()">حسناً 👍</button>
+    </div>`;
+}
+function gameLose(msg,cfg){
+  clearInterval(gameTimer);
+  localStorage.setItem('qcd_'+cfg.id,String(Date.now()));
+  $('game-body').innerHTML=`
+    <div style="text-align:center;padding:28px 16px">
+      <div style="font-size:60px">💔</div>
+      <div style="font-size:22px;font-weight:900;color:var(--red);margin:12px 0">خسرت!</div>
+      <div style="font-size:13px;color:var(--muted);margin-bottom:16px">${msg||'حاول مجدداً'}</div>
+      <div style="color:var(--muted);font-size:13px">لا مكافأة للخسارة</div>
+      <button class="btn btn-ghost btn-full" style="margin-top:20px" onclick="closeGameScreen()">حسناً</button>
+    </div>`;
+}
+
+/* PULSE CHECK */
+function startPulse(cfg){
+  const body=$('game-body');
+  let rounds=0,totalRounds=5,scores=[],phase='wait',tapTime=0;
+  body.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:14px;font-size:12px">
+      <span>الجولة: <strong id="pc-r">1/${totalRounds}</strong></span>
+      <span>النقاط: <strong id="pc-s" class="gold">0</strong></span>
+    </div>
+    <div class="pc-target pc-wait" id="pct">
+      <i class="fas fa-hand-pointer" style="font-size:36px"></i>
+      <div style="font-size:12px;font-weight:700;margin-top:8px" id="pcm">استعد...</div>
+    </div>
+    <div id="pc-hist" style="margin-top:12px;max-height:80px;overflow-y:auto"></div>`;
+
+  const target=$('pct'),pmsg=$('pcm');
+  target.addEventListener('click',onTap);
+
+  function onTap(){
+    if(phase==='wait'){
+      clearTimeout(activeGame._t);
+      scores.push(-50);
+      addHist('مبكر!','var(--purple)');
+      pmsg.textContent='⚡ مبكر جداً!';
+      target.className='pc-target pc-miss';
+      setTimeout(nextRound,800);
+    } else if(phase==='tap'){
+      clearTimeout(activeGame._t2);
+      const ms=Date.now()-tapTime;
+      const pts=Math.max(0,Math.floor(1000-ms*1.4));
+      scores.push(pts);
+      addHist(`${ms}ms → ${pts}pts`,pts>400?'var(--green)':'var(--gold)');
+      target.className='pc-target pc-hit';
+      pmsg.textContent=`${ms}ms — ${pts}pts`;
+      $('pc-s').textContent=scores.reduce((a,b)=>a+Math.max(0,b),0);
+      phase='done';
+      setTimeout(nextRound,700);
+    }
+  }
+
+  function addHist(txt,clr){
+    const h=$('pc-hist');
+    if(!h) return;
+    const d=document.createElement('div');
+    d.style.cssText=`font-size:11px;padding:2px 4px;color:${clr}`;
+    d.textContent=txt;
+    h.prepend(d);
+  }
+
+  function nextRound(){
+    if(rounds>=totalRounds){ finish(); return; }
+    rounds++;
+    phase='wait';
+    target.className='pc-target pc-wait';
+    pmsg.textContent='انتظر...';
+    $('pc-r').textContent=`${rounds}/${totalRounds}`;
+    const delay=1200+Math.random()*2800;
+    activeGame._t=setTimeout(()=>{
+      if(phase!=='wait') return;
+      phase='tap'; tapTime=Date.now();
+      target.className='pc-target pc-ready';
+      pmsg.textContent='اضغط الآن!';
+      activeGame._t2=setTimeout(()=>{
+        if(phase==='tap'){ scores.push(0); addHist('فاتتك!','var(--red)'); target.className='pc-target pc-miss'; pmsg.textContent='💨 فاتتك!'; phase='done'; setTimeout(nextRound,700); }
+      },700);
+    },delay);
+  }
+
+  function finish(){
+    const total=scores.reduce((a,b)=>a+Math.max(0,b),0);
+    const pct=(total/(totalRounds*1000))*100;
+    if(pct>=25) gameWin(pct,cfg);
+    else gameLose(`نقاطك: ${total}`,cfg);
+  }
+
+  nextRound();
+}
+
+/* CIPHER BREAK */
+function startCipher(cfg){
+  const body=$('game-body');
+  let round=0,maxRounds=6,seq=[],input=[],lives=3;
+  body.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:12px">
+      <span>الجولة: <strong id="cb-r">1/${maxRounds}</strong></span>
+      <span>حياة: <strong id="cb-l" class="red">❤️❤️❤️</strong></span>
+    </div>
+    <div id="cb-show" style="min-height:90px;display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:64px;font-weight:900;color:var(--gold)"></div>
+    <div id="cb-in" style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;min-height:36px;margin:10px 0"></div>
+    <div id="cb-pad" class="numpad" style="display:none"></div>`;
+
+  function nextRound(){
+    round++;
+    if(round>maxRounds){ gameWin(100,cfg); return; }
+    $('cb-r').textContent=`${round}/${maxRounds}`;
+    const len=2+round;
+    seq=Array.from({length:len},()=>Math.floor(Math.random()*10));
+    input=[];
+    renderInput();
+    showSeq();
+  }
+
+  function showSeq(){
+    const pad=$('cb-pad'),inp=$('cb-in');
+    if(pad) pad.style.display='none';
+    const show=$('cb-show');
+    show.innerHTML='<div style="font-size:13px;color:var(--muted)">احفظ!</div>';
+    const showTime=Math.max(350,1100-round*80);
+    let i=0;
+    const next=()=>{
+      if(i>=seq.length){ setTimeout(()=>startInput(),350); return; }
+      show.innerHTML=`<div style="animation:popIn .25s ease">${seq[i]}</div>`;
+      i++;
+      setTimeout(next,showTime);
+    };
+    setTimeout(next,400);
+  }
+
+  function startInput(){
+    $('cb-show').innerHTML='<div style="font-size:13px;color:var(--muted)">أدخل التسلسل</div>';
+    const pad=$('cb-pad');
+    pad.style.display='grid';
+    pad.innerHTML=[1,2,3,4,5,6,7,8,9,0,'✗','✓'].map(n=>
+      `<div class="nkey ${n==='✗'?'del':n==='✓'?'ok':''}" data-n="${n}">${n}</div>`
+    ).join('');
+    pad.querySelectorAll('.nkey').forEach(k=>k.addEventListener('click',()=>{
+      const n=k.dataset.n;
+      if(n==='✗'){ input.pop(); renderInput(); }
+      else if(n==='✓') check();
+      else { input.push(parseInt(n)); renderInput(); }
+    }));
+  }
+
+  function renderInput(){
+    const el=$('cb-in'); if(!el) return;
+    el.innerHTML=input.map(n=>
+      `<div style="width:32px;height:32px;border-radius:8px;background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-weight:700;color:var(--gold)">${n}</div>`
+    ).join('')||'<span class="muted small">—</span>';
+  }
+
+  function check(){
+    const ok=seq.every((n,i)=>n===input[i])&&input.length===seq.length;
+    if(ok){
+      $('cb-show').innerHTML='<div style="color:var(--green);font-size:20px">✅ صحيح!</div>';
+      $('cb-pad').style.display='none'; input=[];
+      setTimeout(nextRound,800);
+    } else {
+      lives--;
+      $('cb-l').textContent='❤️'.repeat(Math.max(0,lives));
+      $('cb-show').innerHTML=`<div style="color:var(--red);font-size:18px">❌ الصواب: ${seq.join('-')}</div>`;
+      $('cb-pad').style.display='none'; input=[];
+      if(lives<=0){ gameLose('نفدت حياتك!',cfg); return; }
+      setTimeout(nextRound,1000);
+    }
+  }
+
+  nextRound();
+}
+
+/* CHART ORACLE */
+function startOracle(cfg){
+  const body=$('game-body');
+  let rounds=0,maxR=8,correct=0;
+  body.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:10px;font-size:12px">
+      <span>السؤال: <strong id="co-q">1/${maxR}</strong></span>
+      <span>صحيح: <strong id="co-c" class="gold">0</strong></span>
+    </div>
+    <div style="height:120px;margin-bottom:10px"><canvas id="oc"></canvas></div>
+    <div style="height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden;margin-bottom:12px">
+      <div id="oc-tmr" style="height:100%;background:linear-gradient(90deg,var(--gold),var(--cyan));border-radius:3px;width:100%;transition:width 5s linear"></div>
+    </div>
+    <div class="two-col" style="gap:10px">
+      <button class="btn btn-green btn-full" onclick="oracleAns('up')"><i class="fas fa-arrow-trend-up"></i> ارتفاع</button>
+      <button class="btn btn-red btn-full" onclick="oracleAns('down')"><i class="fas fa-arrow-trend-down"></i> انخفاض</button>
+    </div>
+    <div id="oc-res" style="text-align:center;margin-top:10px;font-size:13px;font-weight:700;min-height:20px"></div>`;
+
+  let prices=[],nextP=0,correctDir='',answered=false,oChart=null;
+
+  window.oracleAns=function(dir){
+    if(answered) return;
+    answered=true;
+    clearTimeout(activeGame._ot);
+    document.getElementById('oc-tmr').style.transition='none';
+    const ok=dir===correctDir;
+    if(ok) correct++;
+    $('co-c').textContent=correct;
+    document.getElementById('oc-res').innerHTML=ok?
+      `<span class="green">✅ صحيح! → ${nextP.toFixed(2)}</span>`:
+      `<span class="red">❌ الصواب: ${correctDir==='up'?'ارتفاع':'انخفاض'} → ${nextP.toFixed(2)}</span>`;
+    if(oChart){ oChart.data.datasets[0].data=[...prices,nextP]; oChart.update('none'); }
+    setTimeout(nextRound,1100);
+  };
+
+  function nextRound(){
+    if(rounds>=maxR){
+      const pct=(correct/maxR)*100;
+      if(correct>=Math.ceil(maxR*.55)) gameWin(pct,cfg);
+      else gameLose(`${correct}/${maxR} صحيح`,cfg);
+      return;
+    }
+    rounds++;
+    answered=false;
+    $('co-q').textContent=`${rounds}/${maxR}`;
+    document.getElementById('oc-res').textContent='';
+    prices=[100];
+    for(let i=1;i<20;i++) prices.push(+(prices[i-1]+(Math.random()-.5)*7).toFixed(2));
+    nextP=+(prices[prices.length-1]+(Math.random()-.5)*10).toFixed(2);
+    correctDir=nextP>prices[prices.length-1]?'up':'down';
+    drawOChart(prices);
+    const tmr=document.getElementById('oc-tmr');
+    if(tmr){ tmr.style.transition='none'; tmr.style.width='100%'; setTimeout(()=>{ tmr.style.transition='width 5s linear'; tmr.style.width='0%'; },50); }
+    activeGame._ot=setTimeout(()=>{
+      if(!answered) window.oracleAns('__timeout__');
+    },5100);
+  }
+
+  function drawOChart(data){
+    const canvas=$('oc'); if(!canvas) return;
+    if(oChart){ oChart.destroy(); }
+    const up=data[data.length-1]>=data[0];
+    oChart=new Chart(canvas,{type:'line',data:{labels:data.map((_,i)=>i+1),datasets:[{data,borderColor:up?'#00FF88':'#FF4757',borderWidth:2,pointRadius:0,tension:.4,fill:true,backgroundColor:up?'rgba(0,255,136,.05)':'rgba(255,71,87,.05)'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{display:false},y:{display:false}},animation:{duration:200}}});
+  }
+
+  nextRound();
+}
+
+/* REKT MINER */
+function startMiner(cfg){
+  const body=$('game-body');
+  const TOTAL=15,TIME=20;
+  let rocksLeft=TOTAL,timeLeft=TIME,hp=0,maxHp=0;
+  body.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:12px;font-size:12px">
+      <span>⏱ <strong id="rm-t" class="red">${TIME}</strong>ث</span>
+      <span>صخور: <strong id="rm-r" class="gold">${TOTAL}</strong></span>
+    </div>
+    <div style="min-height:180px;display:flex;align-items:center;justify-content:center" id="rock-zone"></div>
+    <div class="small muted" style="text-align:center;margin-top:8px">اضغط على الصخرة!</div>`;
+
+  gameTimer=setInterval(()=>{
+    timeLeft--;
+    const tl=$('rm-t'); if(tl) tl.textContent=timeLeft;
+    if(timeLeft<=0){ clearInterval(gameTimer); gameLose(`دمّرت ${TOTAL-rocksLeft}/${TOTAL}`,cfg); }
+  },1000);
+
+  function spawnRock(){
+    const zone=$('rock-zone'); if(!zone) return;
+    const lvl=Math.min(5,Math.ceil((TOTAL-rocksLeft+1)/3));
+    maxHp=lvl; hp=lvl;
+    const sz=[80,100,120,140,160][lvl-1];
+    zone.innerHTML=`
+      <div class="rock" id="ar" style="width:${sz}px;height:${sz}px;font-size:${sz*.55}px;background:rgba(${80-lvl*10},${60-lvl*8},${40},0.2);border:2px solid rgba(120,80,40,${0.3+lvl*.08})">
+        <div class="rock-hpb"><div class="rock-hpf" id="rhpf" style="width:100%"></div></div>
+        <i class="fas fa-mountain"></i>
+        <div style="position:absolute;bottom:6px;font-size:10px;font-weight:700">${hp}/${maxHp}</div>
+      </div>`;
+    document.getElementById('ar').addEventListener('click',function(e){
+      hp--;
+      this.style.transform='scale(.92)';
+      setTimeout(()=>{ if(this) this.style.transform=''; },120);
+      const f=$('rhpf'); if(f) f.style.width=(hp/maxHp*100)+'%';
+      // particles
+      for(let i=0;i<3;i++){
+        const p=document.createElement('div');
+        p.className='ptcl';
+        p.style.left=e.clientX+'px'; p.style.top=e.clientY+'px';
+        p.style.setProperty('--dx',(Math.random()-.5)*50+'px');
+        p.style.setProperty('--dy',-(20+Math.random()*45)+'px');
+        document.body.appendChild(p);
+        setTimeout(()=>p.remove(),600);
+      }
+      if(hp<=0){
+        rocksLeft--;
+        const rr=$('rm-r'); if(rr) rr.textContent=rocksLeft;
+        if(rocksLeft<=0){ clearInterval(gameTimer); const sc=Math.round(timeLeft/TIME*100); gameWin(sc,cfg); return; }
+        zone.innerHTML='<div style="font-size:44px;animation:bounceIn .3s">💥</div>';
+        setTimeout(spawnRock,350);
+      }
+    });
+  }
+  spawnRock();
+}
+
+/* WHALE HUNT */
+function startWhale(cfg){
+  const body=$('game-body');
+  const TIME=15,NEED=10;
+  let caught=0,missed=0,tLeft=TIME,spawnTimer=null;
+  body.innerHTML=`
+    <div style="display:flex;justify-content:space-between;margin-bottom:8px;font-size:12px">
+      <span>⏱ <strong id="wh-t" class="red">${TIME}</strong>ث</span>
+      <span>🐋 <strong id="wh-c" class="gold">0</strong>/${NEED}</span>
+    </div>
+    <div class="ocean" id="ocean"></div>
+    <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:6px">
+      <span>فاتك: <span id="wh-m" class="red">0</span></span>
+      <span>اضغط على الحيتان!</span>
+    </div>`;
+
+  gameTimer=setInterval(()=>{
+    tLeft--;
+    const t=$('wh-t'); if(t) t.textContent=tLeft;
+    if(tLeft<=0){ clearTimeout(spawnTimer); endWhale(); }
+  },1000);
+
+  const WHALES=[
+    {e:'🐋',pts:1,dur:2200,sz:56},{e:'🐬',pts:2,dur:1600,sz:44},
+    {e:'🦈',pts:3,dur:1100,sz:50},{e:'💎',pts:5,dur:800,sz:36},
+  ];
+
+  function spawn(){
+    const ocean=$('ocean'); if(!ocean) return;
+    const w=WHALES[Math.floor(Math.random()*WHALES.length)];
+    const el=document.createElement('div');
+    el.className='whale';
+    el.innerHTML=w.e;
+    el.style.cssText=`left:${5+Math.random()*80}%;top:${5+Math.random()*70}%;width:${w.sz}px;height:${w.sz}px;font-size:${w.sz*.6}px;animation-duration:${w.dur}ms`;
+    ocean.appendChild(el);
+    el.addEventListener('click',()=>{
+      caught+=w.pts;
+      el.style.transform='scale(1.4)'; el.style.opacity='0'; el.style.transition='.25s';
+      setTimeout(()=>el.remove(),260);
+      const wc=$('wh-c'); if(wc) wc.textContent=caught;
+      if(caught>=NEED){ clearTimeout(spawnTimer); clearInterval(gameTimer); gameWin(100,cfg); }
+    });
+    const tid=setTimeout(()=>{
+      el.remove(); missed++;
+      const wm=$('wh-m'); if(wm) wm.textContent=missed;
+    },w.dur);
+    el._tid=tid;
+    const delay=Math.max(450,1300-caught*60);
+    spawnTimer=setTimeout(spawn,delay);
+  }
+
+  function endWhale(){
+    clearTimeout(spawnTimer);
+    const pct=Math.round(caught/NEED*100);
+    if(caught>=NEED) gameWin(100,cfg);
+    else if(pct>=50) gameWin(pct,cfg);
+    else gameLose(`اصطدت ${caught}/${NEED}`,cfg);
+  }
+
+  spawn();
+}
+
+/* ══════════════════════════════════════════
+   GAMBLE
+══════════════════════════════════════════ */
+function renderGambleLobby(c){
+  c.innerHTML=`
+    <div style="text-align:center;padding:14px 0 10px">
+      <i class="fas fa-dice" style="font-size:44px;color:var(--gold);display:block;margin-bottom:8px"></i>
+      <div style="font-size:16px;font-weight:800">سيجا القمار</div>
+      <div class="small muted" style="margin-top:4px">الفائز يأخذ كل الرهان</div>
+    </div>
+    <div class="gc" style="padding:16px;margin-bottom:12px">
+      <label style="font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:7px">مبلغ الرهان</label>
+      <input class="inp" id="gamble-bet" type="number" placeholder="الحد الأدنى 10" min="10" style="margin-bottom:8px">
+      <div class="quick-btns">
+        <div class="qb" onclick="setBet(100)">100</div>
+        <div class="qb" onclick="setBet(500)">500</div>
+        <div class="qb" onclick="setBet(1000)">1K</div>
+        <div class="qb" onclick="setBet(5000)">5K</div>
+        <div class="qb" onclick="setBet(${Math.floor(S.tokens)})">MAX</div>
+      </div>
+      <div class="small muted mt8">رصيدك: <span class="gold">${fmt(S.tokens)}</span> Quinn</div>
+    </div>
+    <button class="btn btn-gold btn-full" style="margin-bottom:10px" onclick="startGamble()">
+      <i class="fas fa-dice"></i> ابحث عن منافس
+    </button>
+    <button class="btn btn-ghost btn-full" onclick="startGambleAI()">
+      <i class="fas fa-robot"></i> ضد الذكاء الاصطناعي
+    </button>
+    <div id="gamble-result" style="margin-top:12px"></div>`;
+
+  window.setBet=function(v){ const b=$('gamble-bet'); if(b) b.value=v; };
+}
+
+function getGambleBet(){
+  const v=parseInt($('gamble-bet')?.value||'0');
+  if(!v||v<10){ toast('الحد الأدنى 10 Quinn','e'); return null; }
+  if(v>S.tokens){ toast('رصيد غير كافٍ','e'); return null; }
+  return v;
+}
+
+async function startGamble(){
+  const bet=getGambleBet(); if(!bet) return;
+  S.tokens-=bet; $('hdr-bal').textContent=fmt(S.tokens);
+  markDirty();
+
+  const res=$('gamble-result');
+  res.innerHTML='<div style="text-align:center;color:var(--cyan);padding:12px"><i class="fas fa-spinner fa-spin"></i> البحث عن منافس...</div>';
+
+  // PvP via RTDB
+  const lobbyRef=rtdb.ref('gambling/lobby');
+  const snap=await lobbyRef.once('value');
+  const waiting=snap.val();
+
+  if(waiting && waiting.uid!==S.uid){
+    // Found opponent
+    const total=bet+(waiting.bet||0);
+    await lobbyRef.remove();
+    const myDie=Math.floor(Math.random()*6)+1;
+    const oppDie=Math.floor(Math.random()*6)+1;
+    showGambleResult(myDie,oppDie,waiting.name||'خصم',bet,total);
+  } else {
+    // Wait
+    await lobbyRef.set({uid:S.uid,name:S.name,bet,ts:Date.now()});
+    res.innerHTML=`<div style="text-align:center;color:var(--cyan);padding:12px"><i class="fas fa-spinner fa-spin"></i> في انتظار خصم...<br><span class="small muted">سيتم المطابقة خلال 10 ثوان</span></div>`;
+
+    setTimeout(async()=>{
+      const s2=await rtdb.ref('gambling/lobby').once('value');
+      if(s2.val()?.uid===S.uid){
+        await rtdb.ref('gambling/lobby').remove();
+        // Simulate bot
+        const myDie=Math.floor(Math.random()*6)+1;
+        const botDie=Math.floor(Math.random()*6)+1;
+        showGambleResult(myDie,botDie,'Quinn AI',bet,bet*2,true);
+      }
+    },10000);
+  }
+}
+
+function startGambleAI(){
+  const bet=getGambleBet(); if(!bet) return;
+  S.tokens-=bet; $('hdr-bal').textContent=fmt(S.tokens);
+  markDirty();
+  setTimeout(()=>{
+    const myDie=Math.floor(Math.random()*6)+1;
+    let aiDie=Math.floor(Math.random()*6)+1;
+    // RTP 95%: occasionally nudge AI higher
+    const sessionRTP=S._sessionWin/(S._sessionBet||1);
+    if(sessionRTP>0.95 && Math.random()<0.65) aiDie=Math.min(6,aiDie+1+Math.floor(Math.random()*2));
+    showGambleResult(myDie,aiDie,'Quinn AI',bet,bet*2,true);
+  },1200);
+}
+
+function showGambleResult(myDie,oppDie,oppName,myBet,totalPot,isAI=false){
+  const faces=['⚀','⚁','⚂','⚃','⚄','⚅'];
+  const won=myDie>oppDie, tied=myDie===oppDie;
+  const res=$('gamble-result'); if(!res) return;
+
+  if(won){
+    S.tokens+=totalPot;
+    S._sessionWin=(S._sessionWin||0)+(totalPot-myBet);
+    addTx('gamble_win',totalPot-myBet);
+  } else if(tied){
+    S.tokens+=myBet;
+    addTx('gamble_win',0);
+  } else {
+    S._sessionBet=(S._sessionBet||0)+myBet;
+    addTx('gamble_lose',myBet);
+  }
+  markDirty();
+  $('hdr-bal').textContent=fmt(S.tokens);
+
+  res.innerHTML=`
+    <div class="gc" style="padding:16px;text-align:center">
+      <div style="display:flex;align-items:center;justify-content:space-around;margin-bottom:14px">
+        <div>
+          <div class="small muted">${S.name.substr(0,10)}</div>
+          <div class="die" style="margin:8px auto">${faces[myDie-1]}</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--gold)">${myDie}</div>
+        </div>
+        <div class="small" style="color:var(--muted)">VS</div>
+        <div>
+          <div class="small muted">${oppName.substr(0,10)}</div>
+          <div class="die" style="margin:8px auto">${faces[oppDie-1]}</div>
+          <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--gold)">${oppDie}</div>
+        </div>
+      </div>
+      <div style="font-size:18px;font-weight:900;${won?'color:var(--green)':tied?'color:var(--gold)':'color:var(--red)'};margin-bottom:6px">
+        ${won?`🏆 فزت! +${fmt(totalPot-myBet)}`:tied?'🤝 تعادل!':'💔 خسرت!'}
+      </div>
+      <div class="small muted">الرهان: ${fmt(myBet)} | الإجمالي: ${fmt(totalPot)}</div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   VAULT TAB
+══════════════════════════════════════════ */
+const VAULT_LOCK_MS=7*24*60*60*1000;
+const BASE_YIELD=0.005;
+
+function renderVault(c){
+  const rank=getRank(S.totalTokens);
+  if(S.totalTokens<2000){
+    c.innerHTML=`
+      <div style="text-align:center;padding:40px 16px">
+        <i class="fas fa-lock" style="font-size:56px;color:var(--muted);display:block;margin-bottom:14px"></i>
+        <div style="font-size:18px;font-weight:800;margin-bottom:8px">Vault مقفول</div>
+        <div class="muted" style="font-size:13px;line-height:1.6">يفتح عند رتبة المنقب<br>(2000 Quinn)</div>
+        <div style="margin-top:16px;padding:12px;background:rgba(255,215,0,.06);border-radius:14px;border:1px solid rgba(255,215,0,.12)">
+          <div class="gold" style="font-size:13px;font-weight:700">رصيدك: ${fmt(S.totalTokens)} / 2000 Quinn</div>
+        </div>
+      </div>`;
+    return;
+  }
+
+  const staked=S.vaultStaked||0;
+  const loyaltyMul=Math.min(1.25,S.vaultLoyaltyMul||1);
+  const dailyRate=BASE_YIELD*loyaltyMul;
+  const pendingMs=Date.now()-(S.vaultLastClaim||Date.now());
+  const pending=Math.floor(staked*dailyRate*(pendingMs/(24*60*60*1000)));
+  const isLocked=staked>0&&(Date.now()-(S.vaultLastDeposit||Date.now()))<VAULT_LOCK_MS;
+  const lockH=isLocked?Math.ceil((VAULT_LOCK_MS-(Date.now()-(S.vaultLastDeposit||Date.now())))/(60*60*1000)):0;
+  const maxDeposit=[100000,250000,500000,750000,1000000][Math.min(4,RANKS.indexOf(rank))];
+
+  c.innerHTML=`
+    <!-- Hero -->
+    <div class="gc gc-gold" style="padding:18px;text-align:center;margin-bottom:13px">
+      <i class="fas fa-vault" style="font-size:40px;color:var(--gold);display:block;margin-bottom:8px"></i>
+      <div style="font-size:18px;font-weight:800;margin-bottom:3px">Quinn Vault</div>
+      <div class="small muted">استثمر Quinn واكسب عوائد يومية</div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px">
+      <div class="gc" style="padding:14px">
+        <div class="small muted mb-4"><i class="fas fa-coins" style="color:var(--gold)"></i> المودع</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--gold)">${fmt(staked)}</div>
+      </div>
+      <div class="gc" style="padding:14px">
+        <div class="small muted mb-4"><i class="fas fa-percent" style="color:var(--cyan)"></i> العائد اليومي</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--cyan)">${(dailyRate*100).toFixed(3)}%</div>
+      </div>
+      <div class="gc" style="padding:14px">
+        <div class="small muted mb-4"><i class="fas fa-heart" style="color:var(--pink)"></i> مضاعف الولاء</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--pink)">${loyaltyMul.toFixed(2)}×</div>
+      </div>
+      <div class="gc" style="padding:14px">
+        <div class="small muted mb-4"><i class="fas fa-clock" style="color:var(--green)"></i> مكافأة معلقة</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:18px;font-weight:900;color:var(--green)">${fmt(pending)}</div>
+      </div>
+    </div>
+
+    ${isLocked?`<div class="gc" style="padding:12px 14px;margin-bottom:12px;background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.15)">
+      <i class="fas fa-lock" style="color:var(--red)"></i>
+      <span class="small" style="color:var(--red);margin-right:7px">مقفول لمدة ${lockH} ساعة أخرى — السحب الآن: خسارة 10%</span>
+    </div>`:''}
+
+    <!-- Actions -->
+    <div class="two-col" style="gap:10px;margin-bottom:12px">
+      <button class="btn btn-gold btn-full" onclick="Q.openModal('vault-dep-modal')">
+        <i class="fas fa-arrow-down"></i> إيداع
+      </button>
+      <button class="btn ${staked===0?'btn-ghost btn-disabled':'btn-red'} btn-full" onclick="execWithdraw()" ${staked===0?'disabled':''}>
+        <i class="fas fa-arrow-up"></i> سحب
+      </button>
+    </div>
+
+    <button class="btn btn-green btn-full ${pending===0?'btn-disabled':''}" onclick="execClaim()" ${pending===0?'disabled':''} style="margin-bottom:14px">
+      <i class="fas fa-gift"></i> استلام المكافأة (${fmt(pending)} Quinn)
+    </button>
+
+    <!-- Info -->
+    <div class="gc" style="padding:14px">
+      <div style="font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px">
+        <div><i class="fas fa-circle-info" style="color:var(--gold)"></i> العائد الأساسي 0.5% يومياً</div>
+        <div><i class="fas fa-circle-info" style="color:var(--cyan)"></i> مضاعف الولاء يصل إلى 1.25× بعد 28 يوم</div>
+        <div><i class="fas fa-circle-info" style="color:var(--red)"></i> السحب قبل 7 أيام: عقوبة 10%</div>
+        <div><i class="fas fa-circle-info" style="color:var(--purple)"></i> الحد الأقصى للإيداع: ${fmt(maxDeposit)} Quinn</div>
+      </div>
+    </div>`;
+
+  $('vd-hint').textContent=`رصيدك: ${fmt(S.tokens)} Quinn`;
+}
+
+function checkVaultRewards(){
+  if(!S.vaultStaked||S.vaultStaked<=0) return;
+  const loyaltyMul=Math.min(1.25,S.vaultLoyaltyMul||1);
+  const dailyRate=BASE_YIELD*loyaltyMul;
+  const pendingMs=Date.now()-(S.vaultLastClaim||Date.now());
+  if(pendingMs<60*1000) return;
+  const reward=Math.floor(S.vaultStaked*dailyRate*(pendingMs/(24*60*60*1000)));
+  if(reward>0){
+    S.tokens+=reward; S.totalTokens+=reward;
+    S.vaultLastClaim=Date.now();
+    addTx('vault_rw',reward);
+    markDirty();
+    $('hdr-bal').textContent=fmt(S.tokens);
+    toast(`🏦 Vault: +${fmt(reward)} Quinn`,'s');
+  }
+}
+
+function execDeposit(){
+  const amt=parseInt($('vd-amt')?.value||'0');
+  if(!amt||amt<1000){ toast('الحد الأدنى 1000 Quinn','e'); return; }
+  if(amt>S.tokens){ toast('رصيد غير كافٍ','e'); return; }
+  S.tokens-=amt;
+  S.vaultStaked=(S.vaultStaked||0)+amt;
+  S.vaultLastDeposit=Date.now();
+  if(!S.vaultLastClaim) S.vaultLastClaim=Date.now();
+  addTx('vault_dep',amt);
+  markDirty();
+  closeModal('vault-dep-modal');
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`✅ تم إيداع ${fmt(amt)} Quinn في Vault`,'s');
+  renderTab('vault');
+}
+
+function execWithdraw(){
+  if(!S.vaultStaked||S.vaultStaked<=0){ toast('لا يوجد رصيد مودع','e'); return; }
+  const isLocked=(Date.now()-(S.vaultLastDeposit||Date.now()))<VAULT_LOCK_MS;
+  let amt=S.vaultStaked;
+  if(isLocked){ amt=Math.floor(amt*0.9); toast(`⚠️ عقوبة سحب مبكر: تلقيت ${fmt(amt)} فقط`,'w'); }
+  S.tokens+=amt;
+  addTx('vault_wd',amt);
+  S.vaultStaked=0; S.vaultLastDeposit=0;
+  markDirty();
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`✅ تم سحب ${fmt(amt)} Quinn`,'s');
+  renderTab('vault');
+}
+
+function execClaim(){
+  if(!S.vaultStaked||S.vaultStaked<=0){ toast('لا يوجد مودع','e'); return; }
+  const loyaltyMul=Math.min(1.25,S.vaultLoyaltyMul||1);
+  const dailyRate=BASE_YIELD*loyaltyMul;
+  const pendingMs=Date.now()-(S.vaultLastClaim||Date.now());
+  const pending=Math.floor(S.vaultStaked*dailyRate*(pendingMs/(24*60*60*1000)));
+  if(pending<=0){ toast('لا توجد مكافأة بعد','w'); return; }
+  S.tokens+=pending; S.totalTokens+=pending;
+  S.vaultLastClaim=Date.now();
+  addTx('vault_rw',pending);
+  markDirty();
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`🎁 حصلت على ${fmt(pending)} Quinn من Vault!`,'s');
+  renderTab('vault');
+}
+
+/* ══════════════════════════════════════════
+   LEADERBOARD TAB
+══════════════════════════════════════════ */
+const LB_CACHE_KEY='quinn_lb';
+const LB_TTL=5*60*1000;
+
+async function renderLeaders(c){
+  c.innerHTML=`
+    <div style="text-align:center;padding:14px 0 12px">
+      <div style="font-size:20px;font-weight:900;background:linear-gradient(135deg,var(--gold),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">المتصدرون</div>
+    </div>
+    <div id="lb-body"><div class="empty"><i class="fas fa-spinner fa-spin" style="font-size:24px;opacity:.5"></i><p>تحميل...</p></div></div>`;
+
+  // Check cache
+  let players=null;
+  try{
+    const raw=localStorage.getItem(LB_CACHE_KEY);
+    if(raw){ const c2=JSON.parse(raw); if(Date.now()-c2.ts<LB_TTL) players=c2.data; }
+  }catch(_){}
+
+  if(!players){
+    try{
+      const snap=await db.collection('users').orderBy('totalTokens','desc').limit(50).get();
+      players=snap.docs.map((d,i)=>({rank:i+1,id:d.id,...d.data()}));
+      localStorage.setItem(LB_CACHE_KEY,JSON.stringify({ts:Date.now(),data:players}));
+    }catch(e){
+      $('lb-body').innerHTML=`<div class="empty"><i class="fas fa-wifi-slash"></i><p>تعذر التحميل — تحقق من الاتصال</p></div>`;
+      return;
+    }
+  }
+
+  const body=$('lb-body'); if(!body) return;
+  const myIdx=players.findIndex(p=>p.id===S.uid);
+  const myRank=myIdx>=0?myIdx+1:'—';
+
+  // Podium
+  const top3=players.slice(0,3);
+  const podCols=['var(--gold)','#C0C0C0','#CD7F32'];
+  const podH=['70px','50px','55px'];
+  let podHTML=`<div style="display:flex;align-items:flex-end;justify-content:center;gap:10px;margin-bottom:18px;height:130px">`;
+  const order=[1,0,2]; // silver, gold, bronze
+  order.forEach((pos,i)=>{
+    const p=top3[pos]; if(!p) return;
+    const rank=getRank(p.totalTokens||0);
+    podHTML+=`<div style="display:flex;flex-direction:column;align-items:center;flex:1;max-width:90px">
+      <div style="width:40px;height:40px;border-radius:50%;background:${rank.color}20;border:2px solid ${rank.color};display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;margin-bottom:4px">${(p.name||'?').charAt(0)}</div>
+      <div style="font-size:10px;font-weight:700;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px">${p.name||'—'}</div>
+      <div style="font-size:9px;color:var(--muted)">${fmt(p.totalTokens||0)}</div>
+      <div style="height:${podH[i]};width:100%;background:linear-gradient(180deg,rgba(255,255,255,.07),transparent);border-radius:8px 8px 0 0;margin-top:4px;display:flex;align-items:center;justify-content:center;font-size:18px">
+        ${['🥇','🥈','🥉'][pos]}
+      </div>
+    </div>`;
+  });
+  podHTML+='</div>';
+
+  const listHTML=players.map((p,i)=>{
+    const rank=getRank(p.totalTokens||0);
+    const isMe=p.id===S.uid;
+    const rnkColors=['var(--gold)','#C0C0C0','#CD7F32'];
+    return `<div class="lb-item ${isMe?'me':''}">
+      <div class="lb-rank" style="color:${rnkColors[i]||'var(--muted)'}">#${i+1}</div>
+      <div class="lb-av" style="background:${rank.color}18;border-color:${rank.color}">${(p.name||'?').charAt(0)}</div>
+      <div class="lb-info">
+        <div class="lb-name">${p.name||'Unknown'}${isMe?' (أنت)':''}</div>
+        <div class="lb-sub">${rank.name}</div>
+      </div>
+      <div class="lb-bal">${fmt(p.totalTokens||0)}</div>
+    </div>`;
+  }).join('');
+
+  body.innerHTML=`
+    ${podHTML}
+    ${myIdx>=0?`<div style="text-align:center;padding:8px 0 12px;font-size:13px;font-weight:700">ترتيبك: <span class="gold">#${myRank}</span></div>`:''}
+    ${listHTML}`;
+}
+
+/* ══════════════════════════════════════════
+   PROFILE TAB
+══════════════════════════════════════════ */
+function renderProfileTab(c){
+  const rank=getRank(S.totalTokens);
+  const xpNeeded=Math.floor(1000*Math.pow(1.4,S.level-1));
+  const xpPct=Math.min(100,(S.xp/xpNeeded)*100);
+  const days=Math.max(1,Math.floor((Date.now()-S.joinDate)/86400000));
+
+  c.innerHTML=`
+    <!-- Profile Hero -->
+    <div class="gc" style="padding:18px;margin-bottom:12px;display:flex;align-items:center;gap:14px;position:relative">
+      <div style="width:58px;height:58px;border-radius:50%;flex-shrink:0;background:${rank.color}1a;border:3px solid ${rank.color};display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;cursor:pointer" onclick="Q.openProfile()">
+        ${S.name.charAt(0).toUpperCase()}
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:18px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${S.name}</div>
+        <div style="font-size:12px;font-weight:700;color:${rank.color};margin:3px 0"><i class="fas ${rank.icon}"></i> ${rank.name}</div>
+        <div class="small muted">@${S.username||'quinn_user'}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" id="settings-toggle"><i class="fas fa-gear"></i></button>
+    </div>
+
+    <!-- Level Progress -->
+    <div class="gc" style="padding:14px;margin-bottom:12px">
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:7px">
+        <span>المستوى ${S.level}</span>
+        <span class="muted small">${fmt(S.xp)} / ${fmt(xpNeeded)} XP</span>
+      </div>
+      <div class="lbar"><div class="lfill" style="width:${xpPct}%;background:${rank.color}"></div></div>
+    </div>
+
+    <!-- Stats -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px">
+      <div class="gc" style="padding:13px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-coins" style="font-size:20px;color:var(--gold)"></i>
+        <div><div style="font-size:15px;font-weight:800">${fmt(S.totalTokens)}</div><div class="small muted">إجمالي الكسب</div></div>
+      </div>
+      <div class="gc" style="padding:13px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-mouse-pointer" style="font-size:20px;color:var(--cyan)"></i>
+        <div><div style="font-size:15px;font-weight:800">${fmt(S.clicks)}</div><div class="small muted">النقرات</div></div>
+      </div>
+      <div class="gc" style="padding:13px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-users" style="font-size:20px;color:var(--pink)"></i>
+        <div><div style="font-size:15px;font-weight:800">${S.referrals}</div><div class="small muted">الإحالات</div></div>
+      </div>
+      <div class="gc" style="padding:13px;display:flex;align-items:center;gap:10px">
+        <i class="fas fa-calendar" style="font-size:20px;color:var(--green)"></i>
+        <div><div style="font-size:15px;font-weight:800">${days}</div><div class="small muted">يوم عضوية</div></div>
+      </div>
+    </div>
+
+    <!-- Wallet ID -->
+    <div class="gc" style="padding:13px 15px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+        <i class="fas fa-wallet" style="color:var(--gold)"></i>
+        <span style="font-size:13px;font-weight:700">معرف المحفظة</span>
+        <button class="btn btn-ghost btn-sm" onclick="Q.copyWallet()"><i class="fas fa-copy"></i></button>
+      </div>
+      <div class="mono" style="font-size:13px;color:var(--cyan)">${S.walletId||'QN-????-????'}</div>
+    </div>
+
+    <!-- Invite -->
+    <button class="btn btn-ghost btn-full" style="margin-bottom:10px" onclick="Q.shareInvite()">
+      <i class="fas fa-share-nodes"></i> دعوة صديق (+5000 Quinn)
+    </button>
+
+    <!-- Secure Key -->
+    <div class="gc gc-gold" style="padding:14px 15px;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+        <i class="fas fa-shield-halved" style="color:var(--gold)"></i>
+        <span style="font-size:13px;font-weight:700">Quinn Secure Key</span>
+      </div>
+      <div id="sk-val" style="font-family:monospace;font-size:13px;color:var(--muted);letter-spacing:1px;margin-bottom:8px">QNN-••••-••••-••••</div>
+      <div class="small red" style="margin-bottom:10px">⚠️ احتفظ به بأمان — لا يمكن استعادته!</div>
+      <button class="btn btn-ghost btn-sm" id="reveal-sk"><i class="fas fa-eye"></i> إظهار المفتاح</button>
+    </div>
+
+    <!-- Settings (hidden by default) -->
+    <div id="settings-panel" class="gc" style="padding:16px;display:none">
+      <div style="font-size:15px;font-weight:800;margin-bottom:14px"><i class="fas fa-gear" style="color:var(--gold)"></i> مركز التحكم</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <span style="font-size:13px">اللغة</span>
+        <div style="display:flex;gap:4px">
+          ${['ar','en','ru','es'].map(l=>`<button class="btn btn-ghost btn-sm" style="padding:4px 9px;font-size:10px;${S._lang===l?'border-color:rgba(255,215,0,.3);color:var(--gold);':''}" onclick="Q.setLang('${l}')">${l.toUpperCase()}</button>`).join('')}
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.05)">
+        <span style="font-size:13px">الإشعارات</span>
+        <div class="tog ${S.notifications?'on':''}" id="notif-tog" onclick="toggleNotifSetting()"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0">
+        <span style="font-size:13px">الدعم الفني</span>
+        <a href="https://t.me/Quinnofficialbot" style="font-size:12px;color:var(--cyan)">@Quinnofficialbot</a>
+      </div>
+      <div class="small muted" style="text-align:center;padding-top:12px;border-top:1px solid rgba(255,255,255,.05)">Quinn Bot v4.0 • 2026</div>
+    </div>`;
+
+  $('settings-toggle').addEventListener('click',()=>{
+    const p=$('settings-panel');
+    p.style.display=p.style.display==='none'?'block':'none';
+    setTimeout(()=>p?.scrollIntoView({behavior:'smooth'}),60);
+  });
+  $('reveal-sk').addEventListener('click',()=>{
+    $('sk-val').textContent=S.secureKey||'لم يتم توليد المفتاح';
+    $('sk-val').style.color='var(--gold)';
+  });
+}
+
+function toggleNotifSetting(){
+  S.notifications=!S.notifications;
+  const tog=$('notif-tog');
+  if(tog) tog.className=`tog ${S.notifications?'on':''}`;
+  markDirty();
+}
+
+/* ══════════════════════════════════════════
+   SHOP SECTION
+══════════════════════════════════════════ */
+const SHOP_PKGS=[
+  {id:'p1',label:'مبتدئ',quinn:500,   icon:'fa-seedling', color:'#4ECDC4'},
+  {id:'p2',label:'صغيرة', quinn:2000,  icon:'fa-star',     color:'#FFD700'},
+  {id:'p3',label:'متوسطة',quinn:10000, icon:'fa-gem',      color:'#A78BFA'},
+  {id:'p4',label:'ممتازة',quinn:50000, icon:'fa-crown',    color:'#FF6B6B'},
+  {id:'p5',label:'الحوت', quinn:200000,icon:'fa-fish',     color:'#06B6D4'},
+];
+
+function renderShopSection(c){
+  c.innerHTML=`
+    <div style="text-align:center;padding:10px 0 14px">
+      <div style="font-size:16px;font-weight:800;margin-bottom:4px"><i class="fas fa-bag-shopping" style="color:var(--gold)"></i> المتجر</div>
+      <div class="small muted">اشترِ Quinn بكلمة مرور المتجر</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${SHOP_PKGS.map(p=>`
+        <div class="gc" style="padding:16px;text-align:center;cursor:pointer;border-color:${p.color}20" onclick="Q.openPasswordShop('${p.id}',${p.quinn},'${p.label}')">
+          <i class="fas ${p.icon}" style="font-size:28px;color:${p.color};display:block;margin-bottom:8px"></i>
+          <div style="font-family:'Orbitron',sans-serif;font-size:14px;font-weight:900;color:var(--gold);margin-bottom:3px">${fmt(p.quinn)}</div>
+          <div class="small muted">حزمة ${p.label}</div>
+          <button class="btn btn-ghost btn-sm btn-full" style="margin-top:10px">شراء</button>
+        </div>`).join('')}
+    </div>
+
+    <div style="margin-top:16px">
+      <div class="sec-title"><i class="fas fa-star" style="color:#FFD700"></i> شراء بالنجوم</div>
+      <div class="gc" style="padding:14px">
+        ${[[50,5],[100,11],[250,30],[500,65],[1000,140]].map(([stars,q])=>`
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.05)">
+            <span style="font-size:14px;font-weight:700">${stars} ⭐</span>
+            <span style="font-size:12px;color:var(--muted)">→</span>
+            <span style="font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;color:var(--gold)">${q} Q</span>
+            <button class="btn btn-ghost btn-sm" onclick="window.open('https://t.me/Quinnofficialbot?start=stars_${stars}_${q}')">
+              <i class="fab fa-telegram"></i> شراء
+            </button>
+          </div>`).join('')}
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICATIONS
+══════════════════════════════════════════ */
+let _notifs=[];
+
+function startNotifListener(){
+  db.collection('notifications').orderBy('timestamp','desc').limit(5).onSnapshot(snap=>{
+    let isFirst=true;
+    snap.docChanges().forEach(ch=>{
+      if(ch.type==='added'){
+        const d=ch.doc.data();
+        _notifs.unshift({msg:d.message,time:d.timestamp?.toDate?.()?.toLocaleString?.('ar-SA')||'الآن'});
+        if(!isFirst){ toast(`🔔 ${d.message}`,'i'); $('notif-dot').style.display='block'; }
+        isFirst=false;
+      }
+    });
+  });
+}
+
+/* ══════════════════════════════════════════
+   REFERRAL
+══════════════════════════════════════════ */
+async function handleReferral(refId){
+  if(S.referredBy||String(S.uid)===String(refId)) return;
+  try{
+    S.referredBy=refId;
+    S.tokens+=1000; S.totalTokens+=1000;
+    addTx('referral',1000,{from:refId});
+    markDirty();
+    await db.collection('users').doc(String(refId)).update({
+      referrals:firebase.firestore.FieldValue.increment(1),
+      tokens:firebase.firestore.FieldValue.increment(5000),
+      totalTokens:firebase.firestore.FieldValue.increment(5000),
+    });
+    toast('🎁 حصلت على 1000 Quinn كمكافأة إحالة!','s');
+  }catch(e){ console.warn('[Referral]',e); }
+}
+
+/* ══════════════════════════════════════════
+   Q OBJECT (global API)
+══════════════════════════════════════════ */
+const Q = {
+  openModal(id){
+    const m=document.getElementById(id); if(m) m.classList.add('open');
+    if(id==='send-modal') $('send-bal-hint').textContent=`رصيدك: ${fmt(S.tokens)} Quinn`;
+    if(id==='vault-dep-modal') $('vd-hint').textContent=`رصيدك: ${fmt(S.tokens)} Quinn`;
+    if(id==='buy-modal') $('buy-cost').textContent=`السعر الحالي: $${goldPrice.toFixed(2)}`;
+    if(id==='sell-modal') $('sell-rev').textContent=`رصيدك: ${S.goldGrams.toFixed(4)}g`;
+  },
+  closeModal(id){ const m=document.getElementById(id); if(m) m.classList.remove('open'); },
+  copyWallet(){
+    navigator.clipboard?.writeText(S.walletId||'');
+    toast('✅ تم نسخ معرف المحفظة','s');
+  },
+  shareInvite(){
+    const link=`${BOT}/\?start=ref_${S.uid}`;
+    if(window.Telegram?.WebApp) window.Telegram.WebApp.openTelegramLink(link);
+    else navigator.clipboard?.writeText(link);
+    toast('تم نسخ رابط الدعوة!','s');
+  },
+  openProfile(){
+    const rank=getRank(S.totalTokens);
+    $('profile-modal-body').innerHTML=`
+      <div style="text-align:center;padding:8px 0 16px">
+        <div style="width:68px;height:68px;border-radius:50%;background:${rank.color}1a;border:3px solid ${rank.color};display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;margin:0 auto 12px">${S.name.charAt(0)}</div>
+        <div style="font-size:20px;font-weight:800;margin-bottom:4px">${S.name}</div>
+        <div style="font-size:13px;font-weight:700;color:${rank.color};margin-bottom:14px"><i class="fas ${rank.icon}"></i> ${rank.name}</div>
+        <div style="font-family:'Orbitron',sans-serif;font-size:26px;font-weight:900;color:var(--gold);margin-bottom:3px">${fmt(S.totalTokens)}</div>
+        <div class="small muted">Quinn إجمالي</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:16px">
+          <div style="padding:10px;background:rgba(255,255,255,.04);border-radius:12px">
+            <div style="font-size:14px;font-weight:800">${fmt(S.clicks)}</div>
+            <div class="small muted">نقرات</div>
+          </div>
+          <div style="padding:10px;background:rgba(255,255,255,.04);border-radius:12px">
+            <div style="font-size:14px;font-weight:800">${S.referrals}</div>
+            <div class="small muted">إحالات</div>
+          </div>
+          <div style="padding:10px;background:rgba(255,255,255,.04);border-radius:12px">
+            <div style="font-size:14px;font-weight:800">${S.level}</div>
+            <div class="small muted">مستوى</div>
+          </div>
+        </div>
+      </div>`;
+    this.openModal('profile-modal');
+  },
+  toggleNotifs(){
+    $('notif-dot').style.display='none';
+    toast(_notifs.length?`🔔 ${_notifs[0]?.msg||''}`:' لا إشعارات','i');
+  },
+  openSendModal(){ this.openModal('send-modal'); },
+  execSend,
+  openPasswordShop(id,quinn,label){
+    $('shop-body').innerHTML=`
+      <p style="font-size:13px;color:var(--muted);margin-bottom:14px">ستحصل على <strong class="gold">${fmt(quinn)} Quinn</strong> — حزمة ${label}</p>
+      <input class="inp" type="password" id="shop-pass" placeholder="كلمة مرور المتجر" autocomplete="off" style="margin-bottom:12px">
+      <button class="btn btn-gold btn-full" onclick="Q.confirmShopBuy(${quinn})">
+        <i class="fas fa-check"></i> تأكيد الشراء
+      </button>
+      <div id="shop-err" class="small red" style="text-align:center;margin-top:8px;min-height:16px"></div>`;
+    this.openModal('shop-modal');
+  },
+  confirmShopBuy(quinn){
+    const pass=$('shop-pass')?.value;
+    if(pass===PASS){
+      S.tokens+=quinn; S.totalTokens+=quinn;
+      addTx('shop_buy',quinn);
+      markDirty();
+      $('hdr-bal').textContent=fmt(S.tokens);
+      this.closeModal('shop-modal');
+      toast(`✅ تم إضافة ${fmt(quinn)} Quinn!`,'s');
+    } else {
+      const e=$('shop-err'); if(e) e.textContent='كلمة مرور خاطئة';
+      const i=$('shop-pass'); if(i){ i.value=''; i.classList.add('inp-shake'); setTimeout(()=>i.classList.remove('inp-shake'),450); }
+    }
+  },
+  openShop(){ renderTab('arena'); setTimeout(()=>{ const t=document.querySelector('[onclick*="shop"]'); if(t) t.click(); },100); },
+  setLang(l){ S._lang=l; toast(`اللغة: ${l.toUpperCase()}`,'i'); },
+};
+window.Q=Q;
+
+/* Send */
+async function execSend(){
+  const to=$('send-to')?.value?.trim();
+  const amt=parseInt($('send-amt')?.value||'0');
+  if(!to||!to.startsWith('QN-')){ toast('معرف غير صحيح','e'); return; }
+  if(!amt||amt<1){ toast('أدخل كمية صحيحة','e'); return; }
+  if(amt>S.tokens){ toast('رصيد غير كافٍ','e'); return; }
+  S.tokens-=amt;
+  addTx('send',amt,{to});
+  markDirty();
+  // Find receiver and credit
+  try{
+    const snap=await db.collection('users').where('walletId','==',to).limit(1).get();
+    if(!snap.empty){
+      const rdoc=snap.docs[0];
+      await rdoc.ref.update({tokens:firebase.firestore.FieldValue.increment(amt),totalTokens:firebase.firestore.FieldValue.increment(amt)});
+    }
+  }catch(_){}
+  Q.closeModal('send-modal');
+  $('hdr-bal').textContent=fmt(S.tokens);
+  toast(`✅ أُرسل ${fmt(amt)} Quinn`,'s');
+  if(curTab==='wallet') renderTab('wallet');
+}
+
+/* Buy/Sell helpers */
+Q.calcBuy=function(){
+  const g=parseFloat($('buy-g')?.value)||0;
+  const el=$('buy-cost'); if(el) el.textContent=`التكلفة: ${fmt(Math.ceil(g*goldPrice))} Quinn`;
+};
+Q.calcSell=function(){
+  const g=parseFloat($('sell-g')?.value)||0;
+  const el=$('sell-rev'); if(el) el.textContent=`ستحصل: ${fmt(Math.floor(g*goldPrice))} Quinn`;
+};
+Q.execBuy  = execBuyGold;
+Q.execSell = execSellGold;
+Q.execDeposit = execDeposit;
+
+// Modal close on backdrop click
+document.querySelectorAll('.modal-bg').forEach(m=>{
+  m.addEventListener('click',function(e){
+    if(e.target===this) this.classList.remove('open');
+  });
+});
+
+// Make game functions global
+window.closeGameScreen=closeGameScreen;
+window.oracleAns=function(){};
+window.execWithdraw=execWithdraw;
+window.execClaim=execClaim;
+window.arenaTab=arenaTab;
+window.arenaSection=arenaSection;
+</script>
+</body>
+</html>
