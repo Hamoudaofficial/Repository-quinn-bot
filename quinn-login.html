@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quinn Bot — الدخول</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;600;700;800;900&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+  :root{
+    --gold:#FFD700;
+    --cyan:#00F5FF;
+    --violet:#9B59B6;
+    --green:#00FF88;
+    --bg-deep:#020A16;
+    --glass-border:rgba(255,255,255,0.08);
+    --ink-1:#F3F8FC;
+    --ink-2:rgba(243,248,252,0.58);
+    --ink-3:rgba(243,248,252,0.34);
+    --sp-1:8px; --sp-2:12px; --sp-3:16px; --sp-4:20px; --sp-5:24px; --sp-6:32px; --sp-7:40px; --sp-8:56px;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(48% 38% at 50% 6%, rgba(155,89,182,0.22), transparent 60%),
+      radial-gradient(55% 40% at 100% 100%, rgba(0,245,255,0.10), transparent 60%),
+      radial-gradient(60% 50% at 0% 100%, rgba(255,215,0,0.06), transparent 60%),
+      var(--bg-deep);
+    font-family:'Cairo', sans-serif;
+    color:var(--ink-1);
+    display:flex; justify-content:center;
+    overflow-x:hidden;
+    position:relative;
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  .drift{position:fixed; border-radius:50%; filter:blur(70px); opacity:.30; pointer-events:none; z-index:0;}
+  .drift-a{width:280px;height:280px; background:var(--violet); top:-80px; left:-60px; animation:driftA 18s ease-in-out infinite;}
+  .drift-b{width:240px;height:240px; background:var(--cyan); bottom:-60px; right:-60px; animation:driftB 22s ease-in-out infinite;}
+  @keyframes driftA{0%,100%{transform:translate(0,0)} 50%{transform:translate(26px,34px)}}
+  @keyframes driftB{0%,100%{transform:translate(0,0)} 50%{transform:translate(-22px,-30px)}}
+
+  .screen{
+    width:100%; max-width:440px; min-height:100vh;
+    position:relative; z-index:1;
+    padding:var(--sp-5) var(--sp-4) var(--sp-6);
+    display:flex; flex-direction:column;
+  }
+
+  /* ---------- STATUS ROW ---------- */
+  .status-row{display:flex; align-items:center; justify-content:space-between;}
+  .word{font-family:'Orbitron'; font-weight:700; font-size:13px; letter-spacing:.12em; color:var(--ink-3);}
+  .word b{color:var(--gold); -webkit-text-fill-color:var(--gold);}
+  .live{display:flex; align-items:center; gap:6px; font-size:11px; font-weight:700; color:var(--green);}
+  .live .dot{width:6px;height:6px;border-radius:50%;background:var(--green); box-shadow:0 0 9px var(--green); animation:pulse 1.8s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1} 50%{opacity:.3}}
+
+  /* ---------- HERO ORB (signature element) ---------- */
+  .hero{
+    display:flex; flex-direction:column; align-items:center;
+    margin-top:var(--sp-8); margin-bottom:var(--sp-7);
+  }
+  .orb-stage{
+    position:relative; width:168px; height:168px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ring{
+    position:absolute; border-radius:50%; border:1px solid transparent;
+  }
+  .ring-1{
+    width:168px; height:168px;
+    border-top-color:rgba(255,215,0,0.55);
+    border-right-color:rgba(255,215,0,0.12);
+    animation:spin 9s linear infinite;
+  }
+  .ring-2{
+    width:132px; height:132px;
+    border-bottom-color:rgba(0,245,255,0.5);
+    border-left-color:rgba(0,245,255,0.1);
+    animation:spin 6.5s linear infinite reverse;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .orb-core{
+    width:92px; height:92px; border-radius:50%;
+    background:
+      radial-gradient(circle at 32% 28%, rgba(255,255,255,0.9), rgba(255,215,0,0.55) 34%, rgba(155,89,182,0.65) 70%, rgba(2,10,22,0.9) 100%);
+    box-shadow:
+      0 0 40px rgba(255,215,0,0.35),
+      0 0 80px rgba(155,89,182,0.25),
+      inset 0 -10px 24px rgba(0,0,0,0.35);
+    display:flex; align-items:center; justify-content:center;
+    animation:breathe 3.6s ease-in-out infinite;
+  }
+  @keyframes breathe{0%,100%{transform:scale(1)} 50%{transform:scale(1.045)}}
+  .orb-core i{font-size:26px; color:rgba(2,10,22,0.85); text-shadow:0 1px 0 rgba(255,255,255,0.25);}
+  .spark{
+    position:absolute; width:4px; height:4px; border-radius:50%; background:var(--gold);
+    box-shadow:0 0 6px var(--gold); opacity:0; animation:spark 2.4s ease-in infinite;
+  }
+  .spark:nth-child(1){top:8%; left:52%; animation-delay:.1s;}
+  .spark:nth-child(2){top:70%; left:10%; animation-delay:.9s; background:var(--cyan); box-shadow:0 0 6px var(--cyan);}
+  .spark:nth-child(3){top:78%; left:82%; animation-delay:1.6s;}
+  @keyframes spark{0%{opacity:0; transform:translateY(0) scale(0.4);} 30%{opacity:1;} 100%{opacity:0; transform:translateY(-22px) scale(1);}}
+
+  .hero-title{
+    margin-top:var(--sp-5);
+    font-family:'Orbitron'; font-weight:800; font-size:26px; letter-spacing:.02em;
+    text-align:center;
+  }
+  .hero-title span{color:var(--gold);}
+  .hero-sub{
+    margin-top:var(--sp-2); font-size:14px; color:var(--ink-2); text-align:center;
+    line-height:1.7; max-width:300px;
+  }
+
+  /* ---------- FEATURE RAIL ---------- */
+  .rail-wrap{
+    position:relative;
+    border-radius:26px;
+    padding:var(--sp-5) var(--sp-4);
+    background:linear-gradient(160deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015));
+    border:0.5px solid var(--glass-border);
+    backdrop-filter:blur(25px) saturate(200%);
+    -webkit-backdrop-filter:blur(25px) saturate(200%);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,0.08), 0 20px 40px -24px rgba(0,0,0,0.6);
+  }
+  .rail{position:relative;}
+  .rail::before{
+    content:'';
+    position:absolute; top:22px; bottom:22px; right:23px; width:1px;
+    background:linear-gradient(180deg, rgba(155,89,182,0.5), rgba(0,245,255,0.5), rgba(255,215,0,0.5));
+  }
+  .feat{
+    position:relative; display:flex; align-items:flex-start; gap:var(--sp-3);
+    padding:var(--sp-3) 0;
+  }
+  .feat + .feat{border-top:0.5px solid rgba(255,255,255,0.05);}
+  .feat-index{
+    flex:none; width:46px; height:46px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center; font-size:17px;
+    position:relative; z-index:1;
+    border:0.5px solid var(--glass-border);
+  }
+  .feat.f1 .feat-index{background:rgba(155,89,182,0.16); color:var(--violet); box-shadow:0 0 18px -4px rgba(155,89,182,0.5);}
+  .feat.f2 .feat-index{background:rgba(0,245,255,0.14); color:var(--cyan); box-shadow:0 0 18px -4px rgba(0,245,255,0.5);}
+  .feat.f3 .feat-index{background:rgba(255,215,0,0.14); color:var(--gold); box-shadow:0 0 18px -4px rgba(255,215,0,0.5);}
+  .feat-body{flex:1; padding-top:2px;}
+  .feat-tag{font-size:10px; font-weight:800; letter-spacing:.1em; color:var(--ink-3); text-transform:uppercase;}
+  .feat.f1 .feat-tag{color:var(--violet);}
+  .feat.f2 .feat-tag{color:var(--cyan);}
+  .feat.f3 .feat-tag{color:var(--gold);}
+  .feat-title{font-size:15px; font-weight:800; margin-top:3px;}
+  .feat-desc{font-size:12.5px; color:var(--ink-2); margin-top:4px; line-height:1.6;}
+  .feat-meta{
+    display:inline-flex; align-items:center; gap:5px; margin-top:8px;
+    font-family:'Orbitron'; font-size:10.5px; font-weight:700;
+    padding:4px 10px; border-radius:20px; border:0.5px solid var(--glass-border);
+  }
+  .feat.f1 .feat-meta{color:var(--violet); background:rgba(155,89,182,0.08);}
+  .feat.f2 .feat-meta{color:var(--cyan); background:rgba(0,245,255,0.08);}
+  .feat.f3 .feat-meta{color:var(--green); background:rgba(0,255,136,0.08);}
+
+  /* ---------- CTA ---------- */
+  .cta-wrap{margin-top:var(--sp-6);}
+  .cta{
+    width:100%; padding:16px; border:none; border-radius:18px; cursor:pointer;
+    font-family:'Cairo'; font-weight:800; font-size:15px;
+    background:linear-gradient(120deg, var(--gold), #f0c400 45%, #d9a300);
+    color:#1a1200;
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    box-shadow:0 14px 30px -14px rgba(255,215,0,0.55), inset 0 1px 0 rgba(255,255,255,0.4);
+    transition:transform .15s cubic-bezier(.2,.9,.3,1.2);
+    position:relative; overflow:hidden;
+  }
+  .cta:active{transform:scale(0.97);}
+  .cta i{font-size:16px;}
+  .cta-hint{
+    text-align:center; font-size:11.5px; color:var(--ink-3); margin-top:var(--sp-3);
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+
+  .trust-row{
+    margin-top:var(--sp-7); display:flex; justify-content:center; gap:var(--sp-5);
+  }
+  .trust-item{display:flex; flex-direction:column; align-items:center; gap:5px;}
+  .trust-item i{font-size:13px; color:var(--ink-3);}
+  .trust-item span{font-size:9.5px; color:var(--ink-3); letter-spacing:.03em;}
+</style>
+</head>
+<body>
+
+<div class="drift drift-a"></div>
+<div class="drift drift-b"></div>
+
+<div class="screen">
+
+  <div class="status-row">
+    <div class="word">QUINN <b>BOT</b></div>
+    <div class="live"><span class="dot"></span> بيئة آمنة</div>
+  </div>
+
+  <div class="hero">
+    <div class="orb-stage">
+      <div class="ring ring-1"></div>
+      <div class="ring ring-2"></div>
+      <span class="spark"></span>
+      <span class="spark"></span>
+      <span class="spark"></span>
+      <div class="orb-core"><i class="fa-solid fa-bolt"></i></div>
+    </div>
+    <div class="hero-title">مرحباً بك في <span>Quinn</span></div>
+    <div class="hero-sub">اقتصادك الرقمي الخاص، محمي ومصمم لينبض بالسرعة — افتحه عبر تيليجرام لتبدأ.</div>
+  </div>
+
+  <div class="rail-wrap">
+    <div class="rail">
+
+      <div class="feat f1">
+        <div class="feat-index"><i class="fa-solid fa-shield-halved"></i></div>
+        <div class="feat-body">
+          <div class="feat-tag">01 · الملف الشخصي</div>
+          <div class="feat-title">قوة وحماية كاملة</div>
+          <div class="feat-desc">مفتاح سري خاص بك، تجميد فوري عند الاشتباه، وتوثيق برتبة موثّقة تحمي هويتك داخل الاقتصاد.</div>
+          <div class="feat-meta"><i class="fa-solid fa-lock"></i> حماية على مستوى الخادم</div>
+        </div>
+      </div>
+
+      <div class="feat f2">
+        <div class="feat-index"><i class="fa-solid fa-gauge-high"></i></div>
+        <div class="feat-body">
+          <div class="feat-tag">02 · الأداء</div>
+          <div class="feat-title">سرعة فورية</div>
+          <div class="feat-desc">كل نقرة ومعاملة تُحدَّث لحظياً على شاشتك، وتُؤكَّد على الخادم دون أي تأخير محسوس.</div>
+          <div class="feat-meta"><i class="fa-solid fa-wave-square"></i> استجابة فورية</div>
+        </div>
+      </div>
+
+      <div class="feat f3">
+        <div class="feat-index"><i class="fa-solid fa-right-left"></i></div>
+        <div class="feat-body">
+          <div class="feat-tag">03 · التحويلات</div>
+          <div class="feat-title">إرسال واستقبال بلا حدود</div>
+          <div class="feat-desc">حوّل Quinn لأي مستخدم بمعرف واحد، أو استقبل من أي مكان عبر رمز محفظتك الخاص.</div>
+          <div class="feat-meta"><i class="fa-solid fa-check-double"></i> معاملات ذرية موثوقة</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="cta-wrap">
+    <button class="cta"><i class="fa-brands fa-telegram"></i> الدخول عبر تيليجرام</button>
+    <div class="cta-hint"><i class="fa-solid fa-circle-info"></i> يعمل Quinn Bot حصرياً داخل تطبيق تيليجرام</div>
+  </div>
+
+  <div class="trust-row">
+    <div class="trust-item"><i class="fa-solid fa-shield-halved"></i><span>تشفير طرفي</span></div>
+    <div class="trust-item"><i class="fa-solid fa-database"></i><span>معاملات ذرية</span></div>
+    <div class="trust-item"><i class="fa-solid fa-eye-slash"></i><span>خصوصية تامة</span></div>
+  </div>
+
+</div>
+
+</body>
+</html>
